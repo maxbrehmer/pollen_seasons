@@ -8,3 +8,13 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
+
+```{r}
+### Libraries
+
+library(tidyverse)
+```
+
+```{r, message=FALSE}
+source("data_wrangling.R", local = knitr::knit_global())
+```

@@ -1,0 +1,119 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage{anysize}
+\marginsize{3cm}{3cm}{2cm}{2cm}
+%\usepackage[applemac]{inputenc}  %för mac 
+%\usepackage[T1]{fontenc}            % Output Swedish characters
+\usepackage[utf8]{inputenc} 
+\usepackage[swedish]{babel}
+
+
+
+
+                 %%%%%% FYLL I UPPGIFTERNA NEDAN {XXX} %%%%%%
+
+
+\newcommand{\datum}{26 Januari 2023}               %%%%% DATUM FÖR UPPRÄTTANDE AV HANDLINGSPLANEN
+
+\newcommand{\kurskod}{MT6010}                      %%%%% KURSKOD,  MT6001 eller  MT6010
+
+\newcommand{\student}{Max Brehmer}              %%%%% DITT NAMN
+
+\newcommand{\pnr}{010907-3254}                       %%%%% DITT PERSONNUMMER
+
+\newcommand{\handledare}{Martin Sköld}            %%%%% NAMN PÅ HANDLEDARE
+
+\newcommand{\exthandledare}{Nej}                     %%%%% EVENTUELL EXTERN HANDLEDARE   Namn / nej
+
+\newcommand{\redovisningsdatum}{Juni 2022}       %%%%% PRELIMINÄRT REDOVISNINGSDATUM
+
+\newcommand{\webbpublicering}{Ja}	%%%%%% GODKÄNNER DU ATT DIN FÄRDIGA KANDIDATUPPSATS PUBLICERAS PÅ INSTITUTIONENS HEMSIDA? Ja / Nej
+
+\newcommand{\urkund}{Ja}	%%%%%% INTYGAR DU ATT DU HAR LÄST URKUNDS HANDBOK OM PLAGIERING OCH KOMMER SKRIVA DITT ARBETE I ENLIGHET MED DEN?  Ja / Nej
+
+
+
+
+             %%% NEDAN BESKRIVER NI ARBETET OCH HUR DET SKA UTFÖRAS %%%
+                     %%% EXEMPELVIS KAN DET SE UT SÅ HÄR %%%
+
+\newcommand{\beskr}{
+\begin{enumerate}
+\item Preliminär titel\\
+Kvantilregressionsanalys av klimatförändringarnas inverkan på pollensäsongen i Sverige.
+\item Översiktlig beskrivning av problemet \\
+De senaste decennierna har till stor del påverkats av globala (och lokala) klimatförändringar. Pollenspridning är i hög mån beroende av klimatet. Detta kandidatarbete kommer därför att undersöka årliga trender av den svenska pollensäsongen. Med andra ord vill vi jämföra hur pollensäsongen beter sig och förändras över tid. I det tillgängliga datamaterialet finns mätningar över hela landet från 70-talet och frammåt vilket ger en tidsram på ungefär 50 år som mätdata kan analyseras på. Detta arbete innefattar även mindre delfrågeställningar som hur Sverige förhåller sig till övriga världen eller vilka typer av pollensporer som påverkas mest av klimatförändringar.
+\item Förslag till lösningsmetod \\
+Ett förslag till en metod som vi tror passar väl till denna tidsserieanalys är kvantilregression. Många liknande projekt använder linjär regression som lösningsmetod, därför tror vi att det är nyttigt att genomföra denna analys med en alternativ metod.
+\item Tidplan \\
+Projektet inleds i januari där en handlingsplan färdigställs och litteratursökning dominerar arbetsbelastningen. Februari och Mars planeras huvudsakligen gå till att framställa en metod för att besvara frågeställningen och att noggrant analysera datamaterialet i R. Under vårens senare del siktar vi på att lägga fokus på de skriftliga delarna av arbetet. Mot slutet av Maj skall hela projektet vara färdigställt och redovisas i början på Juni.
+\\ \\
+\end{enumerate}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+               %%% ÄNDRA EJ NEDAN %%%
+
+
+\begin{document} 
+\begin{tabbing}
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX \=       \kill
+STOCKHOLMS UNIVERSITET	     \> \datum       \\
+MATEMATISKA INSTITUTIONEN     \\
+Avd. Matematisk statistik     \\
+\end{tabbing}
+\medskip
+\begin{center} \large \textbf {Handlingsplan för självständigt arbete} \end{center} 
+\textit{ \small Handlingsplanen ska upprättas av student och handledare i samråd och lämnas till koordinator vid arbetets början. Handlingsplanen gäller 6 månader efter planerat redovisningsdatum och om redovisning ej skett inom den tiden ska en ny handlingsplan upprättas. För att en färdig kandidatuppsats ska bli publicerad på institutionens hemsida krävs ett aktivt godkännande av studenten. För en godkänd handlingsplan krävs att studenten läser URKUNDs handbok om plagiering och intygar att uppsatsen  kommer skrivas  i enlighet med den.}
+
+\begin{normalsize}
+\medskip
+\begin{tabbing}
+ \hspace{22em} \=   \\
+%XXXXXXXXXXXXXXXXXXXX\=       \kill
+Kursbenämning:  \>   Kandidat~\kurskod     \\
+Student:    \> \student ~\pnr     \\
+Handledare:  \> \handledare \\
+Extern handledare: \> \exthandledare \\
+Planerat redovisningsdatum: \> \redovisningsdatum  \\
+Jag godkänner att uppsatsen publiceras \\ på institutionens hemsida: \> \webbpublicering  \\
+Jag har läst URKUNDS handbok om plagiering\\ och kommer skriva i enlighet med den: \> \urkund  \\
+\end{tabbing} 
+\textbf{Beskrivning av arbetet}
+\medskip
+\beskr 
+Stockholm\ \datum \\[30 mm]
+\student     ~~~~~~~~~~~~~~~~~~~~~    \handledare
+
+
+
+\end{normalsize}
+\end{document}
