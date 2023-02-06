@@ -1,5 +1,5 @@
 ---
-title: "Pollen counts"
+title: "A quantile regression analysis of the impact of climate change on the pollen season in Sweden"
 author: "Max Brehmer"
 date: "`r Sys.Date()`"
 output: pdf_document
@@ -18,3 +18,21 @@ library(tidyverse)
 ```{r, message=FALSE}
 source("data_wrangling.R", local = knitr::knit_global())
 ```
+
+## Abstract
+
+## Preface
+
+## Introduction
+
+## Problem
+
+## Method
+
+## Results
+
+## Conclusion
+
+## Bibliography and References
+
+## Appendix
