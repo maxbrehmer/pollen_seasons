@@ -1,5 +1,5 @@
 ---
-title: "A quantile regression analysis over the impact of climate change on the pollen season in Sweden"
+title: "A quantile regression analysis over the impact of climate change on the seasonal pollen release in Sweden"
 author: "Max Brehmer"
 date: "`r Sys.Date()`"
 output: pdf_document
@@ -24,13 +24,13 @@ source("data_wrangling.R", local = knitr::knit_global())
 ## Preface
 
 ## Introduction
-Over the past ?? years it has been clear that our climate is changing rapidly in various ways. Most notably the global average temperature has risen by ?.?? degrees since ????. In the same time frame Sweden has also seen significant shifts in its otherwise stable and temperate climate.
+Over the past couple of decades it has been made clear that our climate is changing rapidly in various ways. Most notably the global average temperature has risen by ≈0.2C per decade since the mid seventies, this constitutes an almost 1C increase over the past half century [hansen2006global]. In the same time frame Sweden has also seen significant shifts in its otherwise stable and temperate climate. Several studies in recent decades draw the conclusion that patterns and behaviours among plant species are impacted by this increase in temperature.
 
-(van2002influence) discusses in their study of the seasonal pollen shift in the Netherlands that an advance in the start of the pollen season by 3-22 days took place in the latter third of the 20th century. Likewise this paper strives to understand what seasonal changes have occurred to the pollen season in Sweden.
+[van2002influence] discusses in their study of the seasonal pollen shift in the Netherlands that an advance in the start of the pollen season by 3-22 days took place in the latter third of the 20th century. Likewise this paper strives to understand what seasonal changes have occurred to the pollen season in Sweden.
 
-As mentioned in (lind2016pollen) the results may differ for various species of pollen. More precisely they found a stark difference in duration among arboreal plant species compared to herbaceous ones, with the former trending towards an earlier end date, while the latter was pushed to a further date and thus have a longer seasonal duration. Grass pollen, being herbaceous, is the leading cause of pollen allergy in developed countries such as Sweden, meaning a lot of people suffer from these seasonal changes for an extended time (garcia2017poaceae).
+As mentioned in [lind2016pollen] the results may differ for various species of pollen. More precisely they found a stark difference in duration among arboreal plant species compared to herbaceous ones, with the former trending towards an earlier end date, while the latter was pushed to a further date and thus have a longer seasonal duration. Grass pollen, being herbaceous, is the leading cause of pollen allergy in many developed countries, meaning a lot of people suffer from these seasonal changes for an extended time [garcia2017poaceae]. In Sweden and other parts of northern Europe however, due to differences in temperature and overall climate, the arboreal types like birch (Betula) are the most common cause of pollinosis [d2017allergenic].
 
-
+Continous monitoring of pollen conducted by the Swedish Museum of Natural History (SMNH) began in 1973 at the Palynological laboratory in Stockholm. Since then multiple other stations have been included in the scope of SMNH's continous pollen monitoring program. As of 2022 there are 20 active stations involved [nrm2022pollen], monitoring the release of 7 unique species of pollen. These 7 species are the arboreal pollen Alder (Alnus), birch (Betula), hazel (Corylus), oak (Quercus), willow (Salix), elm (Ulmus) and the herbaceous species of grass pollen (Poaceae).
 
 
 ## Problem
