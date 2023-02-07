@@ -32,15 +32,20 @@ As mentioned in [lind2016pollen] the results may differ for various species of p
 
 Continous monitoring of pollen conducted by the Swedish Museum of Natural History (SMNH) began in 1973 at the Palynological laboratory in Stockholm. Since then multiple other stations have been included in the scope of SMNH's continous pollen monitoring program. As of 2022 there are 20 active stations involved [nrm2022pollen], monitoring the release of 7 unique species of pollen. These 7 species are the arboreal pollen Alder (Alnus), birch (Betula), hazel (Corylus), oak (Quercus), willow (Salix), elm (Ulmus) and the herbaceous species of grass pollen (Poaceae).
 
-
-## Problem
-
-## Method
+## Methods and material
 
 ## Results
+```{r, message=FALSE}
+source("analysis.R", local = knitr::knit_global())
+```
 
-## Conclusion
+## Discussion
 
 ## Bibliography and References
 
 ## Appendix
+
+
+
+
+
