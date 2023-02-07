@@ -1,5 +1,5 @@
 ---
-title: "A quantile regression analysis of the impact of climate change on the pollen season in Sweden"
+title: "A quantile regression analysis over the impact of climate change on the pollen season in Sweden"
 author: "Max Brehmer"
 date: "`r Sys.Date()`"
 output: pdf_document
@@ -24,6 +24,14 @@ source("data_wrangling.R", local = knitr::knit_global())
 ## Preface
 
 ## Introduction
+Over the past ?? years it has been clear that our climate is changing rapidly in various ways. Most notably the global average temperature has risen by ?.?? degrees since ????. In the same time frame Sweden has also seen significant shifts in its otherwise stable and temperate climate.
+
+(van2002influence) discusses in their study of the seasonal pollen shift in the Netherlands that an advance in the start of the pollen season by 3-22 days took place in the latter third of the 20th century. Likewise this paper strives to understand what seasonal changes have occurred to the pollen season in Sweden.
+
+As mentioned in (lind2016pollen) the results may differ for various species of pollen. More precisely they found a stark difference in duration among arboreal plant species compared to herbaceous ones, with the former trending towards an earlier end date, while the latter was pushed to a further date and thus have a longer seasonal duration. Grass pollen, being herbaceous, is the leading cause of pollen allergy in developed countries such as Sweden, meaning a lot of people suffer from these seasonal changes for an extended time (garcia2017poaceae).
+
+
+
 
 ## Problem
 
