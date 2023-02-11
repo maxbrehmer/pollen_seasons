@@ -13,6 +13,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ### Libraries
 
 library(tidyverse)
+library(lubridate)
 ```
 
 ```{r, message=FALSE}
@@ -30,7 +31,9 @@ As mentioned in [@lind2016pollen] the results may differ for various species of 
 
 Continous monitoring of pollen conducted by the Swedish Museum of Natural History (NRM) began in 1973 at the Palynological laboratory in Stockholm. Since then multiple other stations have been included in the scope of NRM's continous pollen monitoring program. As of 2022 there are 20 active stations involved [@nrm2022pollen], monitoring the release of 7 unique species of pollen. These 7 species are the arboreal pollen of Alder (Alnus), birch (Betula), hazel (Corylus), oak (Quercus), willow (Salix), elm (Ulmus) and the herbaceous species of grass pollen (Poaceae).
 
-In this paper we will attempt to determine the shift in dates of the start and end of the pollen season in Sweden as an effect of global warming of Earth's climate. We will consider global warming as a linear trend over the researched time period as to simplify the process of analyzing pollen patterns. We can do this as research has shown acceptable fitting of linear models over anthropogenic climate change, in regard to temperature [@hansen2006global]. An analysis will be conducted based on two separate bayesian quantile regression models, Empirical likelihood quantile regression and non-parametric quantile regression.
+In this paper we will attempt to determine the shift in dates of the start and end of the pollen season in Sweden as an effect of global warming of Earth's climate. We will consider global warming as a linear trend over the researched time period as to simplify the process of analyzing pollen patterns. We can do this as research has shown acceptable fitting of linear models over anthropogenic climate change, in regard to temperature [@hansen2006global]. An analysis will be conducted based on two separate Bayesian quantile regression models, these are Empirical likelihood quantile regression (EQ) and non-parametric quantile regression (QR). In a study of seasonal shifts of migratory birds [@karlsson2022comparison] perform multiple quantile based methods, including Empirical likelihood and non-parametric QR. As a result, this paper covers the majority of the research in regards to the construction of the statistical models.
+
+By it's conclusion this research paper aims to have built a statistical model that can explain the historic shift in pollen seasons for each of the 7 species and also possesses the ability to predict expected further changes in the Swedish pollen season.
 
 ## Methods and material
 
@@ -39,8 +42,8 @@ As we mentioned earlier in this paper, the monitoring of pollen in the Stockholm
 
 The dataset that we have at our disposal contains 5 unique variables: `date`, `station`, `name`, `count` and `factor`. However as a result of the aforementioned difference in microscope resolution, the `count` and `factor` variables are multiplied to form the more comparable `factor_count` variable. Data is recorded during the predicted pollen season, based on historic results.
 
-### Theoretical methods
-
+### Statistical methods
+In this section we explain the underlying theory behind the statistical approaches used for our data analysis.
 
 ## Results
 ```{r, message=FALSE}
