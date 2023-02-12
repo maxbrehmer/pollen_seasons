@@ -14,6 +14,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 library(tidyverse)
 library(lubridate)
+library(ggridges)
 ```
 
 ```{r, message=FALSE}
@@ -48,6 +49,9 @@ In this section we explain the underlying theory behind the statistical approach
 ## Results
 ```{r, message=FALSE}
 source("analysis.R", local = knitr::knit_global())
+
+pic1990
+pic2022
 ```
 
 ## Discussion
