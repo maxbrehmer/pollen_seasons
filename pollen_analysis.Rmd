@@ -27,15 +27,15 @@ source("data_wrangling.R", local = knitr::knit_global())
 ## Preface
 
 ## Introduction
-Over the past couple of decades it has been made clear that our climate is changing rapidly in various ways. Most notably the global average temperature has risen by ≈0.2C per decade since the mid seventies, this constitutes an almost 1C increase over the past half century [hansen2006global]. In the same time frame Sweden has also seen significant shifts in its otherwise stable and temperate climate. Several studies in recent decades draw the conclusion that plant phenology is impacted by this increase in temperature. [van2002influence] discusses in their study of the seasonal pollen shift in the Netherlands that an advance in the start of the pollen season by 3-22 days took place in the latter third of the 20th century. Likewise this paper strives to understand what seasonal changes have occurred to the pollen season in Sweden.
+Over the past couple of decades it has been made clear that our climate is changing rapidly in various ways. Most notably the global average temperature has risen by ca 0.2C per decade since the mid seventies, this constitutes an almost 1C increase over the past half century [hansen2006global]. In the same time frame Sweden has also seen significant shifts in its otherwise stable and temperate climate. Several studies in recent decades draw the conclusion that plant phenology is impacted by this increase in temperature. [van2002influence] discusses in their study of the seasonal pollen shift in the Netherlands that an advance in the start of the pollen season by 3-22 days took place in the latter third of the 20th century. Likewise this paper strives to understand what seasonal changes have occurred to the pollen season in Sweden.
 
 As mentioned in [lind2016pollen] the results may differ for various species of pollen. More precisely they found a stark difference in duration among arboreal plant species compared to herbaceous ones, with the former trending towards an earlier end date, while the latter was pushed to a further date and thus have a longer seasonal duration. Grass pollen, being herbaceous, is the leading cause of pollen allergy in many developed countries, meaning a lot of people suffer from these seasonal changes for an extended time [garcia2017poaceae]. In Sweden and other parts of northern Europe however, due to differences in temperature and overall climate, the arboreal types like birch (Betula) are the most common cause of pollinosis [d2017allergenic].
 
-Continous monitoring of pollen conducted by the Swedish Museum of Natural History (NRM) began in 1973 at the Palynological laboratory in Stockholm. Since then multiple other stations have been included in the scope of NRM's continous pollen monitoring program. As of 2022 there are 20 active stations involved [nrm2022pollen], monitoring the release of 7 unique species of pollen. These 7 species are the arboreal pollen of Alder (Alnus), birch (Betula), hazel (Corylus), oak (Quercus), willow (Salix), elm (Ulmus) and the herbaceous species of grass pollen (Poaceae).
+Continous monitoring of pollen conducted by the Swedish Museum of Natural History (NRM) began in 1973 at the Palynological laboratory in Stockholm. Since then multiple other stations have been included in the scope of NRM's continous pollen monitoring program. As of 2022 there are 20 active stations involved [nrm2022pollen], monitoring the release of 7 unique species of pollen. These 7 species are the arboreal pollen of alder (Alnus), birch (Betula), hazel (Corylus), oak (Quercus), willow (Salix), elm (Ulmus) and the herbaceous species of grass pollen (Poaceae).
 
 In this paper we will attempt to determine the shift in dates of the start and end of the pollen season in Sweden as an effect of global warming of Earth's climate. We will consider global warming as a linear trend over the researched time period as to simplify the process of analyzing pollen patterns. We can do this as research has shown acceptable fitting of linear models over anthropogenic climate change, in regard to temperature [hansen2006global]. An analysis will be conducted based on two separate Bayesian quantile regression models, these are Empirical likelihood quantile regression (EQ) and non-parametric quantile regression (QR). In a study of seasonal shifts of migratory birds [karlsson2022comparison] perform multiple quantile based methods, including Empirical likelihood and non-parametric QR. As a result, this paper covers the majority of the research in regards to the construction of the statistical models.
 
-By it's conclusion this research paper aims to have built a statistical model that can explain the historic shift in pollen seasons for each of the 7 species and also possesses the ability to predict expected further changes in the Swedish pollen season.
+By its conclusion this research paper aims to have built a statistical model that can explain the historic shift in pollen seasons for each of the 7 species and also possesses the ability to predict expected further changes in the Swedish pollen season.
 
 ## Prior research
 
@@ -44,12 +44,19 @@ By it's conclusion this research paper aims to have built a statistical model th
 ### Collection of pollen data
 As we mentioned earlier in this paper, the monitoring of pollen in the Stockholm region is conducted by the Palynological laboratory at NRM. The laboratory in question uses a Burkard Seven Day Volumetric Spore Trap to capture pollen and spores from the air through a small entrance meant to resemble the human airways. Thus approximately 10 liters of air passes through the machine each minute, which is what humans tend to consume. In order to capture the pollen particles carried by the passing air, a sticky tape is mounted to a drum rotating at 2 mm per hour. As only a small portion of the tape is exposed to the air at each point in time, this method grants us a good indication of the volume of pollen in the passing air at any given moment. It must be noted that not all stations possess the same equipment. In particular differing microscope sizes are used across the country. Consequently, the measured values of the pollen counts are biased towards the larger microscopes, thus showing a somewhat inaccurate representation of the true pollen counts [nrm2022microscope] [nrm2022pollen2]. However considering the structure of the dataset and the consequent data analysis, for which a descriptive presentation follows in the `Data` section, this phenomenon has been ignored.
 
+### Data
 The dataset that we have at our disposal contains 5 unique variables: `date`, `station`, `name`, `count` and `factor`. Of which all but the `factor` variable are used in this research paper. A light description of the meaning of each variable is shown in figure ?.
 
 ```{r, message=FALSE}
 source("analysis.R", local = knitr::knit_global())
 
 kable(data_structure)
+```
+
+```{r, message=FALSE}
+source("analysis.R", local = knitr::knit_global())
+
+kable(stations)
 ```
 
 However as a result of the aforementioned difference in microscope resolution, the `count` and `factor` variables are multiplied to form the more comparable `factor_count` variable. Data is recorded during the predicted pollen season, based on historic results.
@@ -68,7 +75,9 @@ pic2022
 ## Discussion
 
 ### Further improvements
-The solution to this inconvenience is to multiply the pollen count by a factor related to the size of the microscope
+The solution to this inconvenience is to multiply the pollen count by a factor related to the size of the microscope.
+
+To avoid presenting outlier seasons in the ridge plot, we can use an average of perhaps the first X years compared to the last X years.
 
 ## Bibliography and References
 
