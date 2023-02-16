@@ -8,8 +8,9 @@ pic1990 <- df %>% filter(year == 1990) %>% ggplot(aes(x = date, y = lat_name)) +
   theme_ridges() +
   facet_wrap(~ station)
 
-data_structure <- data.frame("Variable" = c("Station", "Pollen type", "Date", "Count", "Factor"), "Type" = c("categorical", "categorical", "continous", "continous", "continous"), "Decription" = c(
-  "Geographic location of the pollen monitoring station.", "Genus of the recorded pollen counts.", "Gregorian calendar date on which the airborne pollen were registered.", "Amount of individual pollen were collected.", "Reference variable for the size of the microscope used."
+data_structure <- data.frame("Variable" = c("Station", "Pollen type", "Date", "Count", "Factor", "Latitude"), "Type" = c("categorical", "categorical", "continous", "continous", "continous", "continous"), "Decription" = c(
+  "Geographic location of the pollen monitoring station.", "Genus of the recorded pollen counts.", "Gregorian calendar date on which the airborne pollen were registered.", 
+  "Amount of individual pollen were collected.", "Reference variable for the size of the microscope used.", "Northern latitudinal cooardinates of said station."
 ))
 
 stations <- data.frame("Station" = c("Umeå", "Eskilstuna", "Stockholm", "Norrköping", "Jönköping", "Västervik"), "Latitude" = c(62.83, 59.37, 59.33, 58.59, 57.78, 57.76), 

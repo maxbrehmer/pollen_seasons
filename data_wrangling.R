@@ -4,4 +4,9 @@ df <- data %>% arrange(station, lat_name, date) %>% mutate(year = year(date))
 
 print(unique(df$lat_name))
 
+latitudes <- data.frame("station" = c("Umeå", "Eskilstuna", "Stockholm", "Norrköping", "Jönköping", "Västervik"),
+                        "latitude" = c(62.83, 59.37, 59.33, 58.59, 57.78, 57.76))
+
+df <- full_join(df, latitudes, by = c("station" = "station"))
+
 df <- df %>% uncount(count) %>% mutate(md_date = format(date, format = "%m-%d"))
