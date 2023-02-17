@@ -62,13 +62,13 @@ kable(stations)
 ### Statistical methods
 In this section we explain the underlying theory behind the statistical approaches used for our data analysis. We will compare the simpler empirical quantile linear model (EQ), as used in [karlsson2022comparison] with the supposedly more complex powerful non-parametric quantile regression which we will refer to as QR. Both of these approaches estimate the response variable as the conditional median or other quantiles of the predictor variables as opposed to ordinary linear regression which uses the method of least squares to estimate the conditional mean [Wikipedia].
 
-To begin with, we consider models with the only predictor variable being `date` conditioned on the genus of pollen and the response variable `count`, an estimate of the pollen count. By fitting the models to certain quantiles, our aim is to predict the shift in dates of which an amount of pollen is released relative to the total pollen count of that year.
+All models in this paper will use `date` as the response variable. The release date of pollen grain $i \in \{ 1,...,n \}$, where $n$ is the total amount of pollen grains released, is predicted by the models as the response $y_i$. The predictor variables to consider are expressed in a covariate vector $x_i = (1, t_i, s_i, x_{i1},..., x_{ij})$ where the discrete variable $t_i$ represents the Gregorian year of observation and $s_i$ is a continuous variable representing northern latitude. The remaining covariates are binary dummy variables as to represent the array of different pollen genus available in the data see [Sundberg2021kompendium] for more theory about dummy variables.
 
 #### Linear regression on empirical quantiles
 Linear regression on empirical quantiles is one of the simplest forms of quantile regression, whereby we assume a linear shape to our model.
 
 #### Non-parametric quantile regression
-By non-parametric regressional models we refer to models that do not make any assumptions about the functional form of the relationship between the reponse variable and predictor variable(s). The advantage of this approach is that one can capture complex non-linear relationships and is more robust when it comes to dealing with significant outliers in the data.
+By non-parametric regression models we refer to models that do not make any assumptions about the functional form of the relationship between the reponse variable and predictor variable(s). The advantage of this approach is that one can capture complex non-linear relationships and is more robust when it comes to dealing with significant outliers in the data. By applying the theory of non-parametric models to a linear predictor of the conditional median, we arrive at the basis of a non-parametric quantile regression model.
 
 ## Results
 ```{r, message=FALSE}
