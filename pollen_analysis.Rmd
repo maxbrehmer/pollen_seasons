@@ -62,10 +62,41 @@ kable(stations)
 ### Statistical methods
 In this section we explain the underlying theory behind the statistical approaches used for our data analysis. We will compare the simpler empirical quantile linear model (EQ), as used in [karlsson2022comparison] with the supposedly more complex powerful non-parametric quantile regression which we will refer to as QR. Both of these approaches estimate the response variable as the conditional median or other quantiles of the predictor variables as opposed to ordinary linear regression which uses the method of least squares to estimate the conditional mean [Wikipedia].
 
-All models in this paper will use `date` as the response variable. The release date of pollen grain $i \in \{ 1,...,n \}$, where $n$ is the total amount of pollen grains released, is predicted by the models as the response $y_i$. The predictor variables to consider are expressed in a covariate vector $x_i = (1, t_i, s_i, x_{i1},..., x_{ij})$ where the discrete variable $t_i$ represents the Gregorian year of observation and $s_i$ is a continuous variable representing northern latitude. The remaining covariates are binary dummy variables as to represent the array of different pollen genus available in the data see [Sundberg2021kompendium] for more theory about dummy variables.
+All models in this paper will use `date` as the response variable. The release date of pollen grain $i \in \{ 1,...,n \}$, where $n$ is the total amount of pollen grains released, is predicted by the models as the response $y_i$. The predictor variables to consider are expressed in a covariate vector $x_i = (1, \, t_i, \, x_{i1},...,\, x_{ij})$ where the discrete variable $t_i \in \mathcal{T} = { \{1,...,T\}}$ represents the Gregorian year of observation. $T$ being the amount of years monitored. The remaining $j$ covariates are either binary dummy variables as to represent the array of different pollen genus available in the data defined by $x_{i1},...,x_{ij} \in \mathcal{X}_1,...,\mathcal{X}_j$, see [Sundberg2021kompendium] for more theory about dummy variables. Moreover continous variables may also be added to complement the single parameter models by adding factors such as latitude.
 
-#### Linear regression on empirical quantiles
-Linear regression on empirical quantiles is one of the simplest forms of quantile regression, whereby we assume a linear shape to our model.
+#### Univariate models
+For a univariate non-parametric quantile regression model, consider the observed response date $y_i$ of grain $i$ and the covariates year $t_i$ and an intercept in the $(n \times 2)$-matrix $X$.
+$$
+X = \begin{pmatrix}
+1 & 1 & ... & 1\\
+t_1 & t_2 & ... & t_n
+\end{pmatrix}
+$$
+
+Let $Y_i$ be a stochastic variable corresponding to the observed value of $y_i$ with the conditional distribution function
+$$
+F_{Y_i|x_i}(y) = \mathbb{P}(Y_i \leq y \, | \, x_i), \quad -\infty < y < \infty \quad (?)
+$$
+
+In order to find the $\tau$-quantile of the conditional distribution of $Y_i \, | \, x_i$ we need to find the smallest value of $y$ such that the conditional cumulative distribution function is greater or equal to $\tau$.
+
+So, for each quantile $0 < \tau < 1$ the inverse
+$$
+Q(\tau \, | \, x_i) = inf\{y; F_{Y_i \, | \, x_i} (y) \geq \tau \} \quad (?)
+$$
+
+of the conditional distribution function in (?) represents the conditional quantile function.
+
+Moving forward, our model takes the form
+$$
+Q(\tau \, | \, X) = X \beta (\tau) + \varepsilon (\tau) \quad (?)
+$$
+
+Whereby the column vector $\beta(\tau) = (\beta_0(\tau), \, \beta_t(\tau))^\top$ contains the intercept $\beta_0(\tau)$ and year as the slope $\beta_t(\tau)$ of quantile $\tau$. We define $\varepsilon(\tau)$ as a non-parameterised vector of the error terms.
+
+An optimization problem is then constructed as to minimize the objective function in (?). The loss function we use is 
+
+#### Multivariate models
 
 #### Non-parametric quantile regression
 By non-parametric regression models we refer to models that do not make any assumptions about the functional form of the relationship between the reponse variable and predictor variable(s). The advantage of this approach is that one can capture complex non-linear relationships and is more robust when it comes to dealing with significant outliers in the data. By applying the theory of non-parametric models to a linear predictor of the conditional median, we arrive at the basis of a non-parametric quantile regression model.
