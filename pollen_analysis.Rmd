@@ -92,9 +92,22 @@ $$
 Q(\tau \, | \, X) = X \beta (\tau) + \varepsilon (\tau) \quad (?)
 $$
 
-Whereby the column vector $\beta(\tau) = (\beta_0(\tau), \, \beta_t(\tau))^\top$ contains the intercept $\beta_0(\tau)$ and year as the slope $\beta_t(\tau)$ of quantile $\tau$. We define $\varepsilon(\tau)$ as a non-parameterised vector of the error terms.
+whereby the column vector $\beta(\tau) = (\beta_0(\tau), \, \beta_t(\tau))^\top$ contains the intercept $\beta_0(\tau)$ and year as the slope $\beta_t(\tau)$ of quantile $\tau$. We define $\varepsilon(\tau)$ as a non-parameterised vector of the error terms.
 
-An optimization problem is then constructed as to minimize the objective function in (?). The loss function we use is 
+An optimization problem is then constructed as to minimize the objective function in (?). [koenker2005qr] introduces the following pinball loss function as a metric to determine the accuracy of a quantile estimate.
+$$
+l_{\tau}(\xi) = 
+\begin{cases}
+\tau \xi        & if \; \xi \geq 0 \\
+(\tau -1) \xi   & if \; \xi < 0.
+\end{cases}
+$$
+Hence the resulting regression parameter estimates of the $\tau$-quantile is given by the solution to the minimization problem
+$$
+\beta(\tau) = \arg \min_{b \in \mathbb{R}^2} \sum_{i=1}^{n} l_{\tau}(y_i - x_ib).
+$$
+
+To find the optimal point along the $\xi$-axis, we use numerical estimation methods provided in the `quantreg` `R` library [koenker2021rpackage].
 
 #### Multivariate models
 
