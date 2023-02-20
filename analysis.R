@@ -21,9 +21,16 @@ stations <- data.frame("Station" = c("Umeå", "Eskilstuna", "Stockholm", "Norrk�
                                                          "Alnus, Betula, Poaceae, Quercus, Salix, Ulmus (1988), Corylus (1989)", 
                                                          "Alnus, Betula, Corylus, Poaceae, Quercus, Salix, Ulmus (1987)"))
 
+colnames(stations) <- c("Station", "Latitude", "Pollen genus")
+
 eskil <- data %>% filter(station == "Eskilstuna") %>% arrange(lat_name, date)
 sthlm <- data %>% filter(station == "Stockholm") %>% arrange(lat_name, date)
 umea <- data %>% filter(station == "Umeå") %>% arrange(lat_name, date)
 jonkp <- data %>% filter(station == "Jönköping") %>% arrange(lat_name, date)
 norrkp <- data %>% filter(station == "Norrköping") %>% arrange(lat_name, date)
 vastvik <- data %>% filter(station == "Västervik") %>% arrange(lat_name, date)
+
+translation <- data.frame("Latin" = c("Alnus", "Betula", "Corylus", "Poaceae", "Quercus", "Salix", "Ulmus"), 
+                          "English" = c("Alder", "Birch", "Hazel", "Grass", "Oak", "Willow", "Elm"))
+
+colnames(translation) <- c("Latin name", "English name")
