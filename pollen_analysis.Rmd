@@ -121,7 +121,7 @@ Since this function is non-differentiable at $0$, we cannot use... Rather we use
 ### Linear regression on emprical quantiles
 Empirical quantile linear regression is a statistical method that combines linear regression with quantile regression to model the relationship between a response variable and one or more predictor variables. The basic gist of EQ regression is to fit a linear regression model to the empirical quantiles of the response variable, rather than to the mean.
 
-Rather than using the raw gregorian date $y_i$ as response variable, we predict an empirical quantile of the dates of a subset of observations. Let $\mathcal{X} = \mathcal{X}_1 \times ... \times \mathcal{X}_j$. For each pair $(x, t) \in \mathcal{X} \times \mathcal{T}$
+Rather than using the raw gregorian date $y_i$ as response variable, we predict an empirical quantile of the dates of a subset of observations. Let $\mathcal{X} = \mathcal{X}_1 \times ... \times \mathcal{X}_j$. For each pair $(x, t) \in \mathcal{X} \times \mathcal{T}$ the set of observations is 
 
 #### Univariate EQ models
 
