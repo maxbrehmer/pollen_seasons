@@ -71,7 +71,6 @@ All models in this paper will use `date` as the response variable. The release d
 ### Nonparametric quantile regression
 By nonparametric regression models we refer to models that do not make any assumptions about the functional form of the relationship between the response variable and predictor variable(s). The advantage of this approach is that one can capture complex nonlinear relationships and is more robust when it comes to dealing with significant outliers in the data. By applying the theory of nonparametric models to a linear predictor of the conditional median, we arrive at the basis of a nonparametric quantile regression model.
 
-#### Univariate QR models
 For a univariate nonparametric QR model, consider the observed response date $y_i$ of grain $i$ and the covariates year $t_i$ and an intercept in the $(n \times 2)$-matrix $X$.
 $$
 X = \begin{pmatrix}
@@ -116,22 +115,43 @@ $$
 
 Since this function is non-differentiable at $0$, we cannot use... Rather we use numerical estimation methods provided in the `R` library `quantreg` [koenker2021rpackage] to find the optimal point along the $\xi$-axis.
 
-#### Multivariate QR models
-
 ### Linear regression on emprical quantiles
-Empirical quantile linear regression is a statistical method that combines linear regression with quantile regression to model the relationship between a response variable and one or more predictor variables. The basic gist of EQ regression is to fit a linear regression model to the empirical quantiles of the response variable, rather than to the mean.
+Another approach we used is to perform linear regression on empirical quantiles, a statistical method that combines linear regression with quantile regression to model the relationship between a response variable and one or more predictor variables. The basic gist of EQ regression is to fit a linear regression model to the empirical quantiles of the response variable, rather than to the mean. This method is called "empirical" quantile regression because it estimates quantiles of the response variable based on the empirical distribution of the data, rather than assuming a specific distribution for the response variable.
 
-Rather than using the raw gregorian date $y_i$ as response variable, we predict an empirical quantile of the dates of a subset of observations. Let $\mathcal{X} = \mathcal{X}_1 \times ... \times \mathcal{X}_j$. For each pair $(x, t) \in \mathcal{X} \times \mathcal{T}$ the set of observations is 
+One way to perform empirical quantile linear regression is by using an indicator function $I(\cdot)$. The indicator function is a mathematical function that takes a value as input and returns 1 if the value satisfies a certain condition and 0 otherwise. In the context of empirical quantile linear regression, the indicator function is used to define the estimation problem in terms of a set of linear programming (LP) constraints.
 
-#### Univariate EQ models
+Rather than using the raw gregorian date $y_i$ as response variable, we predict an empirical quantile of the dates of a subset of observations. For each $t \in \mathcal{T}$ we extract the set of observations
+$$
+\mathcal{Y}_{t} = \left\{ y_i : I(t_i = t) \right\}
+$$
 
-#### Multivariate EQ models
+As in the previous method we construct the $(n \times 2)$ matrix $X$ by stacking each of the covariates $(1, t)$ on top of each other. Let $\tau \in (0,1)$ be a quantile. For each of our sets $\mathcal{Y}$ we let $\hat{F}_{(x,t)}$ be the empirical distribution function formed by the elements of its set. The corresponding empirical quantile is defined as
+$$
+\hat{Q}_{(x,t)}(\tau) = \text{inf} \left\{ y \in \mathcal{Y}_{t} : \hat{F}_t(y) \geq \tau \mid \mathcal{Y}_t \neq \emptyset \right\}. \quad (?)
+$$
+
+For all $t \in \mathcal{T}$, we stack these quantiles into the vector of observations $Y(\tau)$. Next we formulate the linear model
+$$
+Y(\tau) = X\beta(\tau) + \varepsilon(\tau). \quad (?)
+$$
+
+As before $\beta = (\beta_0, \beta_t)$ defines the regression parameters for the intercept $\beta_0$ and year $\beta_1$. Recall that in the nonparametric method, no assumptions were made about the error terms. In this approach however, we assume a normal distribution of the error terms $\varepsilon(\tau) \sim N(0, \sigma^2(\tau)I_T )$, where $I_T$ is the identity matrix of rank $T$. 
+
+The log-likelihood (omitting $\tau$) of the model is given by 
+$$
+l(\beta, \sigma^2 \mid Y, X) = \sum_{t \in \mathcal{T}} \text{log } f \left( \hat{Q}_t(\tau) \mid (X\beta)_t, \sigma^2 \right)
+$$
+
+This model grants each year $t$ the same weight, not each individual pollen. To get even weighting of each pollen, we simply add a weight factor $w_t = \lvert \mathcal{Y}_t \rvert$ to each empirical quantile $\hat{Q}_t(\tau)$. The reweighed log-likelihood (?), again omitting $\tau$ from the notation, takes the form
+$$
+l_w(\beta, \sigma^2 \mid Y, X) = \sum_{t \in \mathcal{T}} w_t \, \text{log } f \left( \hat{Q}_t(\tau) \mid (X\beta)_t, \sigma^2 \right)
+$$
 
 ## Results
 ```{r, message=FALSE}
 source("analysis.R", local = knitr::knit_global())
 
-pic1990
+pic1992
 pic2022
 ```
 
