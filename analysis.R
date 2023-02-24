@@ -23,7 +23,7 @@ stations <- data.frame("Station" = c("UmeÃ¥", "Eskilstuna", "Stockholm", "NorrkÃ
                                           "Alnus, Betula, Corylus, Poaceae, Quercus, Salix, Ulmus (1979)",
                                           "Alnus, Betula, Corylus, Poaceae, Quercus, Salix, Ulmus (1979)"))
 
-colnames(stations) <- c("Station", "Latitude", "Pollen genus")
+colnames(stations) <- c("Station", "Latitude", "Pollen genus (since ...)")
 
 eskil <- df %>% filter(station == "Eskilstuna") %>% arrange(lat_name, date)
 sthlm <- df %>% filter(station == "Stockholm") %>% arrange(lat_name, date)
