@@ -1,10 +1,10 @@
 pic2022 <- df %>% filter(year == 2022) %>% ggplot(aes(x = date, y = lat_name)) +
-  geom_density_ridges(rel_min_height = 0.005) +
+  geom_density_ridges(rel_min_height = 0.01) +
   theme_ridges() +
   facet_wrap(~ station)
 
 pic1992 <- df %>% filter(year == 1992) %>% ggplot(aes(x = date, y = lat_name)) +
-  geom_density_ridges(rel_min_height = 0.005) +
+  geom_density_ridges(rel_min_height = 0.01) +
   theme_ridges() +
   facet_wrap(~ station)
 

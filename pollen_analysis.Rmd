@@ -13,9 +13,10 @@ knitr::opts_chunk$set(echo = FALSE)
 ### Libraries
 
 library(tidyverse)
-library(lubridate)
-library(ggridges)
 library(knitr)
+library(lubridate) # Calendar date functionality
+library(ggridges) # Ridge plotting
+library(quantreg) # Quantile regression modelling
 ```
 
 ```{r, message=FALSE}
@@ -41,7 +42,7 @@ By its conclusion this research paper aims to have built a statistical model tha
 
 ## Data
 
-### data collection
+### Data collection
 As we mentioned earlier in this paper, the monitoring of pollen in the Stockholm region is conducted by the Palynological laboratory at NRM. The laboratory in question uses a Burkard Seven Day Volumetric Spore Trap to capture pollen and spores from the air through a small entrance meant to resemble the human airways. Thus approximately 10 liters of air passes through the machine each minute, which is what humans tend to consume. In order to capture the pollen particles carried by the passing air, a sticky tape is mounted to a drum rotating at 2 mm per hour. As only a small portion of the tape is exposed to the air at each point in time, this method grants us a good indication of the volume of pollen in the passing air at any given moment. It must be noted that not all stations possess the same equipment. In particular differing microscope sizes are used across the country. Consequently, the measured values of the pollen counts are biased towards the larger microscopes, thus showing a somewhat inaccurate representation of the true pollen counts [nrm2022microscope] [nrm2022pollen2]. However considering the structure of the dataset and the consequent data analysis being relativistic, for which a descriptive presentation follows in the `Data` section, this phenomenon has been ignored.
 
 ### Understanding the data
@@ -53,7 +54,7 @@ source("analysis.R", local = knitr::knit_global())
 kable(data_structure)
 ```
 
-Viewing the years of availability in figure ? we conclude that not all data points are present in the data set. The stations had differing opening dates and not all species tend to be available to begin with. If no consideration for the location of said data points are made, we may observed skewed results, as the geographic distribution of monitored pollen changes over time due to availability. Thus analyzing the data in geographic categories of where they were collected, or giving different weights to observations based on latitudinal coordinates is necessary.
+Viewing the years of availability in figure ? we conclude that not all data points are present in the data set. The stations had differing opening dates and not all species tend to be available to begin with. If no consideration for the location of said data points are made, we may observed skewed results, as the geographic distribution of monitored pollen changes over time due to availability. Thus analyzing the data in geographic categories of where they were collected is a necessary consideration.
 
 ```{r, message=FALSE}
 source("analysis.R", local = knitr::knit_global())
@@ -61,10 +62,13 @@ source("analysis.R", local = knitr::knit_global())
 kable(stations)
 ```
 
-## Theory
-In this section we explain the underlying theory behind the statistical approaches used for our data analysis. We will compare the simpler empirical quantile linear model (EQ), as used in [karlsson2022comparison] with the supposedly more powerful nonparametric quantile regression which we will refer to as QR. Both of these approaches estimate the response variable as the conditional median or other quantiles of the predictor variables as opposed to ordinary linear regression (OLR) which uses the method of least squares to estimate the conditional mean [Wikipedia].
+### Data selection
+First we remove any observations with missing values in any column but `factor`. 
 
-OLR is the preferred method for many research purposes due to its inherent simplicity. However for OLR to be effective, a lot of assumptions need to be made about the data. More specifically homoscedasticity and normally distributed observations are two of the most central aspects of linear regression, meaning an OLR model performs poorly for data that is heteroscadastic and/or non-normally distributed. By estimating the conditional median however, as opposed to the mean, we get a model that yields better predictions for data with these properties. Another advantage of using quantile based methods is that one can make more accurate predictions about outliers, since nonlinear tendencies may lead to abnormal behaviors for more extreme observations, which can be more accurately accounted for when looking at quantiles rather than the mean.
+## Theory
+In this section we explain the underlying theory behind the statistical approaches used for our data analysis. We will compare the simpler empirical quantile linear model (EQ), as used in [karlsson2022comparison] with the supposedly more powerful nonparametric quantile regression which we will refer to as QR. Both of these approaches estimate the response variable as the conditional median or other quantiles of the predictor variables as opposed to ordinary linear regression which uses the method of ordinary least squares (OLS) to estimate the conditional mean [Wikipedia].
+
+OLS regression is the preferred method for many research purposes due to its inherent simplicity. However for it to be effective, a lot of assumptions need to be made about the data. More specifically homoscedasticity and normally distributed observations are two of the most central aspects of linear regression, meaning a linear regression model performs poorly for data that is heteroscadastic and/or non-normally distributed. By estimating the conditional median however, as opposed to the mean, we get a model that yields better predictions for data with these properties. Another advantage of using quantile based methods is that one can make more accurate predictions about outliers, since nonlinear tendencies may lead to abnormal behaviors for more extreme observations, which can be more accurately accounted for when looking at quantiles rather than the mean.
 
 All models in this paper will use `date` as the response variable. The release date of pollen grain $i \in \{ 1,...,n \}$, where $n$ is the total amount of pollen grains released, is predicted by the models as the response $y_i$. We form a covariate vector $x_i = (1, \, t_i)$ which includes an intercept and the predictor variable $t_i \in \mathcal{T} = { \{1,...,T\}}$ which refers to the gregorian year of observation with $T$ being the amount of years monitored.
 
@@ -147,9 +151,9 @@ $$
 l_w(\beta, \sigma^2 \mid Y, X) = \sum_{t \in \mathcal{T}} w_t \, \text{log } f \left( \hat{Q}_t(\tau) \mid (X\beta)_t, \sigma^2 \right), \quad (?)
 $$
 
-To proceed fitting the model, we attempt to find the maximum likelihood estimate (MLE) of $\beta(\tau)$ and $\sigma^2(\tau)$ by optimizing the maximization problem
+To proceed fitting the model, we attempt to find the maximum likelihood estimate (MLE) of $\beta(\tau)$ and $\sigma^2(\tau)$ by optimizing
 $$
-\arg \max_{(\beta, \sigma^2) \in \mathbb{R^2}} \, l_{w}(\beta(\tau), \sigma^2(\tau) \mid Y(\tau),X)
+MLE(\beta(\tau), \sigma^2(\tau)) =  \arg \max \, l_{w}(\beta(\tau), \sigma^2(\tau) \mid Y(\tau),X) \quad (?)
 $$
 
 for a given quantile $\tau$. Since the function is continuous and twice differentiable, the solution can easily be found using conventional methods provided in the `quantreg` package.
