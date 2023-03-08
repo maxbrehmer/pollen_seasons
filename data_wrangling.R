@@ -2,7 +2,7 @@ data <- read_csv("data/pollen_counts.csv")
 
 latin_names <- c("Alnus", "Betula", "Corylus", "Poaceae", "Quercus", "Salix", "Ulmus")
 
-df <- data %>% arrange(station, lat_name, date) %>% mutate(year = year(date)) %>%
+df <- data %>% arrange(station, lat_name, date) %>% mutate(year = as.numeric(year(date))) %>%
   mutate(lat_name = case_when(
     swe_name == "Alnus" ~ "Alnus",
     swe_name == "Al" ~ "Alnus",
@@ -25,4 +25,5 @@ latitudes <- data.frame("station" = c("Umeå", "Eskilstuna", "Stockholm", "Norrk
 
 df <- full_join(df, latitudes, by = c("station" = "station"))
 
-df <- df %>% uncount(count) %>% mutate(md_date = format(date, format = "%m-%d"))
+df <- df %>% uncount(count) %>% mutate(greg_day = as.numeric(yday(date))) %>% mutate(md_date = format(date, format = "%m-%d"))
+
