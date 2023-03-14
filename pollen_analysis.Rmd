@@ -18,6 +18,7 @@ library(lubridate) # Calendar date functionality
 library(ggridges) # Ridge plotting
 library(quantreg) # Quantile regression modelling
 library(quantreg.nonpar)
+library(gdata) # renaming objects
 ```
 
 ```{r, message=FALSE}
@@ -190,9 +191,7 @@ kable(translation)
 ```{r, message=FALSE}
 source("models.R", local = knitr::knit_global())
 
-print(srq_0.1)
-print(srq_0.5)
-print(srq_0.9)
+get_qr
 ```
 
 

@@ -35,6 +35,7 @@ gbg <- df %>% filter(station == "Göteborg") %>% arrange(lat_name, date)
 malmo <- df %>% filter(station == "Malmö") %>% arrange(lat_name, date)
 
 translation <- data.frame("Latin" = c("Alnus", "Betula", "Corylus", "Poaceae", "Quercus", "Salix", "Ulmus"), 
-                          "English" = c("Alder", "Birch", "Hazel", "Grass", "Oak", "Willow", "Elm"))
+                          "English" = c("Alder", "Birch", "Hazel", "Grass", "Oak", "Willow", "Elm"), 
+                          "Swedish" = c("Al", "Björk", "Hassel", "Gräs", "Ek", "Viden", "Alm"))
 
-colnames(translation) <- c("Latin name", "English name")
+colnames(translation) <- c("Latin name", "English name", "Swedish name")
