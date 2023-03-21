@@ -36,6 +36,6 @@ malmo <- df %>% filter(station == "Malmö") %>% arrange(lat_name, date)
 
 translation <- data.frame("Latin" = c("Alnus", "Betula", "Corylus", "Poaceae", "Quercus", "Salix", "Ulmus"), 
                           "English" = c("Alder", "Birch", "Hazel", "Grass", "Oak", "Willow", "Elm"), 
-                          "Swedish" = c("Al", "Björk", "Hassel", "Gräs", "Ek", "Viden", "Alm"))
+                          "Swedish" = c("Al", "Björk", "Hassel", "Gräs", "Ek", "Sälg och viden", "Alm"))
 
 colnames(translation) <- c("Latin name", "English name", "Swedish name")

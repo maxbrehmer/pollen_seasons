@@ -191,11 +191,14 @@ kable(translation)
 ```{r, message=FALSE}
 source("models.R", local = knitr::knit_global())
 
-get_qr
+#qr_10
+
 ```
 
 
 
-
+```{r}
+as_tibble(df)
+```
 
 
