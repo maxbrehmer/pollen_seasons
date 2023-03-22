@@ -25,4 +25,6 @@ latitudes <- data.frame("station" = c("Umeå", "Eskilstuna", "Stockholm", "Norrk
 
 df <- full_join(df, latitudes, by = c("station" = "station"))
 
-df <- df %>% uncount(count) %>% mutate(greg_day = as.numeric(yday(date))) %>% mutate(md_date = format(date, format = "%m-%d")) %>% dplyr::select(c("station", "lat_name", "year", "greg_day", "latitude"))
+df <- df %>% uncount(count) %>% mutate(greg_day = as.numeric(yday(date))) %>% mutate(md_date = format(date, format = "%m-%d")) %>% 
+  dplyr::select(c("station", "lat_name", "year", "greg_day", "latitude")) %>%
+  drop_na()

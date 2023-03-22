@@ -1,5 +1,5 @@
 # Model: Quantile regression
-qr_10 <- df %>% nest_by(lat_name, station) %>% mutate(model = list(lm(formula = greg_day ~ year, data = data)))
+# qr_10 <- df %>% nest_by(lat_name, station) %>% mutate(model = list(lm(formula = greg_day ~ year, data = data)))
 #qr_50 <- df %>% nest_by(lat_name, station) %>% rq(greg_day ~ year, tau = 0.5)
 #qr_90 <- df %>% nest_by(lat_name, station) %>% rq(greg_day ~ year, tau = 0.9)
 
