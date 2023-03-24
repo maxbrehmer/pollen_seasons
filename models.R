@@ -1,12 +1,14 @@
 # Model: Quantile regression
-# qr_10 <- df %>% nest_by(lat_name, station) %>% mutate(model = list(lm(formula = greg_day ~ year, data = data)))
+# qr_10 <- df %>% nest_by(lat_name, station) %>% mutate(model = list(rq(formula = greg_day ~ year, data = data)))
 #qr_50 <- df %>% nest_by(lat_name, station) %>% rq(greg_day ~ year, tau = 0.5)
 #qr_90 <- df %>% nest_by(lat_name, station) %>% rq(greg_day ~ year, tau = 0.9)
 
 # Model: Linear regression on quantiles
-#data_q10 <- df %>%
-#  group_by(year) %>%
-#  summarise(q10 = quantile(greg_day, prob = .1))
+data_q10 <- df %>%
+  group_by(lat_name, station, year) %>%
+  summarise(q10 = quantile(greg_day, prob = .1))
+
+eq_10 <- data_q10 %>% nest_by(lat_name, station) %>% mutate(model = list(lm(formula = q10 ~ year, data = data)))
 
 #data_q50 <- df %>%
 #  group_by(year) %>%
@@ -16,7 +18,6 @@
 #  group_by(year) %>%
 #  summarise(q90 = quantile(greg_day, prob = .9))
 
-#eq_10 <- data_q10 %>% nest_by(lat_name, station) %>% lm(q10 ~ year)
 #eq_50 <- data_q50 %>% nest_by(lat_name, station) %>% lm(q50 ~ year)
 #eq_90 <- data_q90 %>% nest_by(lat_name, station) %>% lm(q90 ~ year)
 
