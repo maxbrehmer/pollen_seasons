@@ -26,5 +26,21 @@ latitudes <- data.frame("station" = c("Umeå", "Eskilstuna", "Stockholm", "Norrk
 df <- full_join(df, latitudes, by = c("station" = "station"))
 
 df <- df %>% uncount(count) %>% mutate(greg_day = as.numeric(yday(date))) %>% mutate(md_date = format(date, format = "%m-%d")) %>% 
-  dplyr::select(c("station", "lat_name", "year", "greg_day", "latitude")) %>%
+  dplyr::select(c("station", "lat_name", "year", "greg_day", "date", "latitude")) %>%
   drop_na()
+
+genus <- c("Betula", "Betula", "Poaceae", "Betula", "Betula", "Poaceae", "Betula", "Betula", "Quercus", "Betula", "Betula")
+place <- c("Esklistuna", "Göteborg", "Göteborg", "Jönköping", "Malmö", "Malmö", "Norrköping", "Stockholm", "Stockholm", "Umeå", "Västervik")
+n <- c(10, 10, 2, 5, 5, 2, 6, 8, 2, 4, 5)
+
+for (i in length(genus)) {
+  df <- df %>%
+    filter(lat_name == genus[i], station == place[i]) %>%
+    slice(which(row_number() %% n[i] == 1)) %>%
+    bind_rows(df %>% filter(lat_name != genus[i], station != place[i]))
+}
+
+df <- df %>% arrange(station, lat_name, date)
+
+
+
