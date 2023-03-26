@@ -37,7 +37,7 @@ for (i in length(genus)) {
   df <- df %>%
     filter(lat_name == genus[i], station == place[i]) %>%
     slice(which(row_number() %% n[i] == 1)) %>%
-    bind_rows(df %>% filter(lat_name != genus[i], station != place[i]))
+    bind_rows(df %>% filter(!(lat_name == genus[i] & station == place[i])))
 }
 
 df <- df %>% arrange(station, lat_name, date)

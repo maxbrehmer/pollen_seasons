@@ -193,7 +193,17 @@ source("models.R", local = knitr::knit_global())
 
 eq_10
 
-qr_10
+#qr_10
+```
+
+```{r}
+eq_summary <- summary(eq_10$model[[10]])
+
+eq_summary
+
+eq_summary$coefficients["year", "Pr(>|t|)"]
+
+#summary.rq(qr_10$model[[1]])
 ```
 
 ESKILSTUNA:
