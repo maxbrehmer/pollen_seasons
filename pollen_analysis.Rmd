@@ -44,7 +44,13 @@ This paper begins with the `Prior research` section by presenting the findings o
 
 The `Data` section is where all aspects of the data used in the research is presented. We cover these aspects in three smaller sections. Firstly `Data collection` where a light description of both the physical and digital methods used to collect the data. An extensive description of how we use the data is later presented in the section `Understanding the data`. Here the reader is granted a look at the structure of the data in the form of easily-to-read tables and which variables are to be considered in the research. We conclude the `Data` section with `Data selection` where an explanation of how we deal with missing values is conducted.
 
-Section X `Theory` encompasses all the theoretical definitions of the methods included in this paper. In order to strengthen the significance of our results, we have used two independent methods. Linear regression on empirical quantiles and Nonparametric quantile regression.
+Section X `Theory` encompasses all the theoretical definitions of the methods included in this paper. In order to strengthen the significance of our results, we have used two independent methods. Linear regression on empirical quantiles and Nonparametric quantile regression. Linear regression on empirical quantiles, which we refer to as EQ, is a simple method commonly used to perform statistical analyses on different quantile levels of data, while nonparametric quantile regression (QR) is a more complex method which substitutes the conditional mean of the loss function for the conditional median and requires numerical approaches to the resulting optimization problem. Our sections on EQ and QR respectively explain the theoretical aspects of these methods, while simultaneously providing descriptions of how we have applied them in our models.
+
+A section containing the most important results of our models is given in `Results`. This part of the paper is divided in to 3 smaller sections for more readability. `Plots` contains visual descriptions of how the pollen season behaves over time, for selected combinations of location and species. The remaining figures are available in the appendix. `Tables` is where the key values are presented in the form of ANOVA tables and alike. These values include regression coefficients, p-values and $R^2$ for each model. Again, as for the plots, results for all combinations of data are not presented in this section. Rather a selection of the most significant, representative and most extreme results are, while remaining tables can be found in an appendix.
+
+The `Discussion` is the section in which we attempt to make sense of the results observed and visualized in the `Results` section. For each of the analyzed results we may be able obtain a definitive conclusion, or not, in which case a description of what we are missing for us to draw a conclusion follows. Since there are limits to what we can expect to answer in this thesis, we have set aside a section (`Further improvements`) on how, and which parts of our work can be improved upon.
+
+This paper concludes with an `Appendix` section. Additional or complementary information which the reader may find interesting, but not vital for the results of which we form our conclusions. Each appendix is reffered to by, and refers back to a result or explanation.
 
 ## Prior research
 
@@ -167,11 +173,29 @@ $$
 for a given quantile $\tau$. Since the function is continuous and twice differentiable, the solution can easily be found using conventional methods provided in the `quantreg` package.
 
 ## Results
+
+### Plots
 ```{r, message=FALSE}
 source("analysis.R", local = knitr::knit_global())
 
 pic1992
 pic2022
+```
+
+### Tables
+```{r, message=FALSE}
+source("models.R", local = knitr::knit_global())
+
+eq_10
+
+eq_50
+```
+
+```{r}
+eq_summary <- summary(eq_10$model[[10]])
+
+eq_summary
+
 ```
 
 ## Discussion
@@ -190,23 +214,6 @@ To avoid presenting outlier seasons in the ridge plot, we can use an average of 
 source("analysis.R", local = knitr::knit_global())
 
 kable(translation)
-```
-
-
-
-```{r, message=FALSE}
-source("models.R", local = knitr::knit_global())
-
-eq_10
-
-#qr_10
-```
-
-```{r}
-eq_summary <- summary(eq_10$model[[10]])
-
-eq_summary
-
 ```
 
 ESKILSTUNA:
