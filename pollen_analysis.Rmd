@@ -209,7 +209,7 @@ To avoid presenting outlier seasons in the ridge plot, we can use an average of 
 
 ## Appendix
 
-### English translation of the latin names of pollen species
+### Translation of the latin names of pollen species
 ```{r, message=FALSE}
 source("analysis.R", local = knitr::knit_global())
 

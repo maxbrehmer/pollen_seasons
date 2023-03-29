@@ -4,7 +4,7 @@
 # Model: Linear regression on quantiles
 data_q10 <- df %>%
   group_by(year, lat_name, station) %>%
-  summarise(q10 = quantile(greg_day, prob = .1))
+  summarise(q10 = quantile(greg_day, prob = .01))
 
 eq_10 <- data_q10 %>% ungroup() %>% nest_by(lat_name, station) %>% mutate(model = list(lm(formula = q10 ~ year, data = data))) %>%
   dplyr::select(c(-data)) %>%
@@ -12,7 +12,7 @@ eq_10 <- data_q10 %>% ungroup() %>% nest_by(lat_name, station) %>% mutate(model 
 
 data_q50 <- df %>%
   group_by(year, lat_name, station) %>%
-  summarise(q50 = quantile(greg_day, prob = .5))
+  summarise(q50 = quantile(greg_day, prob = .95))
 
 eq_50 <- data_q50 %>% ungroup() %>% nest_by(lat_name, station) %>% mutate(model = list(lm(formula = q50 ~ year, data = data))) %>%
   dplyr::select(c(-data)) %>%
