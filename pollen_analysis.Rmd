@@ -16,6 +16,7 @@ library(tidyverse)
 library(knitr)
 library(lubridate) # Calendar date functionality
 library(ggridges) # Ridge plotting
+library(ggplot2) # Better plots
 library(quantreg) # Quantile regression modelling
 library(quantreg.nonpar)
 library(gdata) # renaming objects
@@ -85,6 +86,8 @@ In this section we explain the underlying theory behind the statistical approach
 OLS regression is the preferred method for many research purposes due to its inherent simplicity. However for it to be effective, a lot of assumptions need to be made about the data. More specifically homoscedasticity and normally distributed observations are two of the most central aspects of linear regression, meaning a linear regression model performs poorly for data that is heteroscadastic and/or non-normally distributed. By estimating the conditional median however, as opposed to the mean, we get a model that yields better predictions for data with these properties. Another advantage of using quantile based methods is that one can make more accurate predictions about outliers, since nonlinear tendencies may lead to abnormal behaviors for more extreme observations, which can be more accurately accounted for when looking at quantiles rather than the mean.
 
 All models in this paper will use `date` as the response variable. The release date of pollen grain $i \in \{ 1,...,n \}$, where $n$ is the total amount of pollen grains released, is predicted by the models as the response $y_i$. We form a covariate vector $x_i = (1, \, t_i)$ which includes an intercept and the predictor variable $t_i \in \mathcal{T} = { \{1,...,T\}}$ which refers to the gregorian year of observation with $T$ being the amount of years monitored.
+
+In order to make an educated analysis of the behaviour of pollen release we need a strict definition for what constitutes a pollen season. There have been many attempts by various authors to find an optimal definition for the dates of which each pollen season covers. In this paper we classify the dates within which the pollen season is deemed active by referring to the EAN definition. [bastl2018defining] The EAN database contains a lot of data on pollen release in which they define the pollen season as the date at which at least $1%$ of the yearly pollen have been counted. By the same definition, the pollen season is said to end when 95% of all pollen has been released.
 
 ### Nonparametric quantile regression
 By nonparametric regression models we refer to models that do not make any assumptions about the functional form of the relationship between the response variable and predictor variable(s). The advantage of this approach is that one can capture complex nonlinear relationships and is more robust when it comes to dealing with significant outliers in the data. By applying the theory of nonparametric models to a linear predictor of the conditional median, we arrive at the basis of a nonparametric quantile regression model.
@@ -186,17 +189,19 @@ pic2022
 ```{r, message=FALSE}
 source("models.R", local = knitr::knit_global())
 
-eq_10
-
+eq_1
 eq_50
+eq_95
 ```
 
 ```{r}
-eq_summary <- summary(eq_10$model[[10]])
-
-eq_summary
+ggplot(data = eq_1, aes(x = latitude, y = coeff, colour = lat_name)) +
+  geom_point() +
+  stat_smooth(method="lm", se=FALSE)
 
 ```
+
+
 
 ## Discussion
 
