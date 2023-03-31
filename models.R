@@ -35,3 +35,14 @@ data_q95 <- df %>%
 eq_95 <- data_q95 %>% ungroup() %>% nest_by(lat_name, station, latitude) %>% mutate(model = list(lm(formula = q95 ~ year, data = data))) %>%
   dplyr::select(c(-data)) %>%
   mutate(coeff = summary(model)$coefficients["year", "Estimate"], "P value" = summary(model)$coefficients["year", "Pr(>|t|)"], "Adj. R-squared" = summary(model)$adj.r.squared)
+
+eq_joined <- eq_1 %>%
+  dplyr::select(lat_name, station, latitude, coeff, `P value`) %>%
+  rename("coefficient 1%" = coeff, "P value 1%" = `P value`) %>%
+  left_join(eq_50 %>% rename("coefficient 50%" = coeff, "P value 50%" = `P value`) %>% dplyr::select(lat_name, station, latitude, "coefficient 50%", "P value 50%"),
+            by = c("lat_name", "station", "latitude")) %>%
+  left_join(eq_95 %>% rename("coefficient 95%" = coeff, "P value 95%" = `P value`) %>% dplyr::select(lat_name, station, latitude, "coefficient 95%", "P value 95%"),
+            by = c("lat_name", "station", "latitude"))
+
+
+

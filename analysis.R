@@ -1,12 +1,24 @@
-pic2022 <- df %>% filter(year == 2022) %>% ggplot(aes(x = date, y = lat_name)) +
+pic2022 <- df %>% filter(year == 2022) %>% ggplot(aes(x = md_date, y = lat_name)) +
   geom_density_ridges(rel_min_height = 0.01) +
   theme_ridges() +
   facet_wrap(~ station)
 
-pic1992 <- df %>% filter(year == 1992) %>% ggplot(aes(x = date, y = lat_name)) +
+pic1992 <- df %>% filter(year == 1992) %>% ggplot(aes(x = md_date, y = lat_name)) +
   geom_density_ridges(rel_min_height = 0.01) +
   theme_ridges() +
   facet_wrap(~ station)
+
+pic_sthlm_first5 <- df %>% filter(year %in% c(1973, 1974, 1975, 1976, 1977), station == "Stockholm") %>% ggplot(aes(x = md_date, y = lat_name)) +
+  geom_density_ridges(rel_min_height = 0.01, scale = 2.0) +
+  scale_x_date(breaks = seq(as.Date("2000-02-01"), as.Date("2000-09-01"), by = "1 months"), date_labels = "%b", expand = c(0,0), limits = c(as.Date("2000-02-01"), as.Date("2000-09-01")) ) +
+  scale_y_discrete(expand = c(0,0)) +
+  theme_ridges()
+
+pic_sthlm_last5 <- df %>% filter(year %in% c(2018, 2019, 2020, 2021, 2022), station == "Stockholm") %>% ggplot(aes(x = md_date, y = lat_name)) +
+  geom_density_ridges(rel_min_height = 0.01, scale = 2.0) +
+  scale_x_date(breaks = seq(as.Date("2000-02-01"), as.Date("2000-09-01"), by = "1 months"), date_labels = "%b", expand = c(0,0), limits = c(as.Date("2000-02-01"), as.Date("2000-09-01")) ) +
+  scale_y_discrete(expand = c(0,0)) +
+  theme_ridges()
 
 data_structure <- data.frame("Variable" = c("Station", "Pollen type", "Date", "Count", "Factor", "Latitude"), "Type" = c("categorical", "categorical", "continous", "continous", "continous", "continous"), "Decription" = c(
   "Geographic location of the pollen monitoring station.", "Genus of the recorded pollen counts.", "Gregorian calendar date on which the airborne pollen were registered.", 

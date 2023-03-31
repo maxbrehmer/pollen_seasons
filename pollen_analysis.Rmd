@@ -178,26 +178,57 @@ for a given quantile $\tau$. Since the function is continuous and twice differen
 ## Results
 
 ### Plots
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 source("analysis.R", local = knitr::knit_global())
 
-pic1992
-pic2022
+pic_sthlm_first5
+pic_sthlm_last5
 ```
+
 
 ### Tables
 ```{r, message=FALSE}
 source("models.R", local = knitr::knit_global())
 
-eq_1
-eq_50
-eq_95
+eq_joined_1 <- eq_joined %>% arrange(`coefficient 1%`) %>% dplyr::select(lat_name, station, latitude, `coefficient 1%`, `P value 1%`) %>%
+  mutate(across(where(is.numeric), ~ round(., 3))) %>%
+  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (Q = 1%)" = "coefficient 1%", "P value (Q = 1%)" = "P value 1%")
+
+#eq_joined_1_desc <- eq_joined_1 %>% arrange(desc("Coefficient (Q = 1%)"))
+  
+eq_joined_50 <- eq_joined %>% arrange(`coefficient 50%`) %>% dplyr::select(lat_name, station, latitude, `coefficient 50%`, `P value 50%`) %>% 
+  mutate(across(where(is.numeric), ~ round(., 3))) %>%
+  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (Q = 50%)" = "coefficient 50%", "P value (Q = 50%)" = "P value 50%")
+
+#eq_joined_50_desc <- eq_joined_50 %>% arrange(desc("Coefficient (Q = 50%)"))
+  
+eq_joined_95 <-eq_joined %>% arrange(`coefficient 95%`) %>% dplyr::select(lat_name, station, latitude, `coefficient 95%`, `P value 95%`) %>% 
+  mutate(across(where(is.numeric), ~ round(., 3))) %>%
+  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (Q = 95%)" = "coefficient 95%", "P value (Q = 95%)" = "P value 95%")
+
+#eq_joined_95_desc <- eq_joined_95 %>% arrange(desc("Coefficient (Q = 95%)"))
+  
+#kable(head(eq_joined_1, 6), caption = "Most affected 1% (EQ)")
+eq_joined_1 %>% head(6) %>% kable(caption = "Least affected 1% (EQ)")
+eq_joined_1 %>% arrange(desc("Coefficient (Q = 1%)")) %>% head(6) %>% kable(caption = "Least affected 1% (EQ)")
+
+#kable(head(eq_joined_50, 6), caption = "Most affected 50% (EQ)")
+#kable(head(eq_joined_50_desc, 6), caption = "Least affected 50% (EQ)")
+eq_joined_50 %>% head(6) %>% kable(caption = "Least affected 50% (EQ)")
+eq_joined_50 %>% arrange(desc("Coefficient (Q = 50%)")) %>% head(6) %>% kable(caption = "Least affected 50% (EQ)")
+
+#kable(head(eq_joined_95, 6), caption = "Most affected 95% (EQ)")
+#kable(head(eq_joined_95_desc, 6), caption = "Least affected 95% (EQ)")
+eq_joined_95 %>% head(6) %>% kable(caption = "Least affected 95% (EQ)")
+eq_joined_95 %>% arrange(desc("Coefficient (Q = 95%)")) %>% head(6) %>% kable(caption = "Least affected 95% (EQ)")
 ```
 
 ```{r}
 ggplot(data = eq_1, aes(x = latitude, y = coeff, colour = lat_name)) +
   geom_point() +
-  stat_smooth(method="lm", se=FALSE)
+  stat_smooth(formula = y ~ x, method="lm", se=FALSE) +
+  facet_wrap(~lat_name) +
+  labs(colour = "Species", x = "Latitude", y = "Coefficient")
 
 ```
 
