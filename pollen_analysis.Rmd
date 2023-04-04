@@ -78,7 +78,9 @@ kable(stations)
 ```
 
 ### Data selection
-First we remove any observations with missing values in any of the columns `date`, `station` or `name` since these are fundamental parameters to perform the data analysis on. We also need to make sure that at each station, for a certain species, pollen is continuously monitored from a given date. If the time series has a period of missing values, we simply remove any observations that occurred before the gap in the data to avoid missing values interfering with the models. Of course, using quantile based methods remove the most crucial aspects of falsely observed outliers, which missing values effectively are, we still do not want long periods of uninterrupted data to interfere with this research. In figure ? we highlight sections of the time series where missing data is present, and whether it has been removed from the dataset or not.
+First we remove any observations with missing values in any of the columns `date`, `station` or `species` since these are fundamental parameters to perform the data analysis. For the purposes of EQ regression, the time it takes to compute the models on the entire dataset in `R` is negligible. For nonparametric quantile regression however, the computational time appears to grow very quickly with the amount of observations. This has led us to the decision to reduce the amount of content in each dataset (one dataset containing all observations of any combination of `station` and `species`) to below a fixed limit. Without reducing any data, the largest data sets contain $\approx 500 000$ observations, while some combinations of data contain considerably fewer. By testing and optimizing the models for various sizes of the datasets we decided to set the limit to $10 000$ observations per combination of data. This reduces the running time considerably, making the process of analyzing our results much easier. In order to minimize the affect this has on our results the rows must be removed uniformly over the time of year. If the number of observations in a dataset is smaller than $n \cdot 10 000$, we want to select every $n$th element and disgard the rest. We can do this in `R` by using the `slice` and `bind_rows` functions from the `dplyr` package. By performing these modifications to our data, we are sure to keep the shape of the distributions the same and thus the results of the quantile regression.
+
+We also need to make sure that at each station, for a certain species, pollen is continuously monitored from a given date. If the time series has a period of missing values, we simply remove any observations that occurred before the gap in the data to avoid missing values interfering with the models. Of course, using quantile based methods remove the most crucial aspects of falsely observed outliers, which missing values effectively are, we still do not want long periods of uninterrupted data to interfere with this research. In figure ? we highlight sections of the time series where missing data is present, and whether it has been removed from the dataset or not.
 
 ## Theory
 In this section we explain the underlying theory behind the statistical approaches used for our data analysis. We will compare the simpler empirical quantile linear model (EQ), as used in [karlsson2022comparison] with the supposedly more powerful nonparametric quantile regression which we will refer to as QR. Both of these approaches estimate the response variable as the conditional median or other quantiles of the predictor variables as opposed to ordinary linear regression which uses the method of ordinary least squares (OLS) to estimate the conditional mean [Wikipedia].
@@ -194,33 +196,37 @@ eq_joined_1 <- eq_joined %>% arrange(`coefficient 1%`) %>% dplyr::select(lat_nam
   mutate(across(where(is.numeric), ~ round(., 3))) %>%
   rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (Q = 1%)" = "coefficient 1%", "P value (Q = 1%)" = "P value 1%")
 
-#eq_joined_1_desc <- eq_joined_1 %>% arrange(desc("Coefficient (Q = 1%)"))
+eq_joined_1_desc <- eq_joined %>% arrange(desc(`coefficient 1%`)) %>% dplyr::select(lat_name, station, latitude, `coefficient 1%`, `P value 1%`) %>%
+  mutate(across(where(is.numeric), ~ round(., 3))) %>%
+  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (Q = 1%)" = "coefficient 1%", "P value (Q = 1%)" = "P value 1%")
+
   
 eq_joined_50 <- eq_joined %>% arrange(`coefficient 50%`) %>% dplyr::select(lat_name, station, latitude, `coefficient 50%`, `P value 50%`) %>% 
   mutate(across(where(is.numeric), ~ round(., 3))) %>%
   rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (Q = 50%)" = "coefficient 50%", "P value (Q = 50%)" = "P value 50%")
 
-#eq_joined_50_desc <- eq_joined_50 %>% arrange(desc("Coefficient (Q = 50%)"))
+eq_joined_50_desc <- eq_joined %>% arrange(desc(`coefficient 50%`)) %>% dplyr::select(lat_name, station, latitude, `coefficient 50%`, `P value 50%`) %>% 
+  mutate(across(where(is.numeric), ~ round(., 3))) %>%
+  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (Q = 50%)" = "coefficient 50%", "P value (Q = 50%)" = "P value 50%")
   
+
 eq_joined_95 <-eq_joined %>% arrange(`coefficient 95%`) %>% dplyr::select(lat_name, station, latitude, `coefficient 95%`, `P value 95%`) %>% 
   mutate(across(where(is.numeric), ~ round(., 3))) %>%
   rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (Q = 95%)" = "coefficient 95%", "P value (Q = 95%)" = "P value 95%")
 
-#eq_joined_95_desc <- eq_joined_95 %>% arrange(desc("Coefficient (Q = 95%)"))
-  
-#kable(head(eq_joined_1, 6), caption = "Most affected 1% (EQ)")
-eq_joined_1 %>% head(6) %>% kable(caption = "Least affected 1% (EQ)")
-eq_joined_1 %>% arrange(desc("Coefficient (Q = 1%)")) %>% head(6) %>% kable(caption = "Least affected 1% (EQ)")
+eq_joined_95_desc <-eq_joined %>% arrange(desc(`coefficient 95%`)) %>% dplyr::select(lat_name, station, latitude, `coefficient 95%`, `P value 95%`) %>% 
+  mutate(across(where(is.numeric), ~ round(., 3))) %>%
+  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (Q = 95%)" = "coefficient 95%", "P value (Q = 95%)" = "P value 95%")
 
-#kable(head(eq_joined_50, 6), caption = "Most affected 50% (EQ)")
-#kable(head(eq_joined_50_desc, 6), caption = "Least affected 50% (EQ)")
-eq_joined_50 %>% head(6) %>% kable(caption = "Least affected 50% (EQ)")
-eq_joined_50 %>% arrange(desc("Coefficient (Q = 50%)")) %>% head(6) %>% kable(caption = "Least affected 50% (EQ)")
 
-#kable(head(eq_joined_95, 6), caption = "Most affected 95% (EQ)")
-#kable(head(eq_joined_95_desc, 6), caption = "Least affected 95% (EQ)")
-eq_joined_95 %>% head(6) %>% kable(caption = "Least affected 95% (EQ)")
-eq_joined_95 %>% arrange(desc("Coefficient (Q = 95%)")) %>% head(6) %>% kable(caption = "Least affected 95% (EQ)")
+eq_joined_1 %>% head(6) %>% kable(caption = "Earlier shifted 1% (EQ)")
+eq_joined_1_desc %>% head(5) %>% kable(caption = "Later shifted 1% (EQ)")
+
+eq_joined_50 %>% head(6) %>% kable(caption = "Earlier shifted 50% (EQ)")
+eq_joined_50_desc %>% head(2) %>% kable(caption = "Later shifted 50% (EQ)")
+
+eq_joined_95 %>% head(6) %>% kable(caption = "Earlier shifted 95% (EQ)")
+eq_joined_95_desc %>% head(6) %>% kable(caption = "Later shifted 95% (EQ)")
 ```
 
 ```{r}
@@ -252,6 +258,7 @@ source("analysis.R", local = knitr::knit_global())
 kable(translation)
 ```
 
+### Information about reduced data sets
 ESKILSTUNA:
   ALNUS: 45 362
   BETULA: 451 397 / 10 < 50 000   (10)
