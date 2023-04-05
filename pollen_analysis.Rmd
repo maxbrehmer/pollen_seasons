@@ -22,7 +22,7 @@ library(quantreg.nonpar)
 library(gdata) # renaming objects
 ```
 
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 source("data_wrangling.R", local = knitr::knit_global())
 ```
 
@@ -35,7 +35,7 @@ Over the past couple of decades it has been made clear that our climate is chang
 
 As mentioned in [@lind2016pollen] the results may differ for various species of pollen. More precisely they found a stark difference in duration among arboreal plant species compared to herbaceous ones, with the former trending towards an earlier end date, while the latter was pushed to a further date and thus have a longer seasonal duration. Grass pollen, being herbaceous, is the leading cause of pollen allergy in many developed countries, meaning a lot of people suffer from these seasonal changes for an extended time [@garcia2017poaceae]. In Sweden and other parts of northern Europe however, due to differences in temperature and overall climate, the arboreal types like birch (betula) are the most common cause of pollinosis [@d2017allergenic].
 
-Continous monitoring of pollen conducted by the Swedish Museum of Natural History (NRM) began in 1973 at the Palynological laboratory in Stockholm. Since then multiple other stations have been included in the scope of NRM's continous pollen monitoring program. As of 2022 there are 20 active stations involved [@nrm2022pollen], monitoring the release of 7 unique species of pollen. These 7 species are the arboreal pollen of alder (alnus), birch (betula), hazel (corylus), oak (quercus), willow (salix), elm (ulmus) and the herbaceous species of grass pollen (poaceae).
+Continous monitoring of pollen conducted by the Swedish Museum of Natural History (NRM) began in 1973 at the Palynological laboratory in Stockholm. Since then multiple other stations have been included in the scope of NRM's continous pollen monitoring program. As of 2022 there are 20 active stations involved [@nrm2022pollen], monitoring the release of several unique species of pollen. In this paper we consider 7 of the most allergenic species, these are the arboreal pollen of alder (alnus), birch (betula), hazel (corylus), oak (quercus), willow (salix), elm (ulmus) and the herbaceous species of grass pollen (poaceae).
 
 In this paper we will attempt to determine the shift in dates of the start and end of the pollen season in Sweden as an effect of global warming of Earth's climate. We will consider global warming as a linear trend over the researched time period as to simplify the process of analyzing pollen patterns. We can do this as research has shown acceptable fitting of linear models over anthropogenic climate change, in regard to temperature [@hansen2006global]. An analysis will be conducted based on two separate frequentist quantile regression models, namely linear regression on empirical quantiles (EQ) and non-parametric quantile regression (QR). In a study of seasonal shifts of migratory birds [@karlsson2022comparison] perform both these methods, this paper covers the majority of the theory in regards to the construction of the statistical models. In the case of QR, we also make good use of [@takeuchi2006nonparametric] for a more in depth description of the method.
 
@@ -47,21 +47,21 @@ The `Data` section is where all aspects of the data used in the research is pres
 
 Section X `Theory` encompasses all the theoretical definitions of the methods included in this paper. In order to strengthen the significance of our results, we have used two independent methods. Linear regression on empirical quantiles and Nonparametric quantile regression. Linear regression on empirical quantiles, which we refer to as EQ, is a simple method commonly used to perform statistical analyses on different quantile levels of data, while nonparametric quantile regression (QR) is a more complex method which substitutes the conditional mean of the loss function for the conditional median and requires numerical approaches to the resulting optimization problem. Our sections on EQ and QR respectively explain the theoretical aspects of these methods, while simultaneously providing descriptions of how we have applied them in our models.
 
-A section containing the most important results of our models is given in `Results`. This part of the paper is divided in to 3 smaller sections for more readability. `Plots` contains visual descriptions of how the pollen season behaves over time, for selected combinations of location and species. The remaining figures are available in the appendix. `Tables` is where the key values are presented in the form of ANOVA tables and alike. These values include regression coefficients, p-values and $R^2$ for each model. Again, as for the plots, results for all combinations of data are not presented in this section. Rather a selection of the most significant, representative and most extreme results are, while remaining tables can be found in an appendix.
+A section containing the most important results of our models is given in `Results`. This part of the paper is divided in to 2 sections for increased readability. `Plots` contains visual descriptions of how the pollen season behaves over time, for selected combinations of location and species. The remaining figures are available in the appendix. `Tables` is where the key values are presented in the form of ANOVA tables and alike. These values include regression coefficients, p-values and $R^2$ for each model. Again, as for the plots, results for all combinations of data are not presented in this section. Rather a selection of the most significant, representative and most extreme results are, while remaining tables can be found in an appendix.
 
 The `Discussion` is the section in which we attempt to make sense of the results observed and visualized in the `Results` section. For each of the analyzed results we may be able obtain a definitive conclusion, or not, in which case a description of what we are missing for us to draw a conclusion follows. Since there are limits to what we can expect to answer in this thesis, we have set aside a section (`Further improvements`) on how, and which parts of our work can be improved upon.
 
 This paper concludes with an `Appendix` section. Additional or complementary information which the reader may find interesting, but not vital for the results of which we form our conclusions. Each appendix is reffered to by, and refers back to a result or explanation.
 
-## Prior research
+## Litterature review
 
 ## Data
 
 ### Data collection
-As we mentioned earlier in this paper, the monitoring of pollen in the Stockholm region is conducted by the Palynological laboratory at NRM. The laboratory in question uses a Burkard Seven Day Volumetric Spore Trap to capture pollen and spores from the air through a small entrance meant to resemble the human airways. Thus approximately 10 liters of air passes through the machine each minute, which is what humans tend to consume. In order to capture the pollen particles carried by the passing air, a sticky tape is mounted to a drum rotating at 2 mm per hour. As only a small portion of the tape is exposed to the air at each point in time, this method grants us a good indication of the volume of pollen in the passing air at any given moment. It must be noted that not all stations possess the same equipment. In particular, differing microscope sizes are used across the country. Consequently, the measured values of the pollen counts are biased towards the larger microscopes, thus showing a somewhat inaccurate representation of the true pollen counts [nrm2022microscope] [nrm2022pollen2]. However considering the structure of the dataset and the consequent data analysis being relativistic, for which a descriptive presentation follows in the `Data` section, this phenomenon has been ignored.
+As we mentioned earlier in this paper, the monitoring of pollen in the Stockholm region is conducted by the Palynological laboratory at NRM. The laboratory in question uses a Burkard Seven Day Volumetric Spore Trap to capture pollen and spores from the air through a small entrance meant to resemble the human airways. Thus approximately 10 liters of air passes through the machine each minute, which is what humans tend to consume. In order to capture the pollen particles carried by the passing air, a sticky tape is mounted to a drum rotating at 2 mm per hour. As only a small portion of the tape is exposed to the air at each point in time, this method grants us a good indication of the volume of pollen in the passing air at any given moment. Each captured pollen is individually counted with regular intervals using microscopes. It must be noted that not all stations possess the same equipment. In particular, differing microscope sizes are used across the country. Consequently, the measured values of the pollen counts are biased towards the larger microscopes, thus showing a somewhat inaccurate representation of the true pollen counts [@nrm2022microscope] [@nrm2022pollen2]. However considering the structure of the dataset and the consequent data analysis being relativistic, for which a descriptive presentation follows in the `Data` section, this phenomenon has been ignored.
 
 ### Understanding the data
-The dataset that we have at our disposal contains 5 unique variables: `date`, `station`, `name`, `count` and `factor`. Of which all but the `factor` variable are used in this research paper. We have also added a `latitude` variable since it is known that higher latitudes contribute to more extreme climate changes [alecrim2023higher]. This variable is however entirely dependent on `station`. A light description of the meaning of each variable is shown in figure ?. Data is recorded during the predicted pollen season, based on historic results.
+The dataset that we have at our disposal contains 5 unique variables: `date`, `station`, `name`, `count` and `factor`. Of which all but the `factor` variable are used in this research paper. We have also added a `latitude` variable since it is known that higher latitudes contribute to more extreme climate changes [alecrim2023higher]. This variable is however entirely dependent on `station`. A short description of the meaning of each variable is shown in figure ?. Data is recorded during the predicted pollen season, based on historic results.
 
 ```{r, message=FALSE}
 source("analysis.R", local = knitr::knit_global())
@@ -87,9 +87,9 @@ In this section we explain the underlying theory behind the statistical approach
 
 OLS regression is the preferred method for many research purposes due to its inherent simplicity. However for it to be effective, a lot of assumptions need to be made about the data. More specifically homoscedasticity and normally distributed observations are two of the most central aspects of linear regression, meaning a linear regression model performs poorly for data that is heteroscadastic and/or non-normally distributed. By estimating the conditional median however, as opposed to the mean, we get a model that yields better predictions for data with these properties. Another advantage of using quantile based methods is that one can make more accurate predictions about outliers, since nonlinear tendencies may lead to abnormal behaviors for more extreme observations, which can be more accurately accounted for when looking at quantiles rather than the mean.
 
-All models in this paper will use `date` as the response variable. The release date of pollen grain $i \in \{ 1,...,n \}$, where $n$ is the total amount of pollen grains released, is predicted by the models as the response $y_i$. We form a covariate vector $x_i = (1, \, t_i)$ which includes an intercept and the predictor variable $t_i \in \mathcal{T} = { \{1,...,T\}}$ which refers to the gregorian year of observation with $T$ being the amount of years monitored.
+All models in this paper will use `date` as the response variable, or a yearly quantile of `date`. The release date of pollen grain $i \in \{ 1,...,n \}$, where $n$ is the total amount of pollen grains released, is predicted by the models as the response $y_i$. We form a covariate vector $x_i = (1, \, t_i)$ which includes an intercept and the predictor variable $t_i \in \mathcal{T} = { \{1,...,T\}}$ which refers to the gregorian year of observation with $T$ being the amount of years monitored.
 
-In order to make an educated analysis of the behaviour of pollen release we need a strict definition for what constitutes a pollen season. There have been many attempts by various authors to find an optimal definition for the dates of which each pollen season covers. In this paper we classify the dates within which the pollen season is deemed active by referring to the EAN definition. [bastl2018defining] The EAN database contains a lot of data on pollen release in which they define the pollen season as the date at which at least $1%$ of the yearly pollen have been counted. By the same definition, the pollen season is said to end when 95% of all pollen has been released.
+In order to make an educated analysis of the behaviour of pollen release we need a strict definition for what constitutes a pollen season. There have been many attempts by various authors to find an optimal definition for the dates of which each pollen season covers. In this paper we classify the dates within which the pollen season is deemed active by referring to the EAN definition. [bastl2018defining] The EAN database contains a lot of data on pollen release in which they define the pollen season as the date at which at least $1\%$ of the yearly pollen have been counted. By the same definition, the pollen season is said to end when 95% of all pollen has been released.
 
 ### Nonparametric quantile regression
 By nonparametric regression models we refer to models that do not make any assumptions about the functional form of the relationship between the response variable and predictor variable(s). The advantage of this approach is that one can capture complex nonlinear relationships and is more robust when it comes to dealing with significant outliers in the data. By applying the theory of nonparametric models to a linear predictor of the conditional median, we arrive at the basis of a nonparametric quantile regression model.
@@ -179,7 +179,7 @@ for a given quantile $\tau$. Since the function is continuous and twice differen
 
 ## Results
 
-### Plots
+### Distributional changes over time
 ```{r, message=FALSE, warning=FALSE}
 source("analysis.R", local = knitr::knit_global())
 
@@ -188,7 +188,7 @@ pic_sthlm_last5
 ```
 
 
-### Tables
+### Results per species and location
 ```{r, message=FALSE}
 source("models.R", local = knitr::knit_global())
 
@@ -219,46 +219,41 @@ eq_joined_95_desc <-eq_joined %>% arrange(desc(`coefficient 95%`)) %>% dplyr::se
   rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (Q = 95%)" = "coefficient 95%", "P value (Q = 95%)" = "P value 95%")
 
 
-eq_joined_1 %>% head(6) %>% kable(caption = "Earlier shifted 1% (EQ)")
-eq_joined_1_desc %>% head(5) %>% kable(caption = "Later shifted 1% (EQ)")
+eq_joined_1 %>% head(6) %>% kable(caption = "Earlier start 1% (EQ)")
+eq_joined_1_desc %>% head(5) %>% kable(caption = "Later start 1% (EQ)")
 
-eq_joined_50 %>% head(6) %>% kable(caption = "Earlier shifted 50% (EQ)")
-eq_joined_50_desc %>% head(2) %>% kable(caption = "Later shifted 50% (EQ)")
+eq_joined_50 %>% head(6) %>% kable(caption = "Earlier peak 50% (EQ)")
+eq_joined_50_desc %>% head(2) %>% kable(caption = "Later peak 50% (EQ)")
 
-eq_joined_95 %>% head(6) %>% kable(caption = "Earlier shifted 95% (EQ)")
-eq_joined_95_desc %>% head(6) %>% kable(caption = "Later shifted 95% (EQ)")
+eq_joined_95 %>% head(6) %>% kable(caption = "Earlier end 95% (EQ)")
+eq_joined_95_desc %>% head(6) %>% kable(caption = "Later end 95% (EQ)")
 ```
 
+### Geographic influence
 ```{r}
 ggplot(data = eq_1, aes(x = latitude, y = coeff, colour = lat_name)) +
   geom_point() +
   stat_smooth(formula = y ~ x, method="lm", se=FALSE) +
   facet_wrap(~lat_name) +
   labs(colour = "Species", x = "Latitude", y = "Coefficient")
-
 ```
-
-
 
 ## Discussion
 
 ### Further improvements
-The solution to this inconvenience is to multiply the pollen count by a factor related to the size of the microscope.
-
-To avoid presenting outlier seasons in the ridge plot, we can use an average of perhaps the first X years compared to the last X years.
 
 ## Bibliography and References
 
 ## Appendix
 
-### Translation of the latin names of pollen species
+### Appendix 1: Translation of the latin names of pollen species
 ```{r, message=FALSE}
 source("analysis.R", local = knitr::knit_global())
 
 kable(translation)
 ```
 
-### Information about reduced data sets
+### Appendix 2: Information about reduced data sets (ignore)
 ESKILSTUNA:
   ALNUS: 45 362
   BETULA: 451 397 / 10 < 50 000   (10)

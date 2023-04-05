@@ -22,9 +22,9 @@ pic_sthlm_last5 <- df %>% filter(year %in% c(2018, 2019, 2020, 2021, 2022), stat
   theme_ridges() +
   labs(title = "Average yearly distribution of pollen\n in Stockholm (2018-2022)", x = "Date", y = "Intensity")
 
-data_structure <- data.frame("Variable" = c("Station", "Pollen type", "Date", "Count", "Factor", "Latitude"), "Type" = c("categorical", "categorical", "continous", "continous", "continous", "continous"), "Decription" = c(
+data_structure <- data.frame("Variable" = c("Station", "Species", "Date", "Count", "Factor", "Latitude"), "Type" = c("categorical", "categorical", "continous", "continous", "continous", "continous"), "Decription" = c(
   "Geographic location of the pollen monitoring station.", "Genus of the recorded pollen counts.", "Gregorian calendar date on which the airborne pollen were registered.", 
-  "Amount of individual pollen were collected.", "Reference variable for the size of the microscope used.", "Northern latitudinal cooardinates of said station."
+  "Number of individual pollen counted.", "Reference variable for the size of the microscope used.", "Northern latitudinal cooardinates of said station."
 ))
 
 stations <- data.frame("Station" = c("Umeå", "Eskilstuna", "Stockholm", "Norrköping", "Jönköping", "Västervik", "Göteborg", "Malmö"), "Latitude" = c(62.83, 59.37, 59.33, 58.59, 57.78, 57.76, 57.71, 55.60), 
