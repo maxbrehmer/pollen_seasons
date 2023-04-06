@@ -255,74 +255,74 @@ kable(translation)
 
 ### Appendix 2: Information about reduced data sets (ignore)
 ESKILSTUNA:
-  ALNUS: 45 362
-  BETULA: 451 397 / 10 < 50 000   (10)
+  ALNUS: 45 362 / 5 < 10 000      (5)
+  BETULA: 451 397 / 46 < 10 000   (46)
   CORYLUS: 3 812
-  POACEAE: 48 265
-  QUERCUS: 57 914 = 50 000
-  SALIX: 31 227
+  POACEAE: 48 265 / 10 < 10 000   (10)
+  QUERCUS: 57 914 / 6 < 10 000    (6)
+  SALIX: 31 227 / 4 < 10 000      (4)
   ULMUS: 9 779
   
 GÖTEBORG:
-  ALNUS: 33 653
-  BETULA: 494 464 / 10 < 50 000   (10)
+  ALNUS: 33 653 / 3 < 10 000      (4)
+  BETULA: 494 464 / 50 < 10 000   (50)
   CORYLUS: 3 374
-  POACEAE: 74 372 / 2 < 50 000    (2)
-  QUERCUS: 54 957 = 50 000
-  SALIX: 19 285
-  ULMUS: 11 645
+  POACEAE: 74 372 / 8 < 10 000    (8)
+  QUERCUS: 54 957 / 6 < 10 000    (6)
+  SALIX: 19 285 / 2 < 10 000      (2)
+  ULMUS: 11 645 / 2 < 10 000      (2)
   
 JÖNKÖPING:
-  ALNUS: 42 217
-  BETULA: 239 006 / 5 < 50 000    (5)
+  ALNUS: 42 217 / 5 < 10 000      (5)
+  BETULA: 239 006 / 24 < 10 000   (24)
   CORYLUS: 3 594
-  POACEAE: 31 676
-  QUERCUS: 26 482
-  SALIX: 13 929
+  POACEAE: 31 676 / 4 < 10 000    (4)
+  QUERCUS: 26 482 / 3 < 10 000    (3)
+  SALIX: 13 929 / 2 < 10 000      (2)
   ULMUS: 4 884
   
 MALMÖ:
-  ALNUS: 31 596
-  BETULA: 203 475 / 5 < 50 000    (5)
+  ALNUS: 31 596 / 4 < 10 000      (4)
+  BETULA: 203 475 / 21 < 10 000   (21)
   CORYLUS: 4 562
-  POACEAE: 87 912 / 2 < 50 000    (2)
-  QUERCUS: 42 482
-  SALIX: 17 940
-  ULMUS: 35 560
+  POACEAE: 87 912 / 9 < 10 000    (9)
+  QUERCUS: 42 482 / 5 < 10 000    (5)
+  SALIX: 17 940 / 2 < 10 000      (2)
+  ULMUS: 35 560 / 4 < 10 000      (4)
   
 NORRKÖPING:
-  ALNUS: 24 089
-  BETULA: 286 630 / 6 < 50 000    (6)
+  ALNUS: 24 089 / 3 < 10 000      (3)
+  BETULA: 286 630 / 29 < 10 000   (29)
   CORYLUS: 4 484
-  POACEAE: 50 537 = 50 000
-  QUERCUS: 26 899
-  SALIX: 14 715
+  POACEAE: 50 537 / 6 < 10 000    (6)
+  QUERCUS: 26 899 / 3 < 10 000    (3)
+  SALIX: 14 715 / 2 < 10 000      (2)
   ULMUS: 6 509
   
 STOCKHOLM:
-  ALNUS: 55 346 = 50 000
-  BETULA: 372 668 / 8 < 50 000    (8)
+  ALNUS: 55 346 / 6 < 10 000      (6)
+  BETULA: 372 668 / 38 < 10 000   (38)
   CORYLUS: 5 848
-  POACEAE: 52 569 = 50 000
-  QUERCUS: 81 161 / 2 < 50 000    (2)
-  SALIX: 15 398
-  ULMUS: 33 284
+  POACEAE: 52 569 / 6 < 10 000    (6)
+  QUERCUS: 81 161 / 9 < 10 000    (9)
+  SALIX: 15 398 / 2 < 10 000      (2)
+  ULMUS: 33 284 / 4 < 10 000      (4)
   
 UMEÅ:
-  ALNUS: 16 454
-  BETULA: 212 232 / 4 = 50 000    (4)
+  ALNUS: 16 454 / 2 < 10 000      (2)
+  BETULA: 212 232 / 4 = 10 000    (4)
   CORYLUS: 113
-  POACEAE: 22 639
+  POACEAE: 22 639 / 3 < 10 000    (3)
   QUERCUS: 182
   SALIX: 8 875
   ULMUS: 167
   
 VÄSTERVIK:
-  ALNUS: 31 722
-  BETULA: 231 147 / 5 < 50 000    (5)
+  ALNUS: 31 722 / 4 < 10 000      (4)
+  BETULA: 231 147 / 24 < 10 000   (24)
   CORYLUS: 4 254
-  POACEAE: 37 613
-  QUERCUS: 40 942
+  POACEAE: 37 613 / 4 < 10 000    (4)
+  QUERCUS: 40 942 / 5 < 10 000    (5)
   SALIX: 8 127
   ULMUS: 9 821
 
