@@ -24,16 +24,50 @@ latitudes <- data.frame("station" = c("Umeå", "Eskilstuna", "Stockholm", "Norrk
                         "latitude" = c(62.83, 59.37, 59.33, 58.59, 57.78, 57.76, 57.71, 55.60))
 
 df <- full_join(df, latitudes, by = c("station" = "station"))
+  
 
 df <- df %>% uncount(count) %>% mutate(greg_day = as.numeric(yday(date))) %>% mutate(md_date = as_date(paste("00", format(date, format = "%m-%d"), sep = "-")) ) %>% 
   dplyr::select(c("station", "lat_name", "year", "greg_day", "md_date", "date", "latitude")) %>%
   drop_na()
 
-genus <- c("Betula", "Betula", "Poaceae", "Betula", "Betula", "Poaceae", "Betula", "Betula", "Quercus", "Betula", "Betula")
-place <- c("Esklistuna", "Göteborg", "Göteborg", "Jönköping", "Malmö", "Malmö", "Norrköping", "Stockholm", "Stockholm", "Umeå", "Västervik")
-n <- c(10, 10, 2, 5, 5, 2, 6, 8, 2, 4, 5)
+genus <- c("Alnus", "Betula", "Poaceae", "Quercus", "Salix", "Ulmus", 
+           "Alnus", "Betula", "Poaceae", "Quercus", "Salix", "Ulmus", 
+           "Alnus", "Betula", "Poaceae", "Quercus", "Salix", 
+           "Alnus", "Betula", "Poaceae", "Quercus", "Salix", "Ulmus", 
+           "Alnus", "Betula", "Poaceae", "Quercus", "Salix", "Ulmus", 
+           "Alnus", "Betula", "Corylus", "Poaceae", "Quercus", "Salix", "Ulmus", 
+           "Alnus", "Betula", "Poaceae", "Salix", 
+           "Alnus", "Betula", "Poaceae", "Quercus", "Salix", "Ulmus")
 
-for (i in length(genus)) {
+place <- c("Esklistuna", "Esklistuna", "Esklistuna", "Esklistuna", "Esklistuna", "Esklistuna",
+           "Göteborg", "Göteborg", "Göteborg", "Göteborg", "Göteborg", "Göteborg", 
+           "Jönköping", "Jönköping", "Jönköping", "Jönköping", "Jönköping", 
+           "Malmö", "Malmö", "Malmö", "Malmö", "Malmö", "Malmö", 
+           "Norrköping", "Norrköping", "Norrköping", "Norrköping", "Norrköping", "Norrköping", 
+           "Stockholm", "Stockholm", "Stockholm", "Stockholm", "Stockholm", "Stockholm", "Stockholm", 
+           "Umeå", "Umeå", "Umeå", "Umeå",
+           "Västervik", "Västervik", "Västervik", "Västervik", "Västervik", "Västervik")
+
+n <- c(10, 91, 10, 12, 7, 2, 
+       7, 99, 15, 11, 4, 3, 
+       9, 48, 7, 6, 3, 
+       7, 41, 18, 9, 4, 8, 
+       5, 58, 11, 6, 3, 2, 
+       12, 75, 2, 11, 17, 4, 7, 
+       4, 43, 5, 2, 
+       7, 47, 8, 9, 2, 2)
+
+# Apply the function with varying values of n
+n_values <- c(10, 91, 1, 10, 12, 7, 2, 
+              7, 99, 1, 15, 11, 4, 3, 
+              9, 48, 1, 7, 6, 3, 1,
+              7, 41, 1, 18, 9, 4, 8, 
+              5, 58, 1, 11, 6, 3, 2, 
+              12, 75, 2, 11, 17, 4, 7, 
+              4, 43, 1, 5, 1, 2, 1, 
+              7, 47, 1, 8, 9, 2, 2)
+
+for (i in 1:length(genus)) {
   df <- df %>%
     filter(lat_name == genus[i], station == place[i]) %>%
     slice(which(row_number() %% n[i] == 1)) %>%
@@ -41,6 +75,8 @@ for (i in length(genus)) {
 }
 
 df <- df %>% arrange(station, lat_name, date)
+
+
 
 
 
