@@ -53,3 +53,4 @@ translation <- data.frame("Latin" = c("Alnus", "Betula", "Corylus", "Poaceae", "
                           "Swedish" = c("Al", "Björk", "Hassel", "Gräs", "Ek", "Viden", "Alm"))
 
 colnames(translation) <- c("Latin name", "English name", "Swedish name")
+

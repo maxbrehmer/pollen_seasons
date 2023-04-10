@@ -229,6 +229,13 @@ eq_joined_95 %>% head(6) %>% kable(caption = "Earlier end 95% (EQ)")
 eq_joined_95_desc %>% head(6) %>% kable(caption = "Later end 95% (EQ)")
 ```
 
+```{r}
+source("qr_models.R", local = knitr::knit_global())
+
+head(qr_1, 5)
+```
+
+
 ### Geographic influence
 ```{r}
 ggplot(data = eq_1, aes(x = latitude, y = coeff, colour = lat_name)) +
