@@ -232,7 +232,11 @@ eq_joined_95_desc %>% head(6) %>% kable(caption = "Later end 95% (EQ)")
 ```{r}
 source("qr_models.R", local = knitr::knit_global())
 
-head(qr_1, 5)
+#head(qr_1, 5)
+#head(qr_50, 5)
+#head(qr_95, 5)
+
+qr_1 %>% mutate(coeff = round(model$coefficients["year"], 4))
 ```
 
 
