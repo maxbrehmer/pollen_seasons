@@ -85,8 +85,7 @@ We also need to make sure that at each station, for a certain species, pollen is
 ```{r, message=FALSE, warning=FALSE}
 source("analysis.R", local = knitr::knit_global())
 
-pic_sthlm_first5
-pic_sthlm_last5
+ridges
 ```
 
 ## Theory
@@ -257,10 +256,22 @@ head(joined_qr_95 %>% map_df(rev), 4)
 
 ### Geographic influence
 ```{r}
-ggplot(data = eq_1, aes(x = latitude, y = coeff, colour = lat_name)) +
+ggplot(data = joined_qr_1, aes(x = Latitude, y = `Coefficient (QR)`, colour = Species)) +
   geom_point() +
   stat_smooth(formula = y ~ x, method="lm", se=FALSE) +
-  facet_wrap(~lat_name) +
+  facet_wrap(~Species) +
+  labs(colour = "Species", x = "Latitude", y = "Coefficient")
+
+ggplot(data = joined_qr_50, aes(x = Latitude, y = `Coefficient (QR)`, colour = Species)) +
+  geom_point() +
+  stat_smooth(formula = y ~ x, method="lm", se=FALSE) +
+  facet_wrap(~Species) +
+  labs(colour = "Species", x = "Latitude", y = "Coefficient")
+
+ggplot(data = joined_qr_95, aes(x = Latitude, y = `Coefficient (QR)`, colour = Species)) +
+  geom_point() +
+  stat_smooth(formula = y ~ x, method="lm", se=FALSE) +
+  facet_wrap(~Species) +
   labs(colour = "Species", x = "Latitude", y = "Coefficient")
 ```
 
