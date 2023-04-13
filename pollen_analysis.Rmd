@@ -191,52 +191,38 @@ pic_sthlm_last5
 ### Results per species and location
 ```{r, message=FALSE}
 source("models.R", local = knitr::knit_global())
-
-eq_joined_1 <- eq_joined %>% arrange(`coefficient 1%`) %>% dplyr::select(lat_name, station, latitude, `coefficient 1%`, `P value 1%`) %>%
-  mutate(across(where(is.numeric), ~ round(., 3))) %>%
-  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (Q = 1%)" = "coefficient 1%", "P value (Q = 1%)" = "P value 1%")
-
-eq_joined_1_desc <- eq_joined %>% arrange(desc(`coefficient 1%`)) %>% dplyr::select(lat_name, station, latitude, `coefficient 1%`, `P value 1%`) %>%
-  mutate(across(where(is.numeric), ~ round(., 3))) %>%
-  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (Q = 1%)" = "coefficient 1%", "P value (Q = 1%)" = "P value 1%")
-
-  
-eq_joined_50 <- eq_joined %>% arrange(`coefficient 50%`) %>% dplyr::select(lat_name, station, latitude, `coefficient 50%`, `P value 50%`) %>% 
-  mutate(across(where(is.numeric), ~ round(., 3))) %>%
-  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (Q = 50%)" = "coefficient 50%", "P value (Q = 50%)" = "P value 50%")
-
-eq_joined_50_desc <- eq_joined %>% arrange(desc(`coefficient 50%`)) %>% dplyr::select(lat_name, station, latitude, `coefficient 50%`, `P value 50%`) %>% 
-  mutate(across(where(is.numeric), ~ round(., 3))) %>%
-  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (Q = 50%)" = "coefficient 50%", "P value (Q = 50%)" = "P value 50%")
-  
-
-eq_joined_95 <-eq_joined %>% arrange(`coefficient 95%`) %>% dplyr::select(lat_name, station, latitude, `coefficient 95%`, `P value 95%`) %>% 
-  mutate(across(where(is.numeric), ~ round(., 3))) %>%
-  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (Q = 95%)" = "coefficient 95%", "P value (Q = 95%)" = "P value 95%")
-
-eq_joined_95_desc <-eq_joined %>% arrange(desc(`coefficient 95%`)) %>% dplyr::select(lat_name, station, latitude, `coefficient 95%`, `P value 95%`) %>% 
-  mutate(across(where(is.numeric), ~ round(., 3))) %>%
-  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (Q = 95%)" = "coefficient 95%", "P value (Q = 95%)" = "P value 95%")
-
-
-eq_joined_1 %>% head(6) %>% kable(caption = "Earlier start 1% (EQ)")
-eq_joined_1_desc %>% head(5) %>% kable(caption = "Later start 1% (EQ)")
-
-eq_joined_50 %>% head(6) %>% kable(caption = "Earlier peak 50% (EQ)")
-eq_joined_50_desc %>% head(2) %>% kable(caption = "Later peak 50% (EQ)")
-
-eq_joined_95 %>% head(6) %>% kable(caption = "Earlier end 95% (EQ)")
-eq_joined_95_desc %>% head(6) %>% kable(caption = "Later end 95% (EQ)")
 ```
+
 
 ```{r}
 source("qr_models.R", local = knitr::knit_global())
+```
 
-#head(qr_1, 5)
-#head(qr_50, 5)
-#head(qr_95, 5)
+```{r}
+qr_1 <- qr_1 %>% mutate("coefficient 1% (QR)" = model$coefficients["year"])
+qr_50 <- qr_50 %>% mutate("coefficient 50% (QR)" = model$coefficients["year"])
+qr_95 <- qr_95 %>% mutate("coefficient 95% (QR)" = model$coefficients["year"])
 
-qr_1 %>% mutate(coeff = round(model$coefficients["year"], 4))
+joined <- eq_joined %>% left_join(qr_1 %>% dplyr::select(c(-model)), by = c("lat_name", "station")) %>%
+  left_join(qr_50 %>% dplyr::select(c(-model)), by = c("lat_name", "station")) %>%
+  left_join(qr_95 %>% dplyr::select(c(-model)), by = c("lat_name", "station")) %>%
+  mutate(across(where(is.numeric), ~ round(., 3)))
+
+change_eq_1 <- joined %>% arrange(`coefficient 1%`) %>% 
+  dplyr::select(lat_name, station, latitude, `coefficient 1%`, `P value 1%`, `coefficient 1% (QR)`) %>%
+  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 1%", "P value (EQ)" = "P value 1%", "Coefficient (QR)" = "coefficient 1% (QR)")
+
+change_eq_50 <- joined %>% arrange(`coefficient 50%`) %>% 
+  dplyr::select(lat_name, station, latitude, `coefficient 50%`, `P value 50%`, `coefficient 50% (QR)`) %>%
+  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 50%", "P value (EQ)" = "P value 50%", "Coefficient (QR)" = "coefficient 50% (QR)")
+
+change_eq_95 <- joined %>% arrange(`coefficient 95%`) %>% 
+  dplyr::select(lat_name, station, latitude, `coefficient 95%`, `P value 95%`, `coefficient 95% (QR)`) %>%
+  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 95%", "P value (EQ)" = "P value 95%", "Coefficient (QR)" = "coefficient 95% (QR)")
+
+change_eq_1
+change_eq_50
+change_eq_95
 ```
 
 
