@@ -82,6 +82,13 @@ First we remove any observations with missing values in any of the columns `date
 
 We also need to make sure that at each station, for a certain species, pollen is continuously monitored from a given date. If the time series has a period of missing values, we simply remove any observations that occurred before the gap in the data to avoid missing values interfering with the models. Of course, using quantile based methods remove the most crucial aspects of falsely observed outliers, which missing values effectively are, we still do not want long periods of uninterrupted data to interfere with this research. In figure ? we highlight sections of the time series where missing data is present, and whether it has been removed from the dataset or not.
 
+```{r, message=FALSE, warning=FALSE}
+source("analysis.R", local = knitr::knit_global())
+
+pic_sthlm_first5
+pic_sthlm_last5
+```
+
 ## Theory
 In this section we explain the underlying theory behind the statistical approaches used for our data analysis. We will compare the simpler empirical quantile linear model (EQ), as used in [karlsson2022comparison] with the supposedly more powerful nonparametric quantile regression which we will refer to as QR. Both of these approaches estimate the response variable as the conditional median or other quantiles of the predictor variables as opposed to ordinary linear regression which uses the method of ordinary least squares (OLS) to estimate the conditional mean [Wikipedia].
 
@@ -179,15 +186,6 @@ for a given quantile $\tau$. Since the function is continuous and twice differen
 
 ## Results
 
-### Distributional changes over time
-```{r, message=FALSE, warning=FALSE}
-source("analysis.R", local = knitr::knit_global())
-
-pic_sthlm_first5
-pic_sthlm_last5
-```
-
-
 ### Results per species and location
 ```{r, message=FALSE}
 source("models.R", local = knitr::knit_global())
@@ -208,21 +206,52 @@ joined <- eq_joined %>% left_join(qr_1 %>% dplyr::select(c(-model)), by = c("lat
   left_join(qr_95 %>% dplyr::select(c(-model)), by = c("lat_name", "station")) %>%
   mutate(across(where(is.numeric), ~ round(., 3)))
 
-change_eq_1 <- joined %>% arrange(`coefficient 1%`) %>% 
+# Tables for visualizing the EQ models
+joined_eq_1 <- joined %>% arrange(`coefficient 1%`) %>% 
   dplyr::select(lat_name, station, latitude, `coefficient 1%`, `P value 1%`, `coefficient 1% (QR)`) %>%
   rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 1%", "P value (EQ)" = "P value 1%", "Coefficient (QR)" = "coefficient 1% (QR)")
 
-change_eq_50 <- joined %>% arrange(`coefficient 50%`) %>% 
+joined_eq_50 <- joined %>% arrange(`coefficient 50%`) %>% 
   dplyr::select(lat_name, station, latitude, `coefficient 50%`, `P value 50%`, `coefficient 50% (QR)`) %>%
   rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 50%", "P value (EQ)" = "P value 50%", "Coefficient (QR)" = "coefficient 50% (QR)")
 
-change_eq_95 <- joined %>% arrange(`coefficient 95%`) %>% 
+joined_eq_95 <- joined %>% arrange(`coefficient 95%`) %>% 
   dplyr::select(lat_name, station, latitude, `coefficient 95%`, `P value 95%`, `coefficient 95% (QR)`) %>%
   rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 95%", "P value (EQ)" = "P value 95%", "Coefficient (QR)" = "coefficient 95% (QR)")
 
-change_eq_1
-change_eq_50
-change_eq_95
+
+# Tables for visualizing the QR models
+joined_qr_1 <- joined %>% arrange(`coefficient 1% (QR)`) %>% 
+  dplyr::select(lat_name, station, latitude, `coefficient 1%`, `P value 1%`, `coefficient 1% (QR)`) %>%
+  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 1%", "P value (EQ)" = "P value 1%", "Coefficient (QR)" = "coefficient 1% (QR)")
+
+joined_qr_50 <- joined %>% arrange(`coefficient 50% (QR)`) %>% 
+  dplyr::select(lat_name, station, latitude, `coefficient 50%`, `P value 50%`, `coefficient 50% (QR)`) %>%
+  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 50%", "P value (EQ)" = "P value 50%", "Coefficient (QR)" = "coefficient 50% (QR)")
+
+joined_qr_95 <- joined %>% arrange(`coefficient 95% (QR)`) %>% 
+  dplyr::select(lat_name, station, latitude, `coefficient 95%`, `P value 95%`, `coefficient 95% (QR)`) %>%
+  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 95%", "P value (EQ)" = "P value 95%", "Coefficient (QR)" = "coefficient 95% (QR)")
+
+# EQ models
+head(joined_eq_1, 4)
+head(joined_eq_1 %>% map_df(rev), 4)
+
+head(joined_eq_50, 4)
+head(joined_eq_50 %>% map_df(rev), 4)
+
+head(joined_eq_95, 4)
+head(joined_eq_95 %>% map_df(rev), 4)
+
+# QR models
+head(joined_qr_1, 4)
+head(joined_qr_1 %>% map_df(rev), 4)
+
+head(joined_qr_50, 4)
+head(joined_qr_50 %>% map_df(rev), 4)
+
+head(joined_qr_95, 4)
+head(joined_qr_95 %>% map_df(rev), 4)
 ```
 
 
