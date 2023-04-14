@@ -1,4 +1,6 @@
 # Model: Linear regression on quantiles
+
+# 1st quantile
 data_q1 <- df %>%
   group_by(year, lat_name, station, latitude) %>%
   summarise(q1 = quantile(greg_day, prob = .01))
@@ -7,6 +9,7 @@ eq_1 <- data_q1 %>% ungroup() %>% nest_by(lat_name, station, latitude) %>% mutat
   dplyr::select(c(-data)) %>%
   mutate(coeff = summary(model)$coefficients["year", "Estimate"], "P value" = summary(model)$coefficients["year", "Pr(>|t|)"], "Adj. R-squared" = summary(model)$adj.r.squared)
 
+# 50th quantile (median)
 data_q50 <- df %>%
   group_by(year, lat_name, station, latitude) %>%
   summarise(q50 = quantile(greg_day, prob = .5))
@@ -15,6 +18,7 @@ eq_50 <- data_q50 %>% ungroup() %>% nest_by(lat_name, station, latitude) %>% mut
   dplyr::select(c(-data)) %>%
   mutate(coeff = summary(model)$coefficients["year", "Estimate"], "P value" = summary(model)$coefficients["year", "Pr(>|t|)"], "Adj. R-squared" = summary(model)$adj.r.squared)
 
+# 95th quantile
 data_q95 <- df %>%
   group_by(year, lat_name, station, latitude) %>%
   summarise(q95 = quantile(greg_day, prob = .95))
@@ -23,6 +27,7 @@ eq_95 <- data_q95 %>% ungroup() %>% nest_by(lat_name, station, latitude) %>% mut
   dplyr::select(c(-data)) %>%
   mutate(coeff = summary(model)$coefficients["year", "Estimate"], "P value" = summary(model)$coefficients["year", "Pr(>|t|)"], "Adj. R-squared" = summary(model)$adj.r.squared)
 
+# Joining together the relevant information from each table
 eq_joined <- eq_1 %>%
   dplyr::select(lat_name, station, latitude, coeff, `P value`) %>%
   rename("coefficient 1%" = coeff, "P value 1%" = `P value`) %>%

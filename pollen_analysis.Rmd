@@ -19,11 +19,23 @@ library(ggridges) # Ridge plotting
 library(ggplot2) # Better plots
 library(quantreg) # Quantile regression modelling
 library(quantreg.nonpar)
-library(gdata) # renaming objects
+library(gdata) # Renaming objects
 ```
 
 ```{r, message=FALSE, warning=FALSE}
-source("data_wrangling.R", local = knitr::knit_global())
+#source("data_wrangling.R", local = knitr::knit_global())
+```
+
+```{r, message=FALSE, warning=FALSE}
+#source("analysis.R", local = knitr::knit_global())
+```
+
+```{r message=FALSE, warning=FALSE}
+#source("models.R", local = knitr::knit_global())
+```
+
+```{r, message=FALSE, warning=FALSE}
+#source("qr_models.R", local = knitr::knit_global())
 ```
 
 ## Abstract
@@ -64,27 +76,22 @@ As we mentioned earlier in this paper, the monitoring of pollen in the Stockholm
 The dataset that we have at our disposal contains 5 unique variables: `date`, `station`, `name`, `count` and `factor`. Of which all but the `factor` variable are used in this research paper. We have also added a `latitude` variable since it is known that higher latitudes contribute to more extreme climate changes [alecrim2023higher]. This variable is however entirely dependent on `station`. A short description of the meaning of each variable is shown in figure ?. Data is recorded during the predicted pollen season, based on historic results.
 
 ```{r, message=FALSE}
-source("analysis.R", local = knitr::knit_global())
-
 kable(data_structure)
 ```
 
 Viewing the years of availability in figure ? we conclude that not all data points are present in the data set. The stations had differing opening dates and not all species tend to be available to begin with. If no consideration for the location of said data points are made, we may observed skewed results, as the geographic distribution of monitored pollen changes over time due to availability. Thus analyzing the data in geographic categories of where they were collected is a necessary consideration.
 
 ```{r, message=FALSE}
-source("analysis.R", local = knitr::knit_global())
-
 kable(stations)
 ```
 
 ### Data selection
-First we remove any observations with missing values in any of the columns `date`, `station` or `species` since these are fundamental parameters to perform the data analysis. For the purposes of EQ regression, the time it takes to compute the models on the entire dataset in `R` is negligible. For nonparametric quantile regression however, the computational time appears to grow very quickly with the amount of observations. This has led us to the decision to reduce the amount of content in each dataset (one dataset containing all observations of any combination of `station` and `species`) to below a fixed limit. Without reducing any data, the largest data sets contain $\approx 500 000$ observations, while some combinations of data contain considerably fewer. By testing and optimizing the models for various sizes of the datasets we decided to set the limit to $10 000$ observations per combination of data. This reduces the running time considerably, making the process of analyzing our results much easier. In order to minimize the affect this has on our results the rows must be removed uniformly over the time of year. If the number of observations in a dataset is smaller than $n \cdot 10 000$, we want to select every $n$th element and disgard the rest. We can do this in `R` by using the `slice` and `bind_rows` functions from the `dplyr` package. By performing these modifications to our data, we are sure to keep the shape of the distributions the same and thus the results of the quantile regression.
+First we remove any observations with missing values in any of the columns `date`, `station` or `species` since these are fundamental parameters to perform the data analysis. For the purposes of EQ regression, the time it takes to compute the models on the entire dataset in `R` is negligible. For nonparametric quantile regression however, the computational time appears to grow very quickly with the amount of observations. This has led us to the decision to reduce the amount of content in each dataset (one dataset containing all observations of any combination of `station` and `species`) to below a fixed limit. Without reducing any data, the largest data sets contain $\approx 500 000$ observations, while some combinations of data contain considerably fewer. By testing and optimizing the models for various sizes of the datasets we decided to set the limit to $5 000$ observations per combination of data. This reduces the running time considerably, making the process of analyzing our results much easier. In order to minimize the affect this has on our results the rows must be removed uniformly over the time of year. If the number of observations in a dataset is smaller than $n \cdot 5 000$, we want to select every $n$th element and discard the rest. We can do this in `R` by using the `slice` and `bind_rows` functions from the `dplyr` package. By performing these modifications to our data, we are sure to keep the shape of the distributions the same and thus the results of the quantile regression.
 
-We also need to make sure that at each station, for a certain species, pollen is continuously monitored from a given date. If the time series has a period of missing values, we simply remove any observations that occurred before the gap in the data to avoid missing values interfering with the models. Of course, using quantile based methods remove the most crucial aspects of falsely observed outliers, which missing values effectively are, we still do not want long periods of uninterrupted data to interfere with this research. In figure ? we highlight sections of the time series where missing data is present, and whether it has been removed from the dataset or not.
+### Yearly distribution of pollen
+Before constructing the models, we can take a glance at what sort of results to expect from the subsequent regression analysis. In figure ? we present a ridge plot containing information about the distribution of observed pollen by date of year. By looking at the average distribution from the first and last 5 years in the dataset respectively, we construct a somewhat consistent average in terms of the state of the pollen season at a given location, reducing the risk of falsely identifying outlier data as patterned occurrences. We can conclude that, in the Stockholm area, the pollen season seemed to begin earlier for all the arboreal pollen species while grass pollen did not appear to show those tendencies. In general the shape of the pollen distribution was not seen to have been altered. A visual analysis of the distribution of yearly pollen release may suggest that the average pollen season now begins earlier by approximately 10-20 days compared to 45 years ago.
 
 ```{r, message=FALSE, warning=FALSE}
-source("analysis.R", local = knitr::knit_global())
-
 ridges
 ```
 
@@ -186,71 +193,28 @@ for a given quantile $\tau$. Since the function is continuous and twice differen
 ## Results
 
 ### Results per species and location
-```{r, message=FALSE}
-source("models.R", local = knitr::knit_global())
-```
 
 
 ```{r}
-source("qr_models.R", local = knitr::knit_global())
-```
-
-```{r}
-qr_1 <- qr_1 %>% mutate("coefficient 1% (QR)" = model$coefficients["year"])
-qr_50 <- qr_50 %>% mutate("coefficient 50% (QR)" = model$coefficients["year"])
-qr_95 <- qr_95 %>% mutate("coefficient 95% (QR)" = model$coefficients["year"])
-
-joined <- eq_joined %>% left_join(qr_1 %>% dplyr::select(c(-model)), by = c("lat_name", "station")) %>%
-  left_join(qr_50 %>% dplyr::select(c(-model)), by = c("lat_name", "station")) %>%
-  left_join(qr_95 %>% dplyr::select(c(-model)), by = c("lat_name", "station")) %>%
-  mutate(across(where(is.numeric), ~ round(., 3)))
-
-# Tables for visualizing the EQ models
-joined_eq_1 <- joined %>% arrange(`coefficient 1%`) %>% 
-  dplyr::select(lat_name, station, latitude, `coefficient 1%`, `P value 1%`, `coefficient 1% (QR)`) %>%
-  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 1%", "P value (EQ)" = "P value 1%", "Coefficient (QR)" = "coefficient 1% (QR)")
-
-joined_eq_50 <- joined %>% arrange(`coefficient 50%`) %>% 
-  dplyr::select(lat_name, station, latitude, `coefficient 50%`, `P value 50%`, `coefficient 50% (QR)`) %>%
-  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 50%", "P value (EQ)" = "P value 50%", "Coefficient (QR)" = "coefficient 50% (QR)")
-
-joined_eq_95 <- joined %>% arrange(`coefficient 95%`) %>% 
-  dplyr::select(lat_name, station, latitude, `coefficient 95%`, `P value 95%`, `coefficient 95% (QR)`) %>%
-  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 95%", "P value (EQ)" = "P value 95%", "Coefficient (QR)" = "coefficient 95% (QR)")
-
-
-# Tables for visualizing the QR models
-joined_qr_1 <- joined %>% arrange(`coefficient 1% (QR)`) %>% 
-  dplyr::select(lat_name, station, latitude, `coefficient 1%`, `P value 1%`, `coefficient 1% (QR)`) %>%
-  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 1%", "P value (EQ)" = "P value 1%", "Coefficient (QR)" = "coefficient 1% (QR)")
-
-joined_qr_50 <- joined %>% arrange(`coefficient 50% (QR)`) %>% 
-  dplyr::select(lat_name, station, latitude, `coefficient 50%`, `P value 50%`, `coefficient 50% (QR)`) %>%
-  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 50%", "P value (EQ)" = "P value 50%", "Coefficient (QR)" = "coefficient 50% (QR)")
-
-joined_qr_95 <- joined %>% arrange(`coefficient 95% (QR)`) %>% 
-  dplyr::select(lat_name, station, latitude, `coefficient 95%`, `P value 95%`, `coefficient 95% (QR)`) %>%
-  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 95%", "P value (EQ)" = "P value 95%", "Coefficient (QR)" = "coefficient 95% (QR)")
-
 # EQ models
-head(joined_eq_1, 4)
-head(joined_eq_1 %>% map_df(rev), 4)
+kable(head(joined_eq_1, 4))
+kable(head(joined_eq_1 %>% map_df(rev), 4))
 
-head(joined_eq_50, 4)
-head(joined_eq_50 %>% map_df(rev), 4)
+kable(head(joined_eq_50, 4))
+kable(head(joined_eq_50 %>% map_df(rev), 4))
 
-head(joined_eq_95, 4)
-head(joined_eq_95 %>% map_df(rev), 4)
+kable(head(joined_eq_95, 4))
+kable(head(joined_eq_95 %>% map_df(rev), 4))
 
 # QR models
-head(joined_qr_1, 4)
-head(joined_qr_1 %>% map_df(rev), 4)
+kable(head(joined_qr_1, 4))
+kable(head(joined_qr_1 %>% map_df(rev), 4))
 
-head(joined_qr_50, 4)
-head(joined_qr_50 %>% map_df(rev), 4)
+kable(head(joined_qr_50, 4))
+kable(head(joined_qr_50 %>% map_df(rev), 4))
 
-head(joined_qr_95, 4)
-head(joined_qr_95 %>% map_df(rev), 4)
+kable(head(joined_qr_95, 4))
+kable(head(joined_qr_95 %>% map_df(rev), 4))
 ```
 
 
@@ -285,8 +249,6 @@ ggplot(data = joined_qr_95, aes(x = Latitude, y = `Coefficient (QR)`, colour = S
 
 ### Appendix 1: Translation of the latin names of pollen species
 ```{r, message=FALSE}
-source("analysis.R", local = knitr::knit_global())
-
 kable(translation)
 ```
 
