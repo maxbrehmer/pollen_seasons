@@ -23,19 +23,19 @@ library(gdata) # Renaming objects
 ```
 
 ```{r, message=FALSE, warning=FALSE}
-#source("data_wrangling.R", local = knitr::knit_global())
+source("data_wrangling.R", local = knitr::knit_global())
 ```
 
 ```{r, message=FALSE, warning=FALSE}
-#source("analysis.R", local = knitr::knit_global())
+source("analysis.R", local = knitr::knit_global())
 ```
 
 ```{r message=FALSE, warning=FALSE}
-#source("models.R", local = knitr::knit_global())
+source("models.R", local = knitr::knit_global())
 ```
 
 ```{r, message=FALSE, warning=FALSE}
-#source("qr_models.R", local = knitr::knit_global())
+source("qr_models.R", local = knitr::knit_global())
 ```
 
 ## Abstract
