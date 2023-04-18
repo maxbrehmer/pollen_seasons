@@ -21,15 +21,15 @@ joined <- eq_joined %>% left_join(qr_1 %>% dplyr::select(c(-model)), by = c("lat
 
 # Tables for visualizing the EQ models
 joined_eq_1 <- joined %>% arrange(`coefficient 1%`) %>% 
-  dplyr::select(lat_name, station, latitude, `coefficient 1%`, `P value 1%`, `coefficient 1% (QR)`) %>%
+  dplyr::select(lat_name, station, latitude, `coefficient 1%`, `P value 1%`, `coefficient 1% (QR)`, pred_2023) %>%
   rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 1%", "P value (EQ)" = "P value 1%", "Coefficient (QR)" = "coefficient 1% (QR)")
 
 joined_eq_50 <- joined %>% arrange(`coefficient 50%`) %>% 
-  dplyr::select(lat_name, station, latitude, `coefficient 50%`, `P value 50%`, `coefficient 50% (QR)`) %>%
+  dplyr::select(lat_name, station, latitude, `coefficient 50%`, `P value 50%`, `coefficient 50% (QR)`, pred_2023) %>%
   rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 50%", "P value (EQ)" = "P value 50%", "Coefficient (QR)" = "coefficient 50% (QR)")
 
 joined_eq_95 <- joined %>% arrange(`coefficient 95%`) %>% 
-  dplyr::select(lat_name, station, latitude, `coefficient 95%`, `P value 95%`, `coefficient 95% (QR)`) %>%
+  dplyr::select(lat_name, station, latitude, `coefficient 95%`, `P value 95%`, `coefficient 95% (QR)`, pred_2023) %>%
   rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 95%", "P value (EQ)" = "P value 95%", "Coefficient (QR)" = "coefficient 95% (QR)")
 
 

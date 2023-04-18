@@ -35,7 +35,7 @@ source("models.R", local = knitr::knit_global())
 ```
 
 ```{r, message=FALSE, warning=FALSE}
-source("qr_models.R", local = knitr::knit_global())
+#source("qr_models.R", local = knitr::knit_global())
 ```
 
 ## Abstract
@@ -197,24 +197,27 @@ for a given quantile $\tau$. Since the function is continuous and twice differen
 
 ```{r}
 # EQ models
-kable(head(joined_eq_1, 4))
-kable(head(joined_eq_1 %>% map_df(rev), 4))
+kable(head(joined_eq_1, 5), caption = "Start of pollen season for different species and locations, by most significant shift to earlier dates (EQ model)")
+kable(head(joined_eq_1 %>% map_df(rev), 5), caption = "Start of pollen season for different species and locations, by most significant shift to later dates (EQ model)")
 
-kable(head(joined_eq_50, 4))
-kable(head(joined_eq_50 %>% map_df(rev), 4))
+kable(head(joined_eq_50, 5), caption = "Peak of pollen season for different species and locations, by most significant shift to earlier dates (EQ model)")
+kable(head(joined_eq_50 %>% map_df(rev), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to later dates (EQ model)")
 
-kable(head(joined_eq_95, 4))
-kable(head(joined_eq_95 %>% map_df(rev), 4))
+kable(head(joined_eq_95, 5), caption = "End of pollen season for different species and locations, by most significant shift to earlier dates (EQ model)")
+kable(head(joined_eq_95 %>% map_df(rev), 5), caption = "End of pollen season for different species and locations, by most significant shift to later dates (EQ model)")
+```
 
+
+```{r}
 # QR models
-kable(head(joined_qr_1, 4))
-kable(head(joined_qr_1 %>% map_df(rev), 4))
+kable(head(joined_qr_1, 5), caption = "Start of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
+kable(head(joined_qr_1 %>% map_df(rev), 5), caption = "Start of pollen season for different species and locations, by most significant shift to later dates (QR model)")
 
-kable(head(joined_qr_50, 4))
-kable(head(joined_qr_50 %>% map_df(rev), 4))
+kable(head(joined_qr_50, 5), caption = "Peak of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
+kable(head(joined_qr_50 %>% map_df(rev), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to later dates (QR model)")
 
-kable(head(joined_qr_95, 4))
-kable(head(joined_qr_95 %>% map_df(rev), 4))
+kable(head(joined_qr_95, 5), caption = "End of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
+kable(head(joined_qr_95 %>% map_df(rev), 5), caption = "End of pollen season for different species and locations, by most significant shift to later dates (QR model)")
 ```
 
 
