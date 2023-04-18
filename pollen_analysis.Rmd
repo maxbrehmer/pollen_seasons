@@ -208,7 +208,7 @@ kable(head(joined_eq_95 %>% map_df(rev), 5), caption = "End of pollen season for
 ```
 
 
-```{r}
+```{r, include=FALSE}
 # QR models
 kable(head(joined_qr_1, 5), caption = "Start of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
 kable(head(joined_qr_1 %>% map_df(rev), 5), caption = "Start of pollen season for different species and locations, by most significant shift to later dates (QR model)")
