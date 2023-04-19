@@ -46,22 +46,7 @@ joined_eq_95 <- joined %>% arrange(`coefficient 95%`) %>%
   rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 95%", 
          "P value (EQ)" = "P value 95%", "Coefficient (QR)" = "coefficient 95% (QR)", "Predicted 2023 (EQ)" = "Predicted 2023 95% (EQ)", "Predicted 2023 (QR)" = "Predicted 2023 95% (QR)", "Predicted 1973 (EQ)" = "Predicted 1973 95% (EQ)", "Predicted 1973 (QR)" = "Predicted 1973 95% (QR)")
 
-
 # Tables for visualizing the QR models
-#joined_qr_1 <- joined %>% arrange(`coefficient 1% (QR)`) %>% 
-#  dplyr::select(lat_name, station, latitude, `coefficient 1%`, `P value 1%`, `coefficient 1% (QR)`) %>%
-#  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 1%", "P value (EQ)" = "P value 1%", "Coefficient (QR)" = "coefficient 1% (QR)")
-
-#joined_qr_50 <- joined %>% arrange(`coefficient 50% (QR)`) %>% 
-#  dplyr::select(lat_name, station, latitude, `coefficient 50%`, `P value 50%`, `coefficient 50% (QR)`) %>%
-#  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 50%", "P value (EQ)" = "P value 50%", "Coefficient (QR)" = "coefficient 50% (QR)")
-
-#joined_qr_95 <- joined %>% arrange(`coefficient 95% (QR)`) %>% 
-#  dplyr::select(lat_name, station, latitude, `coefficient 95%`, `P value 95%`, `coefficient 95% (QR)`) %>%
-#  rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 95%", "P value (EQ)" = "P value 95%", "Coefficient (QR)" = "coefficient 95% (QR)")
-
-
-
 joined_qr_1 <- joined %>% arrange(`coefficient 1% (QR)`) %>% 
   dplyr::select(lat_name, station, latitude, `coefficient 1%`, `P value 1%`, `coefficient 1% (QR)`, `Predicted 2023 1% (EQ)`, `Predicted 2023 1% (QR)`, `Predicted 1973 1% (EQ)`, `Predicted 1973 1% (QR)`) %>%
   rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 1%", 

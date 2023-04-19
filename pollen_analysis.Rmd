@@ -98,14 +98,16 @@ ridges
 ## Theory
 In this section we explain the underlying theory behind the statistical approaches used for our data analysis. We will compare the simpler empirical quantile linear model (EQ), as used in [karlsson2022comparison] with the supposedly more powerful nonparametric quantile regression which we will refer to as QR. Both of these approaches estimate the response variable as the conditional median or other quantiles of the predictor variables as opposed to ordinary linear regression which uses the method of ordinary least squares (OLS) to estimate the conditional mean [Wikipedia].
 
-OLS regression is the preferred method for many research purposes due to its inherent simplicity. However for it to be effective, a lot of assumptions need to be made about the data. More specifically homoscedasticity and normally distributed observations are two of the most central aspects of linear regression, meaning a linear regression model performs poorly for data that is heteroscadastic and/or non-normally distributed. By estimating the conditional median however, as opposed to the mean, we get a model that yields better predictions for data with these properties. Another advantage of using quantile based methods is that one can make more accurate predictions about outliers, since nonlinear tendencies may lead to abnormal behaviors for more extreme observations, which can be more accurately accounted for when looking at quantiles rather than the mean.
+OLS regression is the preferred method for many research purposes due to its inherent simplicity. In this research paper however, we are more interested in patterns for certain quantiles of data than the mean. To do this effectively we have conducted our research using quantile regression methods instead.
+
+An aspect in which quantile regression performs better than linear regression is when data is not homoscedastic or normally distributed. Linear regression models perform poorly for data that is heteroscadastic and/or non-normally distributed. By estimating the conditional median however, as opposed to the mean, we get a model that yields better predictions for data with these properties. Another advantage of using quantile based methods is that one can make more accurate predictions about outliers, since nonlinear tendencies may lead to abnormal behaviors for more extreme observations, which can be more accurately accounted for when looking at quantiles rather than the mean.
 
 All models in this paper will use `date` as the response variable, or a yearly quantile of `date`. The release date of pollen grain $i \in \{ 1,...,n \}$, where $n$ is the total amount of pollen grains released, is predicted by the models as the response $y_i$. We form a covariate vector $x_i = (1, \, t_i)$ which includes an intercept and the predictor variable $t_i \in \mathcal{T} = { \{1,...,T\}}$ which refers to the gregorian year of observation with $T$ being the amount of years monitored.
 
 In order to make an educated analysis of the behaviour of pollen release we need a strict definition for what constitutes a pollen season. There have been many attempts by various authors to find an optimal definition for the dates of which each pollen season covers. In this paper we classify the dates within which the pollen season is deemed active by referring to the EAN definition. [bastl2018defining] The EAN database contains a lot of data on pollen release in which they define the pollen season as the date at which at least $1\%$ of the yearly pollen have been counted. By the same definition, the pollen season is said to end when 95% of all pollen has been released.
 
 ### Nonparametric quantile regression
-By nonparametric regression models we refer to models that do not make any assumptions about the functional form of the relationship between the response variable and predictor variable(s). The advantage of this approach is that one can capture complex nonlinear relationships and is more robust when it comes to dealing with significant outliers in the data. By applying the theory of nonparametric models to a linear predictor of the conditional median, we arrive at the basis of a nonparametric quantile regression model.
+By nonparametric regression models we refer to models that do not make any parametric assumptions about the form of the conditional distribution function, the relationship between the response variable and predictor variable(s) are linear however. By applying the theory of nonparametric models to a linear predictor of the conditional median, we arrive at the basis of a nonparametric quantile regression model.
 
 For a univariate nonparametric QR model, consider the observed response date $y_i$ of grain $i$ and the predictor variable year $t_i$ with an intercept in the $(n \times 2)$-matrix $X$.
 $$
@@ -163,7 +165,7 @@ $$
 
 As in the previous method we construct the $(n \times 2)$ matrix $X$ by stacking each of the covariates $(1, t)$ on top of each other. Let $\tau \in (0,1)$ be a quantile. For each of our sets $\mathcal{Y}$ we let $\hat{F}_{(x,t)}$ be the empirical distribution function formed by the elements of its set. The corresponding empirical quantile is defined as
 $$
-\hat{Q}_{(x,t)}(\tau) = \text{inf} \left\{ y \in \mathcal{Y}_{t} : \hat{F}_t(y) \geq \tau \mid \mathcal{Y}_t \neq \emptyset \right\}. \quad (?)
+\hat{Q}_{(t)}(\tau) = \text{inf} \left\{ y \in \mathcal{Y}_{t} : \hat{F}_t(y) \geq \tau \mid \mathcal{Y}_t \neq \emptyset \right\}. \quad (?)
 $$
 
 For all $t \in \mathcal{T}$, we stack these quantiles into the vector of observations $Y(\tau)$. Next we formulate the linear model
@@ -210,14 +212,14 @@ kable(head(joined_eq_95 %>% dplyr::select(Species, Location, `Coefficient (EQ)`,
 
 ```{r, include=FALSE}
 # QR models
-#kable(head(joined_qr_1, 5), caption = "Start of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
-#kable(head(joined_qr_1 %>% map_df(rev), 5), caption = "Start of pollen season for different species and locations, by most significant shift to later dates (QR model)")
+#kable(head(joined_qr_1 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `P value (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`), 5), caption = "Start of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
+#kable(head(joined_qr_1 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `P value (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`) %>% map_df(rev), 5), caption = "Start of pollen season for different species and locations, by most significant shift to later dates (QR model)")
 
-#kable(head(joined_qr_50, 5), caption = "Peak of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
-#kable(head(joined_qr_50 %>% map_df(rev), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to later dates (QR model)")
+#kable(head(joined_qr_50 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `P value (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
+#kable(head(joined_qr_50 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `P value (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`) %>% map_df(rev), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to later dates (QR model)")
 
-#kable(head(joined_qr_95, 5), caption = "End of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
-#kable(head(joined_qr_95 %>% map_df(rev), 5), caption = "End of pollen season for different species and locations, by most significant shift to later dates (QR model)")
+#kable(head(joined_qr_95 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `P value (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`), 5), caption = "End of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
+#kable(head(joined_qr_95 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `P value (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`) %>% map_df(rev), 5), caption = "End of pollen season for different species and locations, by most significant shift to later dates (QR model)")
 ```
 
 
