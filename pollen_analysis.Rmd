@@ -35,7 +35,7 @@ source("models.R", local = knitr::knit_global())
 ```
 
 ```{r, message=FALSE, warning=FALSE}
-#source("qr_models.R", local = knitr::knit_global())
+source("qr_models.R", local = knitr::knit_global())
 ```
 
 ## Abstract
@@ -210,16 +210,16 @@ kable(head(joined_eq_95 %>% dplyr::select(Species, Location, `Coefficient (EQ)`,
 ```
 
 
-```{r, include=FALSE}
+```{r}
 # QR models
-#kable(head(joined_qr_1 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `P value (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`), 5), caption = "Start of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
-#kable(head(joined_qr_1 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `P value (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`) %>% map_df(rev), 5), caption = "Start of pollen season for different species and locations, by most significant shift to later dates (QR model)")
+kable(head(joined_qr_1 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`), 5), caption = "Start of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
+kable(head(joined_qr_1 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`) %>% map_df(rev), 5), caption = "Start of pollen season for different species and locations, by most significant shift to later dates (QR model)")
 
-#kable(head(joined_qr_50 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `P value (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
-#kable(head(joined_qr_50 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `P value (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`) %>% map_df(rev), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to later dates (QR model)")
+kable(head(joined_qr_50 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
+kable(head(joined_qr_50 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`) %>% map_df(rev), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to later dates (QR model)")
 
-#kable(head(joined_qr_95 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `P value (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`), 5), caption = "End of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
-#kable(head(joined_qr_95 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `P value (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`) %>% map_df(rev), 5), caption = "End of pollen season for different species and locations, by most significant shift to later dates (QR model)")
+kable(head(joined_qr_95 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`), 5), caption = "End of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
+kable(head(joined_qr_95 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`) %>% map_df(rev), 5), caption = "End of pollen season for different species and locations, by most significant shift to later dates (QR model)")
 ```
 
 
