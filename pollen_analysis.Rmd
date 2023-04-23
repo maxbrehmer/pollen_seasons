@@ -35,7 +35,7 @@ source("models.R", local = knitr::knit_global())
 ```
 
 ```{r, message=FALSE, warning=FALSE}
-source("qr_models.R", local = knitr::knit_global())
+#source("qr_models.R", local = knitr::knit_global())
 ```
 
 ## Abstract
@@ -243,6 +243,18 @@ ggplot(data = joined_eq_95, aes(x = Latitude, y = `Coefficient (EQ)`, colour = S
   facet_wrap(~Species) +
   labs(colour = "Species", x = "Latitude", y = "Coefficient")
 ```
+
+```{r}
+QR <- rq(formula = greg_day ~ year + factor(lat_name), data = df %>% filter(station == "Stockholm"), tau = seq(0.05, 0.95, by = 0.05))
+
+sumQR <- summary(QR)
+
+```
+
+```{r}
+plot(sumQR)
+```
+
 
 ## Discussion
 
