@@ -1,5 +1,5 @@
 # Setting year as starting at 1973
-df <- df %>% mutate(year = year - 1972)
+#df <- df %>% mutate(year = year - 1972)
 
 # Model: Linear regression on quantiles
 

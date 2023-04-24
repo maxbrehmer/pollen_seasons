@@ -245,14 +245,37 @@ ggplot(data = joined_eq_95, aes(x = Latitude, y = `Coefficient (EQ)`, colour = S
 ```
 
 ```{r}
-QR <- rq(formula = greg_day ~ year + factor(lat_name), data = df %>% filter(station == "Stockholm"), tau = seq(0.05, 0.95, by = 0.05))
+QR <- rq(formula = greg_day ~ year, data = df %>% filter(station == "Stockholm", lat_name == "Alnus"), tau = 1:99/100)
 
 sumQR <- summary(QR)
-
 ```
 
+
 ```{r}
-plot(sumQR)
+QR_tidy <- QR %>%
+  broom::tidy(se.type = "rank", conf.int = TRUE, conf.level = 0.95) %>%
+  filter(!grepl("factor", term))
+```
+
+
+```{r}
+#lm <- lm(data=mtcars, 
+#         formula =  hp ~  disp + mpg + I(mpg^2) + qsec + am)
+
+#ols <- as.data.frame(coef(lm))
+#ols.ci <- as.data.frame(confint(lm))
+#ols2 <- cbind(ols, ols.ci)
+#ols2 <- tibble::rownames_to_column(ols2, var="term")
+
+
+plotQR <- QR_tidy %>% 
+  ggplot(aes(x=tau,y=estimate)) +
+  geom_line(color="#eb2a3d", size = 0.5) +
+  #geom_hline(data = ?, aes(yintercept= `coef(lm)`), lty=1, color="#512ffa", size=1) + 
+  geom_ribbon(aes(ymin=conf.low, ymax=conf.high), alpha=0.25, fill="#eb2a3d") +
+  facet_wrap(~term, scales="free", ncol=2)
+
+plotQR
 ```
 
 
