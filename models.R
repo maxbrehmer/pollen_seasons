@@ -1,42 +1,42 @@
-# Setting year as starting at 1973
-#df <- df %>% mutate(year = year - 1972)
+# Setting years before 2023 as starting at 2023 and going backwards
+df <- df %>% mutate(year_bf2023 = year - 1973)
 
 # Model: Linear regression on quantiles
 
 # 1st quantile
 data_q1 <- df %>%
-  group_by(year, lat_name, station, latitude) %>%
+  group_by(year_bf2023, lat_name, station, latitude) %>%
   summarise(q1 = quantile(greg_day, prob = .01))
 
-eq_1 <- data_q1 %>% ungroup() %>% nest_by(lat_name, station, latitude) %>% mutate(model = list(lm(formula = q1 ~ year, data = data))) %>%
-  mutate(coeff = summary(model)$coefficients["year", "Estimate"], "P value" = summary(model)$coefficients["year", "Pr(>|t|)"], "Adj. R-squared" = summary(model)$adj.r.squared) %>%
+eq_1 <- data_q1 %>% ungroup() %>% nest_by(lat_name, station, latitude) %>% mutate(model = list(lm(formula = q1 ~ year_bf2023, data = data))) %>%
+  mutate(coeff = summary(model)$coefficients["year_bf2023", "Estimate"], "P value" = summary(model)$coefficients["year_bf2023", "Pr(>|t|)"], "Adj. R-squared" = summary(model)$adj.r.squared) %>%
   rowwise() %>%
-  mutate(`Predicted 2023 1% (EQ)` = as.integer(predict(lm(q1 ~ year, data = data), newdata = data.frame(year = 2023))), 
-         `Predicted 1973 1% (EQ)` = as.integer(predict(lm(q1 ~ year, data = data), newdata = data.frame(year = 1973)))) %>%
+  mutate(`Predicted 2023 1% (EQ)` = as.integer(predict(lm(q1 ~ year_bf2023, data = data), newdata = data.frame(year_bf2023 = 50))), 
+         `Predicted 1973 1% (EQ)` = as.integer(predict(lm(q1 ~ year_bf2023, data = data), newdata = data.frame(year_bf2023 = 0)))) %>%
   dplyr::select(c(-data))
 
 # 50th quantile (median)
 data_q50 <- df %>%
-  group_by(year, lat_name, station, latitude) %>%
+  group_by(year_bf2023, lat_name, station, latitude) %>%
   summarise(q50 = quantile(greg_day, prob = .5))
 
-eq_50 <- data_q50 %>% ungroup() %>% nest_by(lat_name, station, latitude) %>% mutate(model = list(lm(formula = q50 ~ year, data = data))) %>%
-  mutate(coeff = summary(model)$coefficients["year", "Estimate"], "P value" = summary(model)$coefficients["year", "Pr(>|t|)"], "Adj. R-squared" = summary(model)$adj.r.squared) %>%
+eq_50 <- data_q50 %>% ungroup() %>% nest_by(lat_name, station, latitude) %>% mutate(model = list(lm(formula = q50 ~ year_bf2023, data = data))) %>%
+  mutate(coeff = summary(model)$coefficients["year_bf2023", "Estimate"], "P value" = summary(model)$coefficients["year_bf2023", "Pr(>|t|)"], "Adj. R-squared" = summary(model)$adj.r.squared) %>%
   rowwise() %>%
-  mutate(`Predicted 2023 50% (EQ)` = as.integer(predict(lm(q50 ~ year, data = data), newdata = data.frame(year = 2023))), 
-         `Predicted 1973 50% (EQ)` = as.integer(predict(lm(q50 ~ year, data = data), newdata = data.frame(year = 1973)))) %>%
+  mutate(`Predicted 2023 50% (EQ)` = as.integer(predict(lm(q50 ~ year_bf2023, data = data), newdata = data.frame(year_bf2023 = 50))), 
+         `Predicted 1973 50% (EQ)` = as.integer(predict(lm(q50 ~ year_bf2023, data = data), newdata = data.frame(year_bf2023 = 0)))) %>%
   dplyr::select(c(-data))
 
 # 95th quantile
 data_q95 <- df %>%
-  group_by(year, lat_name, station, latitude) %>%
+  group_by(year_bf2023, lat_name, station, latitude) %>%
   summarise(q95 = quantile(greg_day, prob = .95))
 
-eq_95 <- data_q95 %>% ungroup() %>% nest_by(lat_name, station, latitude) %>% mutate(model = list(lm(formula = q95 ~ year, data = data))) %>%
-  mutate(coeff = summary(model)$coefficients["year", "Estimate"], "P value" = summary(model)$coefficients["year", "Pr(>|t|)"], "Adj. R-squared" = summary(model)$adj.r.squared) %>%
+eq_95 <- data_q95 %>% ungroup() %>% nest_by(lat_name, station, latitude) %>% mutate(model = list(lm(formula = q95 ~ year_bf2023, data = data))) %>%
+  mutate(coeff = summary(model)$coefficients["year_bf2023", "Estimate"], "P value" = summary(model)$coefficients["year_bf2023", "Pr(>|t|)"], "Adj. R-squared" = summary(model)$adj.r.squared) %>%
   rowwise() %>%
-  mutate(`Predicted 2023 95% (EQ)` = as.integer(predict(lm(q95 ~ year, data = data), newdata = data.frame(year = 2023))), 
-         `Predicted 1973 95% (EQ)` = as.integer(predict(lm(q95 ~ year, data = data), newdata = data.frame(year = 1973)))) %>%
+  mutate(`Predicted 2023 95% (EQ)` = as.integer(predict(lm(q95 ~ year_bf2023, data = data), newdata = data.frame(year_bf2023 = 50))), 
+         `Predicted 1973 95% (EQ)` = as.integer(predict(lm(q95 ~ year_bf2023, data = data), newdata = data.frame(year_bf2023 = 0)))) %>%
   dplyr::select(c(-data))
 
 # Joining together the relevant information from each table
