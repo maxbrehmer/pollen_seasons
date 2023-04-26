@@ -251,7 +251,7 @@ ggplot(data = joined_eq_95, aes(x = Latitude, y = `Coefficient (EQ)`, colour = S
 
 ```{r, warning=FALSE}
 # QR performance testing
-QR <- rq(formula = greg_day ~ `Years since 1973`, data = df %>% filter(station == "Stockholm"), tau = 1:99/100)
+QR <- rq(formula = greg_day ~ Year, data = df %>% filter(station == "Stockholm"), tau = 1:99/100)
 
 sumQR <- summary(QR)
 ```
@@ -263,7 +263,7 @@ QR_tidy <- QR %>%
 ```
 
 ```{r, warning=FALSE}
-lm <- lm(data = df %>% filter(station == "Stockholm"), formula = greg_day ~ `Years since 1973`)
+lm <- lm(data = df %>% filter(station == "Stockholm"), formula = greg_day ~ Year)
 
 ols <- as.data.frame(coef(lm))
 ols.ci <- as.data.frame(confint(lm))
@@ -293,7 +293,7 @@ for (i in seq_along(quantile_levels)) {
   quantile_data <- df %>% filter(station == "Stockholm", greg_day <= quantile_val)
   
   # Fit linear regression for the current quantile level
-  lm_quantile <- lm(formula = greg_day ~ `Years since 1973`, data = quantile_data)
+  lm_quantile <- lm(formula = greg_day ~ Year, data = quantile_data)
   
   # Extract coefficient estimates and confidence intervals
   lm_quantile_coef <- coef(lm_quantile)
@@ -306,15 +306,12 @@ for (i in seq_along(quantile_levels)) {
   lm_quantile_df_tau[i+i-1, "conf.high"] <- lm_quantile_ci["(Intercept)", 2]
   lm_quantile_df_tau[i+i-1, "tau"] <- tau
   
-  lm_quantile_df_tau[i+i, "term"] <- "Years since 1973"
+  lm_quantile_df_tau[i+i, "term"] <- "Year"
   lm_quantile_df_tau[i+i, "estimate"] <- lm_quantile_coef[2]
-  lm_quantile_df_tau[i+i, "conf.low"] <- lm_quantile_ci["Years since 1973", 1]
-  lm_quantile_df_tau[i+i, "conf.high"] <- lm_quantile_ci["Years since 1973", 2]
+  lm_quantile_df_tau[i+i, "conf.low"] <- lm_quantile_ci["Year", 1]
+  lm_quantile_df_tau[i+i, "conf.high"] <- lm_quantile_ci["Year", 2]
   lm_quantile_df_tau[i+i, "tau"] <- tau
 }
-
-lm_quantile_df_tau <- lm_quantile_df_tau %>%
-  mutate(term = replace(term, term == c("Years since 1973"), c("Year")))
 ```
 
 
