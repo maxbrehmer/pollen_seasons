@@ -90,16 +90,16 @@ kable(stations)
 First we remove any observations with missing values in any of the columns `date`, `station` or `species` since these are fundamental parameters to perform the data analysis. For the purposes of EQ regression, the time it takes to compute the models on the entire dataset in `R` is negligible. For nonparametric quantile regression however, the computational time appears to grow very quickly with the amount of observations. This has led us to the decision to reduce the amount of content in each dataset (one dataset containing all observations of any combination of `station` and `species`) to below a fixed limit. Without reducing any data, the largest data sets contain $\approx 500 000$ observations, while some combinations of data contain considerably fewer. By testing and optimizing the models for various sizes of the datasets we decided to set the limit to $5 000$ observations per combination of data. This reduces the running time considerably, making the process of analyzing our results much easier. In order to minimize the affect this has on our results the rows must be removed uniformly over the time of year. If the number of observations in a dataset is smaller than $n \cdot 5 000$, we want to select every $n$th element and discard the rest. We can do this in `R` by using the `slice` and `bind_rows` functions from the `dplyr` package. By performing these modifications to our data, we are sure to keep the shape of the distributions the same and thus the results of the quantile regression.
 
 ### Yearly distribution of pollen
-Before constructing the models, we can take a glance at what sort of results to expect from the subsequent regression analysis. In figure ? we present a ridge plot containing information about the distribution of observed pollen by date of year. By looking at the average distribution from the first and last 5 years in the dataset respectively, we construct a somewhat consistent average in terms of the state of the pollen season at a given location, reducing the risk of falsely identifying outlier data as patterned occurrences. We can conclude that, in the Stockholm area, the pollen season seemed to begin earlier for all the arboreal pollen species while grass pollen did not appear to show those tendencies. In general the shape of the pollen distribution was not seen to have been altered over time. A visual analysis of the distribution of yearly pollen release may suggest that the average pollen season now begins earlier by approximately 10-20 days compared to 45 years ago.
+Before constructing the models, we can take a glance at what sort of results to expect from the subsequent regression analysis. In figure ? we present a ridge plot containing information about the distribution of observed pollen by date of year. The `geom_density_ridges` function from the `R` library `ggridges` is used to fit a continuous density function to what is essentially a histogram of the frequency of pollen on each date.
 
-Comment on geom_density_ridges... (Kernel desnity estimates)
+By looking at the average distribution from the first and last 5 years in the dataset respectively, we construct a somewhat consistent average in terms of the state of the pollen season at a given location, reducing the risk of falsely identifying outlier data as patterned occurrences. We can conclude that, in the Stockholm area, the pollen season seemed to begin earlier for all the arboreal pollen species while grass pollen (Poaceae) did not appear to show those tendencies. In general the shape of the pollen distribution was not seen to have been altered over time. A visual analysis of the distribution of yearly pollen release may suggest that the average pollen season now begins earlier by up to a month compared to 45 years ago.
 
 ```{r, message=FALSE, warning=FALSE}
 ridges
 ```
 
 ## Theory
-In this section we explain the underlying theory behind the statistical approaches used for our data analysis. We will compare the simpler empirical quantile linear model (EQ), as used in [karlsson2022comparison] with the supposedly more powerful nonparametric quantile regression which we will refer to as QR. Both of these approaches estimate the response variable as the conditional median or other quantiles of the predictor variables as opposed to ordinary linear regression which uses the method of ordinary least squares (OLS) to estimate the conditional mean [Wikipedia].
+In this section we explain the underlying theory behind the statistical approaches used for our data analysis. We will compare the simpler "empirical quantile linear" model (EQ), as used in [karlsson2022comparison] with the supposedly more powerful method "nonparametric quantile regression" which we will refer to as QR. Both of these approaches estimate the response variable as the conditional median or other quantiles of the predictor variables as opposed to ordinary linear regression which uses the method of ordinary least squares (OLS) to estimate the conditional mean [Wikipedia].
 
 OLS regression is the preferred method for many research purposes due to its inherent simplicity. In this research paper however, we are more interested in patterns for certain quantiles of data than the mean. To do this effectively we have conducted our research using quantile regression methods instead.
 
@@ -166,7 +166,7 @@ $$
 \mathcal{Y}_{t} = \left\{ y_i : I(t_i = t) \right\} \quad (?)
 $$
 
-As in the previous method we construct the $(n \times 2)$ matrix $X$ by stacking each of the covariates $(1, t)$ on top of each other. Let $\tau \in (0,1)$ be a quantile. For each of our sets $\mathcal{Y}$ we let $\hat{F}_{(t)}$ be the empirical distribution function formed by the elements of its set. The corresponding empirical quantile is defined as
+As in the previous method we construct the $(n \times 2)$ matrix $X$ by stacking the intercept and vector of years $(1, t)$ on top of each other. Let $\tau \in (0,1)$ be a quantile. For each of our sets $\mathcal{Y}$ we let $\hat{F}_{(t)}$ be the empirical distribution function formed by the elements of its set. The corresponding empirical quantile is defined as
 $$
 \hat{Q}_{(t)}(\tau) = \text{inf} \left\{ y \in \mathcal{Y}_{t} : \hat{F}_t(y) \geq \tau \mid \mathcal{Y}_t \neq \emptyset \right\}. \quad (?)
 $$
@@ -176,16 +176,16 @@ $$
 Y(\tau) = X\beta(\tau) + \varepsilon(\tau). \quad (?)
 $$
 
-As before $\beta = (\beta_0, \beta_t)$ defines the regression parameters for the intercept $\beta_0$ and year $\beta_1$. Recall that in the nonparametric method, no assumptions were made about the error terms. In this approach however, we assume a normal distribution of the error terms $\varepsilon(\tau) \sim N(0, \sigma^2(\tau)I_T )$, where $I_T$ is the identity matrix of rank $T$. 
+As before $\beta = (\beta_0, \beta_t)$ defines the regression parameters for the intercept $\beta_0$ and year $\beta_t$. Recall that in the nonparametric method, no assumptions were made about the error terms. In this approach however, we assume a normal distribution of the error terms $\varepsilon(\tau) \sim N(0, \sigma^2(\tau)I_T )$, where $I_T$ is the identity matrix of rank $T$. 
 
-The log-likelihood (omitting $\tau$) of the model is given by 
+The log-likelihood of the model is given by 
 $$
-l(\beta, \sigma^2 \mid Y, X) = \sum_{t \in \mathcal{T}} \text{log } f \left( \hat{Q}_t(\tau) \mid (X\beta)_t, \sigma^2 \right) \quad (?)
+l(\beta(\tau), \sigma^2(\tau) \mid Y(\tau), X) = \sum_{t \in \mathcal{T}} \text{log } f \left( \hat{Q}_t(\tau) \mid (X\beta(\tau))_t, \sigma^2(\tau) \right) \quad (?)
 $$
 
-This model grants each year $t$ the same weight, not each individual pollen. To get even weighting of each pollen, we simply add a weight factor $w_t = \lvert \mathcal{Y}_t \rvert$ to each empirical quantile $\hat{Q}_t(\tau)$. The reweighed log-likelihood (?), again omitting $\tau$ from the notation, takes the form
+So far in this approach the model grants each year $t$ the same weight, not each individual pollen. Since the amount of pollen observed each year does not remain constant. A reweighting of the log-likelihood may be conducted as to grant each pollen the same weight. To get even weighting of each pollen, we add a weight factor $w_t = \lvert \mathcal{Y}_t \rvert$ to each empirical quantile $\hat{Q}_t(\tau)$. The reweighed log-likelihood (?), takes the form
 $$
-l_w(\beta, \sigma^2 \mid Y, X) = \sum_{t \in \mathcal{T}} w_t \, \text{log } f \left( \hat{Q}_t(\tau) \mid (X\beta)_t, \sigma^2 \right), \quad (?)
+l_w(\beta(\tau), \sigma^2(\tau) \mid Y(\tau), X) = \sum_{t \in \mathcal{T}} w_t \, \text{log } f \left( \hat{Q}_t(\tau) \mid (X\beta(\tau))_t, \sigma^2(\tau) \right), \quad (?)
 $$
 
 To proceed fitting the model, we attempt to find the maximum likelihood estimate (MLE) of $\beta(\tau)$ and $\sigma^2(\tau)$ by optimizing
