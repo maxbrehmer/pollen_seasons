@@ -188,6 +188,8 @@ $$
 l_w(\beta(\tau), \sigma^2(\tau) \mid Y(\tau), X) = \sum_{t \in \mathcal{T}} w_t \, \text{log } f \left( \hat{Q}_t(\tau) \mid (X\beta(\tau))_t, \sigma^2(\tau) \right), \quad (?)
 $$
 
+This can easily be implemented with the `weights` argument of the `lm` function where we set the weight to be $\frac{1}{\text{nr of observaitons}}$.
+
 To proceed fitting the model, we attempt to find the maximum likelihood estimate (MLE) of $\beta(\tau)$ and $\sigma^2(\tau)$ by optimizing
 $$
 MLE(\beta(\tau), \sigma^2(\tau)) =  \arg \max \, l_{w}(\beta(\tau), \sigma^2(\tau) \mid Y(\tau),X) \quad (?)

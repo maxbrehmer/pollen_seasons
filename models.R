@@ -18,7 +18,7 @@ weights_q1 <- data_q1 %>%
 eq_1 <- data_q1 %>% ungroup() %>% nest_by(lat_name, station, latitude) %>%
   left_join(weights_q1, by = c("lat_name", "station")) %>% mutate(weight = 1/n) %>%
 
-  mutate(model = list(lm(formula = q1 ~ Year, data = data))) %>%
+  mutate(model = list(lm(formula = q1 ~ Year, data = data, weights = rep(weight, times = n)))) %>%
   mutate(coeff = summary(model)$coefficients["Year", "Estimate"], 
          "P value" = summary(model)$coefficients["Year", "Pr(>|t|)"], "Adj. R-squared" = summary(model)$adj.r.squared) %>%
   rowwise() %>%
@@ -40,7 +40,7 @@ weights_q50 <- data_q50 %>%
 eq_50 <- data_q50 %>% ungroup() %>% nest_by(lat_name, station, latitude) %>%
   left_join(weights_q50, by = c("lat_name", "station")) %>% mutate(weight = 1/n) %>%
   
-  mutate(model = list(lm(formula = q50 ~ Year, data = data))) %>%
+  mutate(model = list(lm(formula = q50 ~ Year, data = data, weights = rep(weight, times = n)))) %>%
   mutate(coeff = summary(model)$coefficients["Year", "Estimate"], 
          "P value" = summary(model)$coefficients["Year", "Pr(>|t|)"], "Adj. R-squared" = summary(model)$adj.r.squared) %>%
   rowwise() %>%
@@ -62,7 +62,7 @@ weights_q95 <- data_q95 %>%
 eq_95 <- data_q95 %>% ungroup() %>% nest_by(lat_name, station, latitude) %>%
   left_join(weights_q95, by = c("lat_name", "station")) %>% mutate(weight = 1/n) %>%
   
-  mutate(model = list(lm(formula = q95 ~ Year, data = data))) %>%
+  mutate(model = list(lm(formula = q95 ~ Year, data = data, weights = rep(weight, times = n)))) %>%
   mutate(coeff = summary(model)$coefficients["Year", "Estimate"], 
          "P value" = summary(model)$coefficients["Year", "Pr(>|t|)"], "Adj. R-squared" = summary(model)$adj.r.squared) %>%
   rowwise() %>%
