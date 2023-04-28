@@ -1,24 +1,23 @@
 # Setting years before 2023 as starting at 2023 and going backwards
 df <- df %>% mutate(Year = year - 1973)
 
-
-
 # Model: Linear regression on quantiles
+
+# Creating vector for reweighting
+count_per_year <- df %>% group_by(lat_name, station) %>% count(Year)
+
+new_count <- count_per_year %>%
+  group_by(lat_name, station) %>%
+  summarize(n_list = list(n))
 
 # 1st quantile
 data_q1 <- df %>%
   group_by(Year, lat_name, station, latitude) %>%
   summarise(q1 = quantile(greg_day, prob = .01))
 
-weights_q1 <- data_q1 %>%
-  group_by(lat_name, station) %>% 
-  summarise(n = n()) %>%
-  ungroup()
-
 eq_1 <- data_q1 %>% ungroup() %>% nest_by(lat_name, station, latitude) %>%
-  left_join(weights_q1, by = c("lat_name", "station")) %>% mutate(weight = 1/n) %>%
-
-  mutate(model = list(lm(formula = q1 ~ Year, data = data, weights = rep(weight, times = n)))) %>%
+  left_join(new_count, by = c("lat_name", "station")) %>%
+  mutate(model = list(lm(formula = q1 ~ Year, data = data, weights = n_list))) %>%
   mutate(coeff = summary(model)$coefficients["Year", "Estimate"], 
          "P value" = summary(model)$coefficients["Year", "Pr(>|t|)"], "Adj. R-squared" = summary(model)$adj.r.squared) %>%
   rowwise() %>%
@@ -32,15 +31,9 @@ data_q50 <- df %>%
   group_by(Year, lat_name, station, latitude) %>%
   summarise(q50 = quantile(greg_day, prob = .5))
 
-weights_q50 <- data_q50 %>%
-  group_by(lat_name, station) %>% 
-  summarise(n = n()) %>%
-  ungroup()
-
 eq_50 <- data_q50 %>% ungroup() %>% nest_by(lat_name, station, latitude) %>%
-  left_join(weights_q50, by = c("lat_name", "station")) %>% mutate(weight = 1/n) %>%
-  
-  mutate(model = list(lm(formula = q50 ~ Year, data = data, weights = rep(weight, times = n)))) %>%
+  left_join(new_count, by = c("lat_name", "station")) %>%
+  mutate(model = list(lm(formula = q50 ~ Year, data = data, weights = n_list))) %>%
   mutate(coeff = summary(model)$coefficients["Year", "Estimate"], 
          "P value" = summary(model)$coefficients["Year", "Pr(>|t|)"], "Adj. R-squared" = summary(model)$adj.r.squared) %>%
   rowwise() %>%
@@ -54,15 +47,9 @@ data_q95 <- df %>%
   group_by(Year, lat_name, station, latitude) %>%
   summarise(q95 = quantile(greg_day, prob = .95))
 
-weights_q95 <- data_q95 %>%
-  group_by(lat_name, station) %>% 
-  summarise(n = n()) %>%
-  ungroup()
-
 eq_95 <- data_q95 %>% ungroup() %>% nest_by(lat_name, station, latitude) %>%
-  left_join(weights_q95, by = c("lat_name", "station")) %>% mutate(weight = 1/n) %>%
-  
-  mutate(model = list(lm(formula = q95 ~ Year, data = data, weights = rep(weight, times = n)))) %>%
+  left_join(new_count, by = c("lat_name", "station")) %>%
+  mutate(model = list(lm(formula = q95 ~ Year, data = data, weights = n_list))) %>%
   mutate(coeff = summary(model)$coefficients["Year", "Estimate"], 
          "P value" = summary(model)$coefficients["Year", "Pr(>|t|)"], "Adj. R-squared" = summary(model)$adj.r.squared) %>%
   rowwise() %>%

@@ -99,15 +99,15 @@ ridges
 ```
 
 ## Theory
-In this section we explain the underlying theory behind the statistical approaches used for our data analysis. We will compare the simpler "empirical quantile linear" model (EQ), as used in [karlsson2022comparison] with the supposedly more powerful method "nonparametric quantile regression" which we will refer to as QR. Both of these approaches estimate the response variable as the conditional median or other quantiles of the predictor variables as opposed to ordinary linear regression which uses the method of ordinary least squares (OLS) to estimate the conditional mean [Wikipedia].
+In this section we explain the underlying theory behind the statistical approaches used for our data analysis. We will compare the simpler "empirical quantile linear" model (EQ), as used in [karlsson2022comparison] with the supposedly more powerful method "nonparametric quantile regression" which we will refer to as QR.
 
-OLS regression is the preferred method for many research purposes due to its inherent simplicity. In this research paper however, we are more interested in patterns for certain quantiles of data than the mean. To do this effectively we have conducted our research using quantile regression methods instead.
+By the QR approach, we estimate the response variable as the conditional median of the predictor variables, of which the median can be substituted to any other quantile of data. In the EQ method however, we use the method of ordinary least squares (OLS) to estimate the conditional mean of a subset of the predictor variables corresponding to the desired quantile level [Wikipedia]. Ordinary linear regression is the preferred method for many research purposes due to its inherent simplicity. In this research paper however, we are more interested in patterns for certain quantiles of data than the mean. To do this effectively we have conducted our research using quantile regression methods instead.
 
 An aspect in which quantile regression performs better than linear regression is when data is not homoscedastic or normally distributed. Linear regression models perform poorly for data that is heteroscadastic and/or non-normally distributed. By estimating the conditional median however, as opposed to the mean, we get a model that yields better predictions for data with these properties. Another advantage of using quantile based methods is that one can make more accurate predictions about outliers, since nonlinear tendencies may lead to abnormal behaviors for more extreme observations, which can be more accurately accounted for when looking at quantiles rather than the mean.
 
 All models in this paper will use `date` as the response variable, or a yearly quantile of `date`. The release date of pollen grain $i \in \{ 1,...,n \}$, where $n$ is the total amount of pollen grains released, is predicted by the models as the response $y_i$. We form a covariate vector $x_i = (1, \, t_i)$ which includes an intercept and the predictor variable $t_i \in \mathcal{T} = { \{1,...,T\}}$ which refers to the gregorian year of observation with $T$ being the amount of years monitored.
 
-In order to make an educated analysis of the behaviour of pollen release we need a strict definition for what constitutes a pollen season. There have been many attempts by various authors to find an optimal definition for the dates of which each pollen season covers. In this paper we classify the dates within which the pollen season is deemed active by referring to the EAN definition. [bastl2018defining] The EAN database contains a lot of data on pollen release in which they define the pollen season as the date at which at least $1\%$ of the yearly pollen have been counted. By the same definition, the pollen season is said to end when 95% of all pollen has been released.
+In order to make an educated analysis of the behaviour of pollen release we need a strict definition for what constitutes a pollen season. There have been many attempts by various authors to find an optimal definition for the dates of which each pollen season covers. In this paper we classify the dates within which the pollen season is deemed active by referring to the EAN definition. [bastl2018defining] The EAN database contains a lot of data on pollen release in which they define the pollen season as the date at which at least $1\%$ of the yearly pollen have been counted. By the same definition, the pollen season is said to end when 95% of all pollen has been released. A reason as to why the starting quantile level and the one at the end of the season are not symmetric (i.e. why $Q_{start} \neq 1 - Q_{end}$) may be similar to how infection transmission models tend to behave, namely that the beginning of the season tends to be very intense while the distribution decreases more slowly towards the end of the season.
 
 ### Nonparametric quantile regression
 By nonparametric regression models we refer to models that do not make any parametric assumptions about the form of the conditional distribution function, the relationship between the response variable and predictor variable(s) are linear however. By applying the theory of nonparametric models to a linear predictor of the conditional median, we arrive at the basis of a nonparametric quantile regression model.
@@ -141,7 +141,7 @@ $$
 
 whereby the column vector $\beta(\tau) = (\beta_0(\tau), \, \beta_t(\tau))^\top$ contains the intercept $\beta_0(\tau)$ and year as the slope $\beta_t(\tau)$ of quantile $\tau$. We define $\varepsilon(\tau)$ as a non-parameterised vector of the error terms.
 
-An optimization problem is then constructed as to minimize the objective function in (?). In ordinary linear regression one typically uses the method of least squared errors (LSE) to find the model that leads to the lowest amount of loss of information. In our case we use the pinball loss function $l_{\tau}(\xi)$ introduced in [koenker2005qr] as a metric to determine the accuracy of a quantile estimate [takeuchi2006nonparametric]. The pinball loss function is given by
+An optimization problem is then constructed as to minimize the objective function in (?). In ordinary linear regression one typically uses the method of least squared errors (LSE) to find the model that leads to the lowest amount of loss of information. In our case we use the pinball loss function $l_{\tau}(\xi)$ introduced in [koenker2005qr] as a metric to determine the accuracy of a quantile estimate [takeuchi2006nonparametric]. For a more detailed description of how the pinball loss function works, see appendix (?.?). Furthermore, the pinball loss function is given by
 $$
 l_{\tau}(\xi) = 
 \begin{cases}
@@ -154,7 +154,7 @@ $$
 \beta(\tau) = \arg \min_{b \in \mathbb{R}^2} \sum_{i=1}^{n} l_{\tau}(y_i - x_ib). \quad (?)
 $$
 
-Since this function is non-differentiable at $0$, we cannot use... Rather we use numerical estimation methods provided in the `R` library `quantreg` [koenker2021rpackage] to find the optimal point along the $\xi$-axis.
+Since this function is non-differentiable at $0$, no direct solution exists. Rather we use numerical estimation methods provided in the `R` library `quantreg` [koenker2021rpackage], such as the Frisch-Newton interior point method to find the optimal point along the $\xi$-axis.
 
 ### Linear regression on emprical quantiles
 Another approach we used is to perform linear regression on empirical quantiles, a statistical method that combines linear regression with quantile regression to model the relationship between a response variable and one or more predictor variables. The basic gist of EQ regression is to fit a linear regression model to the empirical quantiles of the response variable, rather than to the mean. This method is called "empirical" quantile regression because it estimates quantiles of the response variable based on the empirical distribution of the data, rather than assuming a specific distribution for the response variable.
@@ -166,12 +166,12 @@ $$
 \mathcal{Y}_{t} = \left\{ y_i : I(t_i = t) \right\} \quad (?)
 $$
 
-As in the previous method we construct the $(n \times 2)$ matrix $X$ by stacking the intercept and vector of years $(1, t)$ on top of each other. Let $\tau \in (0,1)$ be a quantile. For each of our sets $\mathcal{Y}$ we let $\hat{F}_{(t)}$ be the empirical distribution function formed by the elements of its set. The corresponding empirical quantile is defined as
+Let $\tau \in (0,1)$ be a quantile. For each of our sets $\mathcal{Y}$ we let $\hat{F}_{(t)}$ be the empirical distribution function formed by the elements of its set. The corresponding empirical quantile is defined as
 $$
 \hat{Q}_{(t)}(\tau) = \text{inf} \left\{ y \in \mathcal{Y}_{t} : \hat{F}_t(y) \geq \tau \mid \mathcal{Y}_t \neq \emptyset \right\}. \quad (?)
 $$
 
-For all $t \in \mathcal{T}$, we stack these quantiles into the vector of observations $Y(\tau)$. Next we formulate the linear model
+As in the previous method we construct the $(n \times 2)$ matrix $X$ by stacking the intercept and vector of years $(1, t)$ on top of each other. For all $t \in \mathcal{T}$, we stack the quantiles into the vector of observations $Y(\tau)$. Next we formulate the linear model
 $$
 Y(\tau) = X\beta(\tau) + \varepsilon(\tau). \quad (?)
 $$
