@@ -109,6 +109,8 @@ All models in this paper will use `date` as the response variable, or a yearly q
 
 In order to make an educated analysis of the behaviour of pollen release we need a strict definition for what constitutes a pollen season. There have been many attempts by various authors to find an optimal definition for the dates of which each pollen season covers. In this paper we classify the dates within which the pollen season is deemed active by referring to the EAN definition. [bastl2018defining] The EAN database contains a lot of data on pollen release in which they define the pollen season as the date at which at least $1\%$ of the yearly pollen have been counted. By the same definition, the pollen season is said to end when 95% of all pollen has been released. A reason as to why the starting quantile level and the one at the end of the season are not symmetric (i.e. why $Q_{start} \neq 1 - Q_{end}$) may be similar to how infection transmission models tend to behave, namely that the beginning of the season tends to be very intense while the distribution decreases more slowly towards the end of the season.
 
+[][][] Explain arithmetic mean, median and quantiles and explain how the pinball loss function ties in to this. Later substitute the mu/tau value to x_ib in the regression analysis [][][].
+
 ### Nonparametric quantile regression
 By nonparametric regression models we refer to models that do not make any parametric assumptions about the form of the conditional distribution function, the relationship between the response variable and predictor variable(s) are linear however. By applying the theory of nonparametric models to a linear predictor of the conditional median, we arrive at the basis of a nonparametric quantile regression model.
 
@@ -349,23 +351,26 @@ plotQR
 
 ```{r}
 trend_data <- df %>% filter(station == "Stockholm", lat_name == "Betula")
-trend_summarised <- df %>% group_by(Year, lat_name, station, latitude, greg_day) %>%
+trend_summarised <- df %>% group_by(Year, lat_name, station, latitude) %>%
                 summarise(q1 = quantile(greg_day, prob = .01)) %>% filter(station == "Stockholm", lat_name == "Betula")
 
 plot_trend <- ggplot() +
   geom_jitter(data = trend_data, aes(x = Year, y = greg_day)) +
   stat_quantile(data = trend_data, aes(x = Year, y = greg_day), quantiles = c(0.01)) +
-  geom_smooth(data = trend_summarised, method = "lm", aes(x = Year, y = greg_day))
+  geom_jitter(data = trend_summarised, aes(x = Year, y = q1, color = "red")) +
+  geom_smooth(data = trend_summarised, method = "lm", aes(x = Year, y = q1, color = "red"))
 
 plot_trend
 ```
 
+[][][] Talk about how the QR method fits quantiles of data under te limit and how an outlying year with lots of observations performs badly especially for these extreme quantiles like 1%. [][][]
+
 ```{r}
-df %>% group_by(Year, lat_name, station, latitude, greg_day) %>%
+trend_summarised
+
+df %>% group_by(Year, lat_name, station, latitude) %>%
                 summarise(q1 = quantile(greg_day, prob = .01)) %>% filter(station == "Stockholm", lat_name == "Betula")
 ```
-
-
 
 
 
