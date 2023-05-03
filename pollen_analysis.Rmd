@@ -347,6 +347,27 @@ plotQR <- QR_tidy %>%
 plotQR
 ```
 
+```{r}
+trend_data <- df %>% filter(station == "Stockholm", lat_name == "Betula")
+trend_summarised <- df %>% group_by(Year, lat_name, station, latitude, greg_day) %>%
+                summarise(q1 = quantile(greg_day, prob = .01)) %>% filter(station == "Stockholm", lat_name == "Betula")
+
+plot_trend <- ggplot() +
+  geom_jitter(data = trend_data, aes(x = Year, y = greg_day)) +
+  stat_quantile(data = trend_data, aes(x = Year, y = greg_day), quantiles = c(0.01)) +
+  geom_smooth(data = trend_summarised, method = "lm", aes(x = Year, y = greg_day))
+
+plot_trend
+```
+
+```{r}
+df %>% group_by(Year, lat_name, station, latitude, greg_day) %>%
+                summarise(q1 = quantile(greg_day, prob = .01)) %>% filter(station == "Stockholm", lat_name == "Betula")
+```
+
+
+
+
 
 ## Discussion
 
