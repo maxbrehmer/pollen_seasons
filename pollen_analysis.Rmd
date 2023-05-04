@@ -123,18 +123,25 @@ $$
 
 Furthermore, if one wants to compute the vector of observations for any given quantile $\tau$, one may use the minimization algorithm
 $$
-x_{\tau} = \underset{x_{\tau} \in \mathbb{R}}{\mathrm{\arg \min}} \sum_{i=1}^{n} l_{\tau}(y_i - x_{\tau}),
+x_{\tau} = \underset{x_{\tau} \in \mathbb{R}}{\mathrm{\arg \min}} \sum_{i=1}^{n} \mathcal{L}_{\tau}(y_i - x_{\tau}),
 $$
 
-where $l_{\tau}(y_i - \tau)$ represents the pinball loss function, first introduced by Roger Koenker in [koenker2005qr]. This is a convex, piecewise linear function which computes the deviation between the predicted quantile and the actual value of the target variable. It is defined by
+where $\mathcal{L}_{\tau}(\xi)$ represents the pinball loss function, first introduced by Roger Koenker in [koenker2005qr]. This is a convex, piecewise linear function which computes the deviation between the predicted quantile and the actual value of the target variable. It is defined by
 $$
-l_{\tau}(y_i - x_{\tau}) = 
+\mathcal{L}_{\tau}(\xi) = 
 \begin{cases}
-(y_i - x_{\tau})\cdot\tau          & \text{if} \; (y_i - x_{\tau}) \geq 0 \\
-(y_i - x_{\tau})\cdot(\tau -1)     & \text{if} \; (y_i - x_{\tau}) < 0.
+\xi\cdot\tau          & \text{if} \; (\xi) \geq 0 \\
+\xi\cdot(\tau -1)     & \text{if} \; (\xi) < 0.
 \end{cases} \quad (?)
 $$
 [][][] CHATGPT [][][]
+The name of the pinball loss function derives from the fact that it's shape somewhat resembles that of a pinball game. Rather trivially, the loss is minimized at $\xi = 0$, since that means the predicted quantile exactly attains the value of the observed value of the target variable. Overprediction is more heavily penalized than underprediciton for quantiles $\tau < 0$, while the opposite is true when $\tau > 0$. This is because the loss function places more weight on the residuals above the predicted value for overprediction and below the predicted value for underprediction.
+
+```{r, echo=FALSE}
+knitr::include_graphics("data/pinball.png")
+```
+
+
 The pinball loss function is called "pinball" because it has a shape that resembles a pinball game, with a linear ramp up from the lower endpoint to the prediction and a linear ramp down from the prediction to the upper endpoint. The slope of the linear ramps is determined by the quantile level, q.
 
 The pinball loss function penalizes underprediction more heavily than overprediction when q > 0.5, and vice versa when q < 0.5. This is because the loss function places more weight on the residuals below the predicted value for underprediction and above the predicted value for overprediction.
@@ -175,9 +182,9 @@ $$
 
 whereby the column vector $\beta(\tau) = (\beta_0(\tau), \, \beta_t(\tau))^\top$ contains the intercept $\beta_0(\tau)$ and year as the slope $\beta_t(\tau)$ of quantile $\tau$. We define $\varepsilon(\tau)$ as a non-parameterised vector of the error terms.
 
-An optimization problem is then constructed as to minimize the objective function in (?). In ordinary linear regression one typically uses the method of least squared errors (LSE) to find the model that leads to the lowest amount of loss of information. In our case we use the pinball loss function $l_{\tau}(\xi)$ introduced in [koenker2005qr] as a metric to determine the accuracy of a quantile estimate [takeuchi2006nonparametric]. For a more detailed description of how the pinball loss function works, see appendix (?.?). Furthermore, the pinball loss function is given by
+An optimization problem is then constructed as to minimize the objective function in (?). In ordinary linear regression one typically uses the method of least squared errors (LSE) to find the model that leads to the lowest amount of loss of information. In our case we use the pinball loss function $\mathcal{L}_{\tau}(\xi)$ introduced in [koenker2005qr] as a metric to determine the accuracy of a quantile estimate [takeuchi2006nonparametric]. For a more detailed description of how the pinball loss function works, see appendix (?.?). Furthermore, the pinball loss function is given by
 $$
-l_{\tau}(\xi) = 
+\mathcal{L}_{\tau}(\xi) = 
 \begin{cases}
 \tau \xi        & \text{if} \; \xi \geq 0 \\
 (\tau -1) \xi   & \text{if} \; \xi < 0
@@ -185,7 +192,7 @@ l_{\tau}(\xi) =
 $$
 hence the resulting regression parameter estimates of the $\tau$-quantile is given by the solution to the minimization problem
 $$
-\beta(\tau) = \arg \min_{b \in \mathbb{R}^2} \sum_{i=1}^{n} l_{\tau}(y_i - x_ib). \quad (?)
+\beta(\tau) = \arg \min_{b \in \mathbb{R}^2} \sum_{i=1}^{n} \mathcal{L}_{\tau}(y_i - x_ib). \quad (?)
 $$
 
 Since this function is non-differentiable at $0$, no direct solution exists. Rather we use numerical estimation methods provided in the `R` library `quantreg` [koenker2021rpackage], such as the Frisch-Newton interior point method to find the optimal point along the $\xi$-axis.
