@@ -109,6 +109,38 @@ All models in this paper will use `date` as the response variable, or a yearly q
 
 In order to make an educated analysis of the behaviour of pollen release we need a strict definition for what constitutes a pollen season. There have been many attempts by various authors to find an optimal definition for the dates of which each pollen season covers. In this paper we classify the dates within which the pollen season is deemed active by referring to the EAN definition. [bastl2018defining] The EAN database contains a lot of data on pollen release in which they define the pollen season as the date at which at least $1\%$ of the yearly pollen have been counted. By the same definition, the pollen season is said to end when 95% of all pollen has been released. A reason as to why the starting quantile level and the one at the end of the season are not symmetric (i.e. why $Q_{start} \neq 1 - Q_{end}$) may be similar to how infection transmission models tend to behave, namely that the beginning of the season tends to be very intense while the distribution decreases more slowly towards the end of the season.
 
+When performing calculations of the arithmetic mean of a vector, we use the following formula:
+$$
+\bar{x} = \underset{\bar{x} \in \mathbb{R}}{\mathrm{\arg \min}} \sum_{i=1}^{n} (y_i - \bar{x})^2, 
+$$
+
+where $y_i$ and $x$ correspond to the observed...
+
+If we instead want to calculate the arithmetic median vector, we use the absolute values between the vector of observations and the average instead of the square of these vectors. The median is thus provided by
+$$
+\hat{x} = \underset{\hat{x} \in \mathbb{R}}{\mathrm{\arg \min}} \sum_{i=1}^{n} |y_i - \hat{x}|^2.
+$$
+
+Furthermore, if one wants to compute the vector of observations for any given quantile $\tau$, one may use the minimization algorithm
+$$
+x_{\tau} = \underset{x_{\tau} \in \mathbb{R}}{\mathrm{\arg \min}} \sum_{i=1}^{n} l_{\tau}(y_i - x_{\tau}),
+$$
+
+where $l_{\tau}(y_i - \tau)$ represents the pinball loss function, first introduced by Roger Koenker in [koenker2005qr]. This is a convex, piecewise linear function which computes the deviation between the predicted quantile and the actual value of the target variable. It is defined by
+$$
+l_{\tau}(y_i - x_{\tau}) = 
+\begin{cases}
+(y_i - x_{\tau})\cdot\tau          & \text{if} \; (y_i - x_{\tau}) \geq 0 \\
+(y_i - x_{\tau})\cdot(\tau -1)     & \text{if} \; (y_i - x_{\tau}) < 0.
+\end{cases} \quad (?)
+$$
+[][][] CHATGPT [][][]
+The pinball loss function is called "pinball" because it has a shape that resembles a pinball game, with a linear ramp up from the lower endpoint to the prediction and a linear ramp down from the prediction to the upper endpoint. The slope of the linear ramps is determined by the quantile level, q.
+
+The pinball loss function penalizes underprediction more heavily than overprediction when q > 0.5, and vice versa when q < 0.5. This is because the loss function places more weight on the residuals below the predicted value for underprediction and above the predicted value for overprediction.
+
+By minimizing the pinball loss function over a set of training examples, we can learn the parameters of a quantile regression model that can accurately predict the conditional quantiles of the target variable.
+
 [][][] Explain arithmetic mean, median and quantiles and explain how the pinball loss function ties in to this. Later substitute the mu/tau value to x_ib in the regression analysis [][][].
 
 ### Nonparametric quantile regression
@@ -349,30 +381,25 @@ plotQR <- QR_tidy %>%
 plotQR
 ```
 
-```{r}
+```{r, message=FALSE, fig.cap="Jitter plot over the yearly distribution of betula pollen in Stockholm comparing QR and EQ at the 1% quantile level"}
 trend_data <- df %>% filter(station == "Stockholm", lat_name == "Betula")
 trend_summarised <- df %>% group_by(Year, lat_name, station, latitude) %>%
                 summarise(q1 = quantile(greg_day, prob = .01)) %>% filter(station == "Stockholm", lat_name == "Betula")
 
 plot_trend <- ggplot() +
   geom_jitter(data = trend_data, aes(x = Year, y = greg_day)) +
-  stat_quantile(data = trend_data, aes(x = Year, y = greg_day), quantiles = c(0.01)) +
-  geom_jitter(data = trend_summarised, aes(x = Year, y = q1, color = "red")) +
-  geom_smooth(data = trend_summarised, method = "lm", aes(x = Year, y = q1, color = "red"))
+  geom_quantile(data = trend_data, aes(x = Year, y = greg_day, color = "QR"), quantiles = c(0.01), size = 1) +
+  geom_jitter(data = trend_summarised, aes(x = Year, y = q1, color = "EQ")) +
+  geom_smooth(data = trend_summarised, method = "lm", aes(x = Year, y = q1, color = "EQ")) +
+  labs(x = "Year", y = "Day") +
+  scale_color_manual(name = "Method", 
+                     values = c(QR = "blue", EQ = "red"), 
+                     labels = c(QR = "QR", EQ = "EQ"))
 
 plot_trend
 ```
 
-[][][] Talk about how the QR method fits quantiles of data under te limit and how an outlying year with lots of observations performs badly especially for these extreme quantiles like 1%. [][][]
-
-```{r}
-trend_summarised
-
-df %>% group_by(Year, lat_name, station, latitude) %>%
-                summarise(q1 = quantile(greg_day, prob = .01)) %>% filter(station == "Stockholm", lat_name == "Betula")
-```
-
-
+In figure (?) we see the difference in fitting of both our models. The quantile regression method fits a linear model to encompass a given quantile, in this case the first 1% of yearly pollen release, below the regression line. We can observe that year 17 appears to be a heavy outlier in which the entire pollen season came significantly earlier than other years. Since the QR method tries to fit a linear trend with a specific amount of observations below it, and a large amount of these first 1% of observations are from the 17th year, the model is heavily skewed by the observations from this year and thus does not generate a good fit. EQ does not fall for this issue since we in this approach aggregate the observations from each year to a specific date value (red points) and then perform ordinary linear regression on these aggregated observations. In this case the one outlier year corresponds to only 2% of the total observations while for QR this effect appears to be well over 50%. These results explain why the confidence intervals for QR are much larger than the equivalent measure of EQ. Thus we conclude that linear regression on emprical quantiles is a more fitting approach to use in the case of estimating the yearly seasonal shift of pollen.
 
 ## Discussion
 
