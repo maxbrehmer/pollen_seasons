@@ -90,7 +90,28 @@ kable(stations)
 First we remove any observations with missing values in any of the columns `date`, `station` or `species` since these are fundamental parameters to perform the data analysis. For the purposes of EQ regression, the time it takes to compute the models on the entire dataset in `R` is negligible. For nonparametric quantile regression however, the computational time appears to grow very quickly with the amount of observations. This has led us to the decision to reduce the amount of content in each dataset (one dataset containing all observations of any combination of `station` and `species`) to below a fixed limit. Without reducing any data, the largest data sets contain $\approx 500 000$ observations, while some combinations of data contain considerably fewer. By testing and optimizing the models for various sizes of the datasets we decided to set the limit to $5 000$ observations per combination of data. This reduces the running time considerably, making the process of analyzing our results much easier. In order to minimize the affect this has on our results the rows must be removed uniformly over the time of year. If the number of observations in a dataset is smaller than $n \cdot 5 000$, we want to select every $n$th element and discard the rest. We can do this in `R` by using the `slice` and `bind_rows` functions from the `dplyr` package. By performing these modifications to our data, we are sure to keep the shape of the distributions the same and thus the results of the quantile regression.
 
 ### Yearly distribution of pollen
-Before constructing the models, we can take a glance at what sort of results to expect from the subsequent regression analysis. In figure ? we present a ridge plot containing information about the distribution of observed pollen by date of year. The `geom_density_ridges` function from the `R` library `ggridges` is used to fit a continuous density function to what is essentially a histogram of the frequency of pollen on each date.
+Before constructing the models, we can take a glance at what sort of results to expect from the subsequent regression analysis. In figure ? we present a ridge plot containing information about the distribution of observed pollen by date of year. The `geom_density_ridges` function from the `R` library `ggridges` is used to fit a continuous density function to what is, in essence, a histogram of the frequency of pollen on each date.
+
+[][][] CHATGPT [][][]
+The densities in geom_density_ridges() are calculated using kernel density estimation (KDE), which is a non-parametric method for estimating the probability density function of a random variable.
+
+KDE estimates the density by placing a kernel (usually a Gaussian or normal distribution) at each data point, and then summing up the contributions from all the kernels to obtain a smooth estimate of the density. The width of the kernel (also known as the bandwidth) determines how much each data point contributes to the density estimate, with larger bandwidths resulting in smoother but less detailed density estimates, and smaller bandwidths resulting in more detailed but noisier density estimates.
+
+In geom_density_ridges(), the KDE is computed separately for each variable, with the bandwidth chosen automatically based on the data using the density() function in R. By default, geom_density_ridges() uses a Gaussian kernel to estimate the densities, but this can be changed using the kernel parameter.
+
+The resulting density estimates are then stacked on top of each other to create the ridgeline plot, with each density plot offset by a small amount along the y-axis to prevent overlap between the densities.
+
+||||||| SOURCES |||||||
+The official ggridges package documentation: https://cran.r-project.org/web/packages/ggridges/ggridges.pdf
+
+A tutorial on ridgeline plots in R, which covers the ggridges package and kernel density estimation: https://www.data-to-viz.com/caveat/joyplot.html
+
+A chapter on kernel density estimation from the book "Introduction to Data Science" by Rafael A. Irizarry: https://rafalab.github.io/dsbook/distributions.html#kernel-density-estimation
+
+An article on kernel density estimation from the journal "WIREs Computational Statistics": https://onlinelibrary.wiley.com/doi/abs/10.1002/wics.1486
+||||||| SOURCES |||||||
+
+[][][] CHATGPT [][][]
 
 By looking at the average distribution from the first and last 5 years in the dataset respectively, we construct a somewhat consistent average in terms of the state of the pollen season at a given location, reducing the risk of falsely identifying outlier data as patterned occurrences. We can conclude that, in the Stockholm area, the pollen season seemed to begin earlier for all the arboreal pollen species while grass pollen (Poaceae) did not appear to show those tendencies. In general the shape of the pollen distribution was not seen to have been altered over time. A visual analysis of the distribution of yearly pollen release may suggest that the average pollen season now begins earlier by up to a month compared to 45 years ago.
 
@@ -135,25 +156,17 @@ $$
 \end{cases} \quad (?)
 $$
 [][][] CHATGPT [][][]
-The name of the pinball loss function derives from the fact that it's shape somewhat resembles that of a pinball game. Rather trivially, the loss is minimized at $\xi = 0$, since that means the predicted quantile exactly attains the value of the observed value of the target variable. Overprediction is more heavily penalized than underprediciton for quantiles $\tau < 0$, while the opposite is true when $\tau > 0$. This is because the loss function places more weight on the residuals above the predicted value for overprediction and below the predicted value for underprediction.
+The name of the pinball loss function derives from the fact that it's shape somewhat resembles that of a pinball game as shown in figure (?). Rather trivially, the loss is minimized at $\xi = 0$, since that means the predicted quantile exactly attains the value of the observed value of the target variable. Overprediction is more heavily penalized than underprediciton for quantiles $\tau < 0$, while the opposite is true when $\tau > 0$. This is because the loss function places more weight on the residuals above the predicted value for overprediction and below the predicted value for underprediction.
+[][][] CHATGPT [][][]
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.cap="Pinball loss function example"}
 knitr::include_graphics("data/pinball.png")
 ```
-
-
-The pinball loss function is called "pinball" because it has a shape that resembles a pinball game, with a linear ramp up from the lower endpoint to the prediction and a linear ramp down from the prediction to the upper endpoint. The slope of the linear ramps is determined by the quantile level, q.
-
-The pinball loss function penalizes underprediction more heavily than overprediction when q > 0.5, and vice versa when q < 0.5. This is because the loss function places more weight on the residuals below the predicted value for underprediction and above the predicted value for overprediction.
-
-By minimizing the pinball loss function over a set of training examples, we can learn the parameters of a quantile regression model that can accurately predict the conditional quantiles of the target variable.
-
-[][][] Explain arithmetic mean, median and quantiles and explain how the pinball loss function ties in to this. Later substitute the mu/tau value to x_ib in the regression analysis [][][].
 
 ### Nonparametric quantile regression
 By nonparametric regression models we refer to models that do not make any parametric assumptions about the form of the conditional distribution function, the relationship between the response variable and predictor variable(s) are linear however. By applying the theory of nonparametric models to a linear predictor of the conditional median, we arrive at the basis of a nonparametric quantile regression model.
 
-For a univariate nonparametric QR model, consider the observed response date $y_i$ of grain $i$ and the predictor variable year $t_i$ with an intercept in the $(n \times 2)$-matrix $X$.
+For a nonparametric QR model, consider the observed response date $y_i$ of grain $i$ and the predictor variable year $t_i$ with an intercept in the $(n \times 2)$-matrix $X$.
 $$
 X = \begin{pmatrix}
 1 & 1 & ... & 1\\
@@ -182,7 +195,7 @@ $$
 
 whereby the column vector $\beta(\tau) = (\beta_0(\tau), \, \beta_t(\tau))^\top$ contains the intercept $\beta_0(\tau)$ and year as the slope $\beta_t(\tau)$ of quantile $\tau$. We define $\varepsilon(\tau)$ as a non-parameterised vector of the error terms.
 
-An optimization problem is then constructed as to minimize the objective function in (?). In ordinary linear regression one typically uses the method of least squared errors (LSE) to find the model that leads to the lowest amount of loss of information. In our case we use the pinball loss function $\mathcal{L}_{\tau}(\xi)$ introduced in [koenker2005qr] as a metric to determine the accuracy of a quantile estimate [takeuchi2006nonparametric]. For a more detailed description of how the pinball loss function works, see appendix (?.?). Furthermore, the pinball loss function is given by
+An optimization problem is then constructed as to minimize the objective function in (?). In ordinary linear regression one typically uses the method of least squared errors (LSE) to find the model that leads to the lowest amount of loss of information. In our case however, we want to learn the parameters of a quantile regression model that can accurately predict the conditional quantiles of the target variable. To do this, we minimize the pinball loss function $\mathcal{L}_{\tau}(\xi)$ which we previously introduced in the `Theory` section over a set of training examples $x$ [koenker2005qr] [takeuchi2006nonparametric]. As discussed earlier in this paper, the pinball loss function is given by
 $$
 \mathcal{L}_{\tau}(\xi) = 
 \begin{cases}
@@ -411,6 +424,7 @@ In figure (?) we see the difference in fitting of both our models. The quantile 
 ## Discussion
 
 ### Further improvements
+The QR approach struggles with clusters of outliers such as a year with a significantly earlier pollen season. One way to look at it is that there exists a random effect of year that we do not consider in this approach. Thus deeming the assumption of independent observations obsolete in the case of our QR model. In order to improve these models, one may consider adding a random variable to deal with this yearly effect, resulting in a linear quantile mixed model.
 
 ## Bibliography and References
 
