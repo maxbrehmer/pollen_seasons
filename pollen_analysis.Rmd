@@ -90,28 +90,7 @@ kable(stations)
 First we remove any observations with missing values in any of the columns `date`, `station` or `species` since these are fundamental parameters to perform the data analysis. For the purposes of EQ regression, the time it takes to compute the models on the entire dataset in `R` is negligible. For nonparametric quantile regression however, the computational time appears to grow very quickly with the amount of observations. This has led us to the decision to reduce the amount of content in each dataset (one dataset containing all observations of any combination of `station` and `species`) to below a fixed limit. Without reducing any data, the largest data sets contain $\approx 500 000$ observations, while some combinations of data contain considerably fewer. By testing and optimizing the models for various sizes of the datasets we decided to set the limit to $5 000$ observations per combination of data. This reduces the running time considerably, making the process of analyzing our results much easier. In order to minimize the affect this has on our results the rows must be removed uniformly over the time of year. If the number of observations in a dataset is smaller than $n \cdot 5 000$, we want to select every $n$th element and discard the rest. We can do this in `R` by using the `slice` and `bind_rows` functions from the `dplyr` package. By performing these modifications to our data, we are sure to keep the shape of the distributions the same and thus the results of the quantile regression.
 
 ### Yearly distribution of pollen
-Before constructing the models, we can take a glance at what sort of results to expect from the subsequent regression analysis. In figure ? we present a ridge plot containing information about the distribution of observed pollen by date of year. The `geom_density_ridges` function from the `R` library `ggridges` is used to fit a continuous density function to what is, in essence, a histogram of the frequency of pollen on each date.
-
-[][][] CHATGPT [][][]
-The densities in geom_density_ridges() are calculated using kernel density estimation (KDE), which is a non-parametric method for estimating the probability density function of a random variable.
-
-KDE estimates the density by placing a kernel (usually a Gaussian or normal distribution) at each data point, and then summing up the contributions from all the kernels to obtain a smooth estimate of the density. The width of the kernel (also known as the bandwidth) determines how much each data point contributes to the density estimate, with larger bandwidths resulting in smoother but less detailed density estimates, and smaller bandwidths resulting in more detailed but noisier density estimates.
-
-In geom_density_ridges(), the KDE is computed separately for each variable, with the bandwidth chosen automatically based on the data using the density() function in R. By default, geom_density_ridges() uses a Gaussian kernel to estimate the densities, but this can be changed using the kernel parameter.
-
-The resulting density estimates are then stacked on top of each other to create the ridgeline plot, with each density plot offset by a small amount along the y-axis to prevent overlap between the densities.
-
-||||||| SOURCES |||||||
-The official ggridges package documentation: https://cran.r-project.org/web/packages/ggridges/ggridges.pdf
-
-A tutorial on ridgeline plots in R, which covers the ggridges package and kernel density estimation: https://www.data-to-viz.com/caveat/joyplot.html
-
-A chapter on kernel density estimation from the book "Introduction to Data Science" by Rafael A. Irizarry: https://rafalab.github.io/dsbook/distributions.html#kernel-density-estimation
-
-An article on kernel density estimation from the journal "WIREs Computational Statistics": https://onlinelibrary.wiley.com/doi/abs/10.1002/wics.1486
-||||||| SOURCES |||||||
-
-[][][] CHATGPT [][][]
+Before constructing the models, we can take a glance at what sort of results to expect from the subsequent regression analysis. In figure (?) we present a ridge plot containing information about the distribution of observed pollen by date of year. The `geom_density_ridges()` function from the `R` library `ggridges` uses kernel density estimation (KDE) to fit a continuous density function to what is, in essence, a histogram of the frequency of pollen on each date. KDE is a non-parametric method used to estimate the probability density function of a random variable. This is achieved by placing a kernel at each data point. In our case the kernels are Gaussian distributed, however normal distributions are also commonly used in KDE estimation. We then summarise each of the kernels' distributions in order to obtain a smooth continuous approximation of the density. The width of the kernel, known as the bandwidth, determines by how much each data point contributes to the density estimate. Larger bandwidths result in smoother but less detailed density estimates, while smaller bandwidths result in more detailed but noisier density estimates [@mvstat2001kde]. A common way to find the optimal bandwidth is to use the Asymptotic Mean Integrated Squared Error (AMISE). The function `geom_density_ridges()` uses an alternative method based on the Sheather and Jones (1991) plug-in bandwidth selection method. [@10.2307/2345597]
 
 By looking at the average distribution from the first and last 5 years in the dataset respectively, we construct a somewhat consistent average in terms of the state of the pollen season at a given location, reducing the risk of falsely identifying outlier data as patterned occurrences. We can conclude that, in the Stockholm area, the pollen season seemed to begin earlier for all the arboreal pollen species while grass pollen (Poaceae) did not appear to show those tendencies. In general the shape of the pollen distribution was not seen to have been altered over time. A visual analysis of the distribution of yearly pollen release may suggest that the average pollen season now begins earlier by up to a month compared to 45 years ago.
 
@@ -155,9 +134,8 @@ $$
 \xi\cdot(\tau -1)     & \text{if} \; (\xi) < 0.
 \end{cases} \quad (?)
 $$
-[][][] CHATGPT [][][]
+
 The name of the pinball loss function derives from the fact that it's shape somewhat resembles that of a pinball game as shown in figure (?). Rather trivially, the loss is minimized at $\xi = 0$, since that means the predicted quantile exactly attains the value of the observed value of the target variable. Overprediction is more heavily penalized than underprediciton for quantiles $\tau < 0$, while the opposite is true when $\tau > 0$. This is because the loss function places more weight on the residuals above the predicted value for overprediction and below the predicted value for underprediction.
-[][][] CHATGPT [][][]
 
 ```{r, echo=FALSE, fig.cap="Pinball loss function example"}
 knitr::include_graphics("data/pinball.png")
@@ -195,7 +173,7 @@ $$
 
 whereby the column vector $\beta(\tau) = (\beta_0(\tau), \, \beta_t(\tau))^\top$ contains the intercept $\beta_0(\tau)$ and year as the slope $\beta_t(\tau)$ of quantile $\tau$. We define $\varepsilon(\tau)$ as a non-parameterised vector of the error terms.
 
-An optimization problem is then constructed as to minimize the objective function in (?). In ordinary linear regression one typically uses the method of least squared errors (LSE) to find the model that leads to the lowest amount of loss of information. In our case however, we want to learn the parameters of a quantile regression model that can accurately predict the conditional quantiles of the target variable. To do this, we minimize the pinball loss function $\mathcal{L}_{\tau}(\xi)$ which we previously introduced in the `Theory` section over a set of training examples $x$ [koenker2005qr] [takeuchi2006nonparametric]. As discussed earlier in this paper, the pinball loss function is given by
+An optimization problem is then constructed as to minimize the objective function in (?). In ordinary linear regression one typically uses the method of least squared errors (LSE) to find the model that leads to the lowest amount of loss of information. In our case however, we want to learn the parameters of a quantile regression model that can accurately predict the conditional quantiles of the target variable. To do this, we minimize the pinball loss function $\mathcal{L}_{\tau}(\xi)$, which we previously introduced in the `Theory` section, over a set of training examples $x$ [koenker2005qr] [takeuchi2006nonparametric]. As discussed earlier in this paper, the pinball loss function is defined by
 $$
 \mathcal{L}_{\tau}(\xi) = 
 \begin{cases}
@@ -251,59 +229,9 @@ $$
 
 for a given quantile $\tau$. Since the function is continuous and twice differentiable, the solution can easily be found using conventional methods provided in the `quantreg` package.
 
-Förklara mer i detalj och ge exempel på aritmetiskt medelvärde, median för pinball loss function istället för att ge sig på regressionen direkt.
-
 ## Results
 
-### Results per species and location
-
-
-```{r}
-# EQ models
-kable(head(joined_eq_1 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`), 5), caption = "Start of pollen season for different species and locations, by most significant shift to earlier dates (EQ model)")
-kable(head(joined_eq_1 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`) %>% map_df(rev), 5), caption = "Start of pollen season for different species and locations, by most significant shift to later dates (EQ model)")
-
-kable(head(joined_eq_50 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to earlier dates (EQ model)")
-kable(head(joined_eq_50 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`) %>% map_df(rev), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to later dates (EQ model)")
-
-kable(head(joined_eq_95 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`), 5), caption = "End of pollen season for different species and locations, by most significant shift to earlier dates (EQ model)")
-kable(head(joined_eq_95 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`) %>% map_df(rev), 5), caption = "End of pollen season for different species and locations, by most significant shift to later dates (EQ model)")
-```
-
-
-```{r}
-# QR models
-kable(head(joined_qr_1 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`), 5), caption = "Start of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
-kable(head(joined_qr_1 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`) %>% map_df(rev), 5), caption = "Start of pollen season for different species and locations, by most significant shift to later dates (QR model)")
-
-kable(head(joined_qr_50 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
-kable(head(joined_qr_50 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`) %>% map_df(rev), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to later dates (QR model)")
-
-kable(head(joined_qr_95 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`), 5), caption = "End of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
-kable(head(joined_qr_95 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`) %>% map_df(rev), 5), caption = "End of pollen season for different species and locations, by most significant shift to later dates (QR model)")
-```
-
-
-### Geographic influence
-```{r}
-ggplot(data = joined_eq_1, aes(x = Latitude, y = `Coefficient (EQ)`, colour = Species)) +
-  geom_point() +
-  stat_smooth(formula = y ~ x, method="lm", se=FALSE) +
-  facet_wrap(~Species) +
-  labs(colour = "Species", x = "Latitude", y = "Coefficient")
-
-ggplot(data = joined_eq_50, aes(x = Latitude, y = `Coefficient (EQ)`, colour = Species)) +
-  geom_point() +
-  stat_smooth(formula = y ~ x, method="lm", se=FALSE) +
-  facet_wrap(~Species) +
-  labs(colour = "Species", x = "Latitude", y = "Coefficient")
-
-ggplot(data = joined_eq_95, aes(x = Latitude, y = `Coefficient (EQ)`, colour = Species)) +
-  geom_point() +
-  stat_smooth(formula = y ~ x, method="lm", se=FALSE) +
-  facet_wrap(~Species) +
-  labs(colour = "Species", x = "Latitude", y = "Coefficient")
-```
+### Statistical model performance across quantiles
 
 ```{r, warning=FALSE}
 # QR performance testing
@@ -371,23 +299,23 @@ for (i in seq_along(quantile_levels)) {
 ```
 
 
-```{r}
+```{r, fig.cap="Line graph over the coefficient and intecept estimates for each quantile. The thicker, opaque bounaries define the 95%-confidence intervals for each method. The red line shows the linear regression coefficient without quantile parameterization"}
 # Define colors for QR and EQ plots
 qr_color <- "#512ffa"  # QR plot color
-eq_color <- "#56de07"  # EQ plot color
+eq_color <- "#56de47"  # EQ plot color
 
 # Create the plot
 plotQR <- QR_tidy %>% 
   ggplot(aes(x=tau,y=estimate)) +
   
   # QR
-  geom_line(aes(color="QR"), size = 0.5, show.legend = FALSE) + # Set color to "QR"
-  geom_hline(data = ols2, aes(yintercept= `coef(lm)`), lty=1, color="#eb2a3d", size=0.5) + 
-  geom_hline(aes(yintercept = 0), lty=2, color="black", size=0.5) + 
+  geom_line(aes(color="QR"), linewidth = 0.5, show.legend = FALSE) + # Set color to "QR"
+  geom_hline(data = ols2, aes(yintercept= `coef(lm)`), lty=1, color="#eb2a3d", linewidth=0.5) + 
+  geom_hline(aes(yintercept = 0), lty=2, color="black", linewidth=0.5) + 
   geom_ribbon(aes(ymin=conf.low, ymax=conf.high, fill="QR"), alpha=0.25) + # Set fill to "QR"
   
   # EQ
-  geom_line(data = lm_quantile_df_tau, aes(x = tau, y = estimate, group = term, color="EQ"), size = 0.5, show.legend = FALSE) + # Set color to "EQ"
+  geom_line(data = lm_quantile_df_tau, aes(x = tau, y = estimate, group = term, color="EQ"), linewidth = 0.5, show.legend = FALSE) + # Set color to "EQ"
   geom_ribbon(data = lm_quantile_df_tau, aes(x = tau, ymin = conf.low, ymax = conf.high, fill="EQ"), alpha = 0.25) + # Set fill to "EQ"
   
   facet_wrap(~term, scales="free", ncol=2) +
@@ -401,6 +329,10 @@ plotQR <- QR_tidy %>%
 plotQR
 ```
 
+Figure (?) shows us how each method behaves for any quantile of data. We observe that the intercept begins at around day 50 for both models but increases more rapidly over the quantiles for QR than with EQ, leading to a significantly later estimation of when the pollen season ends (high quantiles) using the QR approach. Another phenomenon visible in figure (?) is that the direction of the slopes are different in the second graph. What we observe is that the QR estimates of the `year` variable move from strong negative coefficients, to lesser negative or even slightly positive coefficients across the quantiles. This means we get a significantly earlier start of the pollen season, but a less shifted end to the season. All in all this results in a longer and more spread out pollen season. In stark contrast to the QR method, when analyzing the EQ coefficient estimations, we find that the early parts of the pollen season actually moved to later dates, while most of the season beyond the first 20% of pollen or so, saw a shift of around 0.3 days per year to earlier dates.
+
+Based on this information, one may ask oneself which of these approaches we deem to be the most fit to represent the behaviour of the pollen season. The fact that the size of the confidence intervals differ so greatly is, to us, sufficient material to determine the EQ model as more desirable for the purpose of this research paper. In order to understand this difference in confidence between the to methods, let us take a look at how the models look overlayed on the set of observations.
+
 ```{r, message=FALSE, fig.cap="Jitter plot over the yearly distribution of betula pollen in Stockholm comparing QR and EQ at the 1% quantile level"}
 trend_data <- df %>% filter(station == "Stockholm", lat_name == "Betula")
 trend_summarised <- df %>% group_by(Year, lat_name, station, latitude) %>%
@@ -413,13 +345,62 @@ plot_trend <- ggplot() +
   geom_smooth(data = trend_summarised, method = "lm", aes(x = Year, y = q1, color = "EQ")) +
   labs(x = "Year", y = "Day") +
   scale_color_manual(name = "Method", 
-                     values = c(QR = "blue", EQ = "red"), 
+                     values = c(QR = "#512ffa", EQ = "#56de47"), 
                      labels = c(QR = "QR", EQ = "EQ"))
 
 plot_trend
 ```
 
-In figure (?) we see the difference in fitting of both our models. The quantile regression method fits a linear model to encompass a given quantile, in this case the first 1% of yearly pollen release, below the regression line. We can observe that year 17 appears to be a heavy outlier in which the entire pollen season came significantly earlier than other years. Since the QR method tries to fit a linear trend with a specific amount of observations below it, and a large amount of these first 1% of observations are from the 17th year, the model is heavily skewed by the observations from this year and thus does not generate a good fit. EQ does not fall for this issue since we in this approach aggregate the observations from each year to a specific date value (red points) and then perform ordinary linear regression on these aggregated observations. In this case the one outlier year corresponds to only 2% of the total observations while for QR this effect appears to be well over 50%. These results explain why the confidence intervals for QR are much larger than the equivalent measure of EQ. Thus we conclude that linear regression on emprical quantiles is a more fitting approach to use in the case of estimating the yearly seasonal shift of pollen.
+Figure (?) tells us the difference in fitting of both our models. The quantile regression method fits a linear model to encompass a given quantile, in this case the first 1% of yearly pollen release, below the regression line. We can observe that year 17 appears to be a heavy outlier in which the entire pollen season came significantly earlier than other years. Since the QR method tries to fit a linear trend with a specific amount of observations below it, and a large amount of these first 1% of observations are from the 17th year, the model is heavily skewed by the observations from this year and thus does not generate a good fit. EQ does not succumb to this issue since we in this approach aggregate the observations from each year to a specific date value (red points) and then perform ordinary linear regression on these aggregated observations. In this case the one outlier year corresponds to only 2% of the total observations while for QR this effect appears to be well over 50%. These results explain why the confidence intervals for QR are much larger than the equivalent measure of EQ. Thus we conclude that linear regression on empirical quantiles is a more fitting approach to use in the case of estimating the yearly seasonal shift of pollen.
+
+### Results per species and location
+
+```{r}
+# EQ models
+kable(head(joined_eq_1 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`), 5), caption = "Start of pollen season for different species and locations, by most significant shift to earlier dates (EQ model)")
+kable(head(joined_eq_1 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`) %>% map_df(rev), 5), caption = "Start of pollen season for different species and locations, by most significant shift to later dates (EQ model)")
+
+kable(head(joined_eq_50 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to earlier dates (EQ model)")
+kable(head(joined_eq_50 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`) %>% map_df(rev), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to later dates (EQ model)")
+
+kable(head(joined_eq_95 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`), 5), caption = "End of pollen season for different species and locations, by most significant shift to earlier dates (EQ model)")
+kable(head(joined_eq_95 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`) %>% map_df(rev), 5), caption = "End of pollen season for different species and locations, by most significant shift to later dates (EQ model)")
+```
+
+
+```{r}
+# QR models
+kable(head(joined_qr_1 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`), 5), caption = "Start of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
+kable(head(joined_qr_1 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`) %>% map_df(rev), 5), caption = "Start of pollen season for different species and locations, by most significant shift to later dates (QR model)")
+
+kable(head(joined_qr_50 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
+kable(head(joined_qr_50 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`) %>% map_df(rev), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to later dates (QR model)")
+
+kable(head(joined_qr_95 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`), 5), caption = "End of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
+kable(head(joined_qr_95 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`) %>% map_df(rev), 5), caption = "End of pollen season for different species and locations, by most significant shift to later dates (QR model)")
+```
+
+
+### Geographic influence
+```{r}
+ggplot(data = joined_eq_1, aes(x = Latitude, y = `Coefficient (EQ)`, colour = Species)) +
+  geom_point() +
+  stat_smooth(formula = y ~ x, method="lm", se=FALSE) +
+  facet_wrap(~Species) +
+  labs(colour = "Species", x = "Latitude", y = "Coefficient")
+
+ggplot(data = joined_eq_50, aes(x = Latitude, y = `Coefficient (EQ)`, colour = Species)) +
+  geom_point() +
+  stat_smooth(formula = y ~ x, method="lm", se=FALSE) +
+  facet_wrap(~Species) +
+  labs(colour = "Species", x = "Latitude", y = "Coefficient")
+
+ggplot(data = joined_eq_95, aes(x = Latitude, y = `Coefficient (EQ)`, colour = Species)) +
+  geom_point() +
+  stat_smooth(formula = y ~ x, method="lm", se=FALSE) +
+  facet_wrap(~Species) +
+  labs(colour = "Species", x = "Latitude", y = "Coefficient")
+```
 
 ## Discussion
 
