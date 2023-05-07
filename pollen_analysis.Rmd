@@ -36,7 +36,7 @@ source("models.R", local = knitr::knit_global())
 ```
 
 ```{r, message=FALSE, warning=FALSE}
-source("qr_models.R", local = knitr::knit_global())
+#source("qr_models.R", local = knitr::knit_global())
 ```
 
 ## Abstract
@@ -357,50 +357,57 @@ Figure (?) tells us the difference in fitting of both our models. The quantile r
 
 ```{r}
 # EQ models
-kable(head(joined_eq_1 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`), 5), caption = "Start of pollen season for different species and locations, by most significant shift to earlier dates (EQ model)")
-kable(head(joined_eq_1 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`) %>% map_df(rev), 5), caption = "Start of pollen season for different species and locations, by most significant shift to later dates (EQ model)")
+kable(head(joined_eq_1 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), 5), caption = "Start of pollen season for different species and locations, by most significant shift to earlier dates (EQ model)")
+kable(head(joined_eq_1 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>% map_df(rev), 5), caption = "Start of pollen season for different species and locations, by most significant shift to later dates (EQ model)")
 
-kable(head(joined_eq_50 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to earlier dates (EQ model)")
-kable(head(joined_eq_50 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`) %>% map_df(rev), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to later dates (EQ model)")
+kable(head(joined_eq_50 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to earlier dates (EQ model)")
+kable(head(joined_eq_50 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>% map_df(rev), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to later dates (EQ model)")
 
-kable(head(joined_eq_95 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`), 5), caption = "End of pollen season for different species and locations, by most significant shift to earlier dates (EQ model)")
-kable(head(joined_eq_95 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`) %>% map_df(rev), 5), caption = "End of pollen season for different species and locations, by most significant shift to later dates (EQ model)")
+kable(head(joined_eq_95 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), 5), caption = "End of pollen season for different species and locations, by most significant shift to earlier dates (EQ model)")
+kable(head(joined_eq_95 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>% map_df(rev), 5), caption = "End of pollen season for different species and locations, by most significant shift to later dates (EQ model)")
 ```
 
 
 ```{r}
 # QR models
-kable(head(joined_qr_1 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`), 5), caption = "Start of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
-kable(head(joined_qr_1 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`) %>% map_df(rev), 5), caption = "Start of pollen season for different species and locations, by most significant shift to later dates (QR model)")
+kable(head(joined_qr_1 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`), 5), caption = "Start of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
+kable(head(joined_qr_1 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`) %>% map_df(rev), 5), caption = "Start of pollen season for different species and locations, by most significant shift to later dates (QR model)")
 
-kable(head(joined_qr_50 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
-kable(head(joined_qr_50 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`) %>% map_df(rev), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to later dates (QR model)")
+kable(head(joined_qr_50 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
+kable(head(joined_qr_50 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`) %>% map_df(rev), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to later dates (QR model)")
 
-kable(head(joined_qr_95 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`), 5), caption = "End of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
-kable(head(joined_qr_95 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`) %>% map_df(rev), 5), caption = "End of pollen season for different species and locations, by most significant shift to later dates (QR model)")
+kable(head(joined_qr_95 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`), 5), caption = "End of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
+kable(head(joined_qr_95 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`) %>% map_df(rev), 5), caption = "End of pollen season for different species and locations, by most significant shift to later dates (QR model)")
 ```
 
 
 ### Geographic influence
-```{r}
+```{r, fig.cap="Visualization of latitudal impact on the EQ estimations (1% quantile)"}
 ggplot(data = joined_eq_1, aes(x = Latitude, y = `Coefficient (EQ)`, colour = Species)) +
   geom_point() +
   stat_smooth(formula = y ~ x, method="lm", se=FALSE) +
   facet_wrap(~Species) +
   labs(colour = "Species", x = "Latitude", y = "Coefficient")
+```
 
+```{r, fig.cap="Visualization of latitudal impact on the EQ estimations (50% quantile)"}
 ggplot(data = joined_eq_50, aes(x = Latitude, y = `Coefficient (EQ)`, colour = Species)) +
   geom_point() +
   stat_smooth(formula = y ~ x, method="lm", se=FALSE) +
   facet_wrap(~Species) +
   labs(colour = "Species", x = "Latitude", y = "Coefficient")
+```
 
+
+```{r, fig.cap="Visualization of latitudal impact on the EQ estimations (95% quantile)"}
 ggplot(data = joined_eq_95, aes(x = Latitude, y = `Coefficient (EQ)`, colour = Species)) +
   geom_point() +
   stat_smooth(formula = y ~ x, method="lm", se=FALSE) +
   facet_wrap(~Species) +
   labs(colour = "Species", x = "Latitude", y = "Coefficient")
 ```
+
+In figures (?) through (?) we can view the regression coefficients for each species and how they differ based on the latitude of the station the pollen were collected at. Thus we can determine whether pollen in colder climates are affected by climate change by a greater extent than in warmer areas, or vice versa. Figure (?) tells us how the beginning of the pollen season shifts at the observed locations throughout Sweden. Alder, hazel and oak all appear to have more dramatic seasonal shifts at northerly latitudes, while grass, birch, willow and elm show the opposite effect. The median quantile, which we also refer to as the peak of the pollen season was not observed to have had a significant impact of the latitude of where it took place, as seen in figure (?). The steep regression slope of the peak of the elm pollen seasonal shift comes down to the fact that the coefficient at the highest latitude is vastly different to the others. By that metric, a conclusion can not be made about whether this is proof of climate change impacting elm pollen at higher latitudes simply an outlier. It is worth noting that the p-value of the aforementioned elm coefficient in Umeå is 0.981. By all accounts, this points to the data point being an outlier. By figure (?) we see how the coefficients for the 95%-quantiles are estimated. We now observe, in contrast to the 1%-quantiles, that grass pollen attributes to a quicker growth toward earlier dates, the further north one goes. The remaining pollen species' seasonal ends do not appear to be strongly affected by latitude. What we can conclude from this is that the seasonal window for grass pollen does not expand as much at high latitudes than what can be observed at lower latitudes. Other species are not affected to as great of an extent by the latitude of their release.
 
 ## Discussion
 
