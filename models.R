@@ -1,6 +1,3 @@
-# Setting years before 2023 as starting at 2023 and going backwards
-df <- df %>% mutate(Year = year - 1973)
-
 # Model: Linear regression on quantiles
 
 # Creating vector for reweighting
@@ -93,4 +90,36 @@ joined_eq_95 <- eq_joined %>% arrange(`coefficient 95%`) %>%
          "P value (EQ)" = "P value 95%", "Predicted 1973 (EQ)" = "Predicted 1973 95% (EQ)", "Predicted 2023 (EQ)" = "Predicted 2023 95% (EQ)", "Predicted 2050 (EQ)" = "Predicted 2050 95% (EQ)")
 
 
+# Season shift tables per species
+
+shift_eq_1 <- joined_eq_1 %>%
+  group_by(Species) %>%
+  mutate(`Coefficient (1%)` = mean(`Coefficient (EQ)`), `Estimated day 1973 (1%)` = as.integer(mean(`Predicted 1973 (EQ)`)), 
+         `Estimated day 2023 (1%)` = as.integer(mean(`Predicted 2023 (EQ)`)), `Estimated day 2050 (1%)` = as.integer(mean(`Predicted 2050 (EQ)`))) %>%
+  distinct(Species, .keep_all = TRUE) %>%  # Keep only one row for each Species, based on all columns
+  dplyr::select(Species, `Coefficient (1%)`, `Estimated day 1973 (1%)`, `Estimated day 2023 (1%)`, `Estimated day 2050 (1%)`)
+
+shift_eq_50 <- joined_eq_50 %>%
+  group_by(Species) %>%
+  mutate(`Coefficient (50%)` = mean(`Coefficient (EQ)`), `Estimated day 1973 (50%)` = as.integer(mean(`Predicted 1973 (EQ)`)), 
+         `Estimated day 2023 (50%)` = as.integer(mean(`Predicted 2023 (EQ)`)), `Estimated day 2050 (50%)` = as.integer(mean(`Predicted 2050 (EQ)`))) %>%
+  distinct(Species, .keep_all = TRUE) %>%  # Keep only one row for each Species, based on all columns
+  dplyr::select(Species, `Coefficient (50%)`, `Estimated day 1973 (50%)`, `Estimated day 2023 (50%)`, `Estimated day 2050 (50%)`)
+
+shift_eq_95 <- joined_eq_95 %>%
+  group_by(Species) %>%
+  mutate(`Coefficient (95%)` = mean(`Coefficient (EQ)`), `Estimated day 1973 (95%)` = as.integer(mean(`Predicted 1973 (EQ)`)), 
+         `Estimated day 2023 (95%)` = as.integer(mean(`Predicted 2023 (EQ)`)), `Estimated day 2050 (95%)` = as.integer(mean(`Predicted 2050 (EQ)`))) %>%
+  distinct(Species, .keep_all = TRUE) %>%  # Keep only one row for each Species, based on all columns
+  dplyr::select(Species, `Coefficient (95%)`, `Estimated day 1973 (95%)`, `Estimated day 2023 (95%)`, `Estimated day 2050 (95%)`)
+
+# Joined table for season lengths
+
+shift_by_species <- shift_eq_1 %>%
+  left_join(shift_eq_50, by = c("Species")) %>%
+  left_join(shift_eq_95, by = c("Species")) %>%
+  mutate(`Season length 1973` = abs(`Estimated day 1973 (95%)` - `Estimated day 1973 (1%)`), 
+         `Season length 2023` = abs(`Estimated day 2023 (95%)` - `Estimated day 2023 (1%)`),
+         `Season length 2050` = abs(`Estimated day 2050 (95%)` - `Estimated day 2050 (1%)`)) %>%
+  dplyr::select(Species, `Coefficient (1%)`, `Coefficient (50%)`, `Coefficient (95%)`, `Season length 1973`, `Season length 2023`, `Season length 2050`)
 
