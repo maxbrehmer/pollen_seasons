@@ -44,8 +44,10 @@ source("models.R", local = knitr::knit_global())
 ```
 
 ## Abstract
+Abstract kommer...
 
 ## Preface
+Här tänkte jag skriva tack till handledare, en acknowledgement om att jag använt AI verktyg som ChatGPT och övrig extra information om uppsatsen.
 
 ## Introduction
 Over the past couple of decades it has been made clear that our climate is changing rapidly in various ways. Most notably the global average temperature has risen by ca $0.2^\circ C$ per decade since the mid seventies, this constitutes an almost $1^\circ C$ increase over the past half century [@hansen2006global]. In the same time frame Sweden has also seen significant shifts in its otherwise stable and temperate climate. Several studies in recent decades draw the conclusion that plant phenology is impacted by this increase in temperature. [@van2002influence] discusses in their study of the seasonal pollen shift in the Netherlands that an advance in the start of the pollen season by 3-22 days took place in the latter third of the 20th century. Likewise this paper strives to understand what seasonal changes have occurred to the pollen season in Sweden.
@@ -71,6 +73,7 @@ The `Discussion` is the section in which we attempt to make sense of the results
 This paper concludes with an `Appendix` section. Additional or complementary information which the reader may find interesting, but not vital for the results of which we form our conclusions. Each appendix is reffered to by, and refers back to a result or explanation.
 
 ## Litterature review
+I mån av tid skriver jag lite om vad som tidigare uppmärksammats i liknande tidigare rapporter.
 
 ## Data
 
@@ -78,27 +81,27 @@ This paper concludes with an `Appendix` section. Additional or complementary inf
 As we mentioned earlier in this paper, the monitoring of pollen in the Stockholm region is conducted by the Palynological laboratory at NRM. The laboratory in question uses a Burkard Seven Day Volumetric Spore Trap to capture pollen and spores from the air through a small entrance meant to resemble the human airways. Thus approximately 10 liters of air passes through the machine each minute, which is what humans tend to consume. In order to capture the pollen particles carried by the passing air, a sticky tape is mounted to a drum rotating at 2 mm per hour. As only a small portion of the tape is exposed to the air at each point in time, this method grants us a good indication of the volume of pollen in the passing air at any given moment. Each captured pollen is individually counted with regular intervals using microscopes. It must be noted that not all stations possess the same equipment. In particular, differing microscope sizes are used across the country. Consequently, the measured values of the pollen counts are biased towards the larger microscopes, thus showing a somewhat inaccurate representation of the true pollen counts [@nrm2022microscope] [@nrm2022pollen2]. However considering the structure of the dataset and the consequent data analysis being relativistic, for which a descriptive presentation follows in the `Data` section, this phenomenon has been ignored.
 
 ### Understanding the data
-The dataset that we have at our disposal contains 5 unique variables: `date`, `station`, `name`, `count` and `factor`. Of which all but the `factor` variable are used in this research paper. We have also added a `latitude` variable since it is known that higher latitudes contribute to more extreme climate changes [alecrim2023higher]. This variable is however entirely dependent on `station`. A short description of the meaning of each variable is shown in figure ?. Data is recorded during the predicted pollen season, based on historic results.
+The dataset that we have at our disposal contains 5 unique variables: `date`, `station`, `name`, `count` and `factor`. Of which all but the `factor` variable are used in this research paper. We have also added a `latitude` variable since it is known that higher latitudes contribute to more extreme climate changes [@alecrim2023higher]. This variable is however entirely dependent on `station`. A short description of the meaning of each variable is shown in figure ?. Data is recorded during the predicted pollen season, based on historic results.
 
 ```{r, message=FALSE}
-kable(data_structure)
+kable(data_structure, caption = "Description of the variables present in the datasets used in this research paper.")
 ```
 
 Viewing the years of availability in figure ? we conclude that not all data points are present in the data set. The stations had differing opening dates and not all species tend to be available to begin with. If no consideration for the location of said data points are made, we may observed skewed results, as the geographic distribution of monitored pollen changes over time due to availability. Thus analyzing the data in geographic categories of where they were collected is a necessary consideration.
 
 ```{r, message=FALSE}
-kable(stations)
+kable(stations, caption = "Years for which data for different pollen species are available at the pollen monitoring stations used in our research, as well as their latidudal coordinates.")
 ```
 
 ### Data selection
-First we remove any observations with missing values in any of the columns `date`, `station` or `species` since these are fundamental parameters to perform the data analysis. For the purposes of EQ regression, the time it takes to compute the models on the entire dataset in `R` is negligible. For nonparametric quantile regression however, the computational time appears to grow very quickly with the amount of observations. This has led us to the decision to reduce the amount of content in each dataset (one dataset containing all observations of any combination of `station` and `species`) to below a fixed limit. Without reducing any data, the largest data sets contain $\approx 500 000$ observations, while some combinations of data contain considerably fewer. By testing and optimizing the models for various sizes of the datasets we decided to set the limit to $5 000$ observations per combination of data. This reduces the running time considerably, making the process of analyzing our results much easier. In order to minimize the affect this has on our results the rows must be removed uniformly over the time of year. If the number of observations in a dataset is smaller than $n \cdot 5 000$, we want to select every $n$th element and discard the rest. We can do this in `R` by using the `slice` and `bind_rows` functions from the `dplyr` package. By performing these modifications to our data, we are sure to keep the shape of the distributions the same and thus the results of the quantile regression.
+First we remove any observations with missing values in any of the columns `date`, `station` or `species` since these are fundamental parameters to perform the data analysis. For the purposes of EQ regression, the time it takes to compute the models on the entire dataset in `R` is negligible. For nonparametric quantile regression however, the computational time appears to grow very quickly with the amount of observations. This has led us to the decision to reduce the amount of content in each dataset (one dataset containing all observations of any combination of `station` and `species`) to below a fixed limit. Without reducing any data, the largest data sets contain $\sim 500 000$ observations, while some combinations of data contain considerably fewer. By testing and optimizing the models for various sizes of the datasets we decided to set the limit to $5 000$ observations per combination of data. This reduces the running time considerably, making the process of analyzing our results much easier. In order to minimize the affect this has on our results the rows must be removed uniformly over the time of year. If the number of observations in a dataset is smaller than $n \cdot 5 000$, we want to select every $n$th element and discard the rest. We can do this in `R` by using the `slice` and `bind_rows` functions from the `dplyr` package. By performing these modifications to our data, we are sure to keep the shape of the distributions the same and thus the results of the quantile regression.
 
-### Yearly distribution of pollen
+### Annual distribution of pollen
 Before constructing the models, we can take a glance at what sort of results to expect from the subsequent regression analysis. In figure (?) we present a ridge plot containing information about the distribution of observed pollen by date of year. The `geom_density_ridges()` function from the `R` library `ggridges` uses kernel density estimation (KDE) to fit a continuous density function to what is, in essence, a histogram of the frequency of pollen on each date. KDE is a non-parametric method used to estimate the probability density function of a random variable. This is achieved by placing a kernel at each data point. In our case the kernels are Gaussian distributed, however normal distributions are also commonly used in KDE estimation. We then summarise each of the kernels' distributions in order to obtain a smooth continuous approximation of the density. The width of the kernel, known as the bandwidth, determines by how much each data point contributes to the density estimate. Larger bandwidths result in smoother but less detailed density estimates, while smaller bandwidths result in more detailed but noisier density estimates [@mvstat2001kde]. A common way to find the optimal bandwidth is to use the Asymptotic Mean Integrated Squared Error (AMISE). The function `geom_density_ridges()` uses an alternative method based on the Sheather and Jones (1991) plug-in bandwidth selection method. [@10.2307/2345597]
 
-By looking at the average distribution from the first and last 5 years in the dataset respectively, we construct a somewhat consistent average in terms of the state of the pollen season at a given location, reducing the risk of falsely identifying outlier data as patterned occurrences. We can conclude that, in the Stockholm area, the pollen season seemed to begin earlier for all the arboreal pollen species while grass pollen (Poaceae) did not appear to show those tendencies. In general the shape of the pollen distribution was not seen to have been altered over time. A visual analysis of the distribution of yearly pollen release may suggest that the average pollen season now begins earlier by up to a month compared to 45 years ago.
+By looking at the average distribution from the first and last 5 years in the dataset respectively, we construct a somewhat consistent average in terms of the state of the pollen season at a given location, reducing the risk of falsely identifying outlier data as patterned occurrences. We can conclude that, in the Stockholm area, the pollen season seemed to begin earlier for all the arboreal pollen species while grass pollen (Poaceae) did not appear to show those tendencies. In general the shape of the pollen distribution was not seen to have been altered over time. A visual analysis of the distribution of annual pollen release may suggest that the average pollen season now begins earlier by up to a month compared to 45 years ago.
 
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, fig.cap="Ridgeline figures approximating the density functions of the distribution of annual pollen. Comparing the observed dates of pollen capture for the average of the years 1973-1978 (green) with the average for 2018-2022 (red)."}
 ridges
 ```
 
@@ -111,7 +114,7 @@ An aspect in which quantile regression performs better than linear regression is
 
 All models in this paper will use `date` as the response variable, or a yearly quantile of `date`. The release date of pollen grain $i \in \{ 1,...,n \}$, where $n$ is the total amount of pollen grains released, is predicted by the models as the response $y_i$. We form a covariate vector $x_i = (1, \, t_i)$ which includes an intercept and the predictor variable $t_i \in \mathcal{T} = { \{1,...,T\}}$ which refers to the gregorian year of observation with $T$ being the amount of years monitored.
 
-In order to make an educated analysis of the behaviour of pollen release we need a strict definition for what constitutes a pollen season. There have been many attempts by various authors to find an optimal definition for the dates of which each pollen season covers. In this paper we classify the dates within which the pollen season is deemed active by referring to the EAN definition. [bastl2018defining] The EAN database contains a lot of data on pollen release in which they define the pollen season as the date at which at least $1\%$ of the yearly pollen have been counted. By the same definition, the pollen season is said to end when 95% of all pollen has been released. A reason as to why the starting quantile level and the one at the end of the season are not symmetric (i.e. why $Q_{start} \neq 1 - Q_{end}$) may be similar to how infection transmission models tend to behave, namely that the beginning of the season tends to be very intense while the distribution decreases more slowly towards the end of the season.
+In order to make an educated analysis of the behaviour of pollen release we need a strict definition for what constitutes a pollen season. There have been many attempts by various authors to find an optimal definition for the dates of which each pollen season covers. In this paper we classify the dates within which the pollen season is deemed active by referring to the EAN definition. [bastl2018defining] The EAN database contains a lot of data on pollen release in which they define the pollen season as the date at which at least $1\%$ of the annual pollen have been counted. By the same definition, the pollen season is said to end when $95\%$ of all pollen has been released. A reason as to why the starting quantile level and the one at the end of the season are not symmetric (i.e. why $Q_{start} \neq 1 - Q_{end}$) may be similar to how infection transmission models tend to behave, namely that the beginning of the season tends to be very intense while the distribution decreases more slowly towards the end of the season.
 
 When performing calculations of the arithmetic mean of a vector, we use the following formula:
 $$
@@ -141,7 +144,7 @@ $$
 
 The name of the pinball loss function derives from the fact that it's shape somewhat resembles that of a pinball game as shown in figure (?). Rather trivially, the loss is minimized at $\xi = 0$, since that means the predicted quantile exactly attains the value of the observed value of the target variable. Overprediction is more heavily penalized than underprediciton for quantiles $\tau < 0$, while the opposite is true when $\tau > 0$. This is because the loss function places more weight on the residuals above the predicted value for overprediction and below the predicted value for underprediction.
 
-```{r, echo=FALSE, fig.cap="Pinball loss function example"}
+```{r, echo=FALSE, fig.cap="Illustration of the pinball loss function."}
 knitr::include_graphics("data/pinball.png")
 ```
 
@@ -224,7 +227,7 @@ $$
 l_w(\beta(\tau), \sigma^2(\tau) \mid Y(\tau), X) = \sum_{t \in \mathcal{T}} w_t \, \text{log } f \left( \hat{Q}_t(\tau) \mid (X\beta(\tau))_t, \sigma^2(\tau) \right), \quad (?)
 $$
 
-This can easily be implemented with the `weights` argument of the `lm` function where we set the weight to be $\frac{1}{\text{nr of observaitons}}$.
+This can easily be implemented with the `weights` argument of the `lm` function where we set the weight to be $\frac{1}{N_t}$ where $N_t$ represents the number of observations at year $t$.
 
 To proceed fitting the model, we attempt to find the maximum likelihood estimate (MLE) of $\beta(\tau)$ and $\sigma^2(\tau)$ by optimizing
 $$
@@ -237,7 +240,7 @@ for a given quantile $\tau$. Since the function is continuous and twice differen
 
 ### Statistical model performance across quantiles
 
-```{r, fig.cap="Line graph over the coefficient and intecept estimates for each quantile. The thicker, opaque bounaries define the 95%-confidence intervals for each method. The red line shows the linear regression coefficient without quantile parameterization"}
+```{r, fig.cap="Line graph over the coefficient and intecept estimates for each quantile. The thicker, opaque bounaries define the 95%-confidence intervals for each method. The red line shows the linear regression coefficient without quantile parameterization."}
 plotQR
 ```
 
@@ -245,47 +248,23 @@ Figure (?) shows us how each method behaves for any quantile of data. We observe
 
 Based on this information, one may ask oneself which of these approaches we deem to be the most fit to represent the behaviour of the pollen season. The fact that the size of the confidence intervals differ so greatly is, to us, sufficient material to determine the EQ model as more desirable for the purpose of this research paper. In order to understand this difference in confidence between the to methods, let us take a look at how the models look overlayed on the set of observations.
 
-```{r, message=FALSE, fig.cap="Jitter plot over the yearly distribution of betula pollen in Stockholm comparing QR and EQ at the 1% quantile level"}
+```{r, message=FALSE, fig.cap="Jitter plot over the annual distribution of betula pollen in Stockholm comparing QR and EQ at the 1% quantile level."}
 plot_trend
 ```
 
-Figure (?) tells us the difference in fitting of both our models. The quantile regression method fits a linear model to encompass a given quantile, in this case the first 1% of yearly pollen release, below the regression line. We can observe that year 17 appears to be a heavy outlier in which the entire pollen season came significantly earlier than other years. Since the QR method tries to fit a linear trend with a specific amount of observations below it, and a large amount of these first 1% of observations are from the 17th year, the model is heavily skewed by the observations from this year and thus does not generate a good fit. EQ does not succumb to this issue since we in this approach aggregate the observations from each year to a specific date value (red points) and then perform ordinary linear regression on these aggregated observations. In this case the one outlier year corresponds to only 2% of the total observations while for QR this effect appears to be well over 50%. These results explain why the confidence intervals for QR are much larger than the equivalent measure of EQ. Thus we conclude that linear regression on empirical quantiles is a more fitting approach to use in the case of estimating the yearly seasonal shift of pollen.
+Figure (?) tells us the difference in fitting of both our models. The quantile regression method fits a linear model to encompass a given quantile, in this case the first $1\%$ of annual pollen release, below the regression line. We can observe that year 17 appears to be a heavy outlier in which the entire pollen season came significantly earlier than other years. Since the QR method tries to fit a linear trend with a specific amount of observations below it, and a large amount of these first 1% of observations are from the 17th year, the model is heavily skewed by the observations from this year and thus does not generate a good fit. EQ does not succumb to this issue since we in this approach aggregate the observations from each year to a specific date value (red points) and then perform ordinary linear regression on these aggregated observations. In this case the one outlier year corresponds to only 2% of the total observations while for QR this effect appears to be well over $50\%$. These results explain why the confidence intervals for QR are much larger than the equivalent measure of EQ. Thus we conclude that linear regression on empirical quantiles is a more fitting approach to use in the case of estimating the annual seasonal shift of pollen.
 
-### Results per species and location
-
-```{r}
-# EQ models
-kable(head(joined_eq_1 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), 15), caption = "Start of pollen season for different species and locations, by most significant shift to earlier dates (EQ model)")
-kable(head(joined_eq_1 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>% map_df(rev), 15), caption = "Start of pollen season for different species and locations, by most significant shift to later dates (EQ model)")
-
-kable(head(joined_eq_50 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to earlier dates (EQ model)")
-kable(head(joined_eq_50 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>% map_df(rev), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to later dates (EQ model)")
-
-kable(head(joined_eq_95 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), 5), caption = "End of pollen season for different species and locations, by most significant shift to earlier dates (EQ model)")
-kable(head(joined_eq_95 %>% dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>% map_df(rev), 5), caption = "End of pollen season for different species and locations, by most significant shift to later dates (EQ model)")
-```
-
+### Estimations and predictions per species
 
 ```{r}
-shift_eq_1
-shift_eq_50
-shift_eq_95
-
-shift_by_species
+kable(shift_by_species, caption = "Modelled pollen season shift by species averaged over all monitored stations.")
 ```
 
+Table (?) grants us information about how our EQ models predict the pollen seasons, for all monitored species, to respond to increasing temperatures in the atmosphere. While some pollen monitoring stations generated results with positive coefficients for certain species, such a phenomenon appears not to be present when we take the mean of our regression coefficients for each species from all stations. The exception to this however would be the $95\%$-quantile estimate for grass pollen (poaceae), meaning the grass pollen season is moving to later dates over time, while its start and peak shifts to earlier dates. This brings us to the conclusion that the pollen season unanimously is headed towards an earlier start, as well as peak, as the climate warms. The date at which $95\%$ of all annual pollen gets monitored also seems to arrive earlier each year. The exception to this pattern is, as we point out, grass pollen. The coefficient estimates for the end of season arrival dates are however lower than the starting dates across all species. By using the linear regression coefficients shown in the table, we can predict the dates at which quantiles of the annual pollen release are expected to appear at. 
 
-```{r}
-# QR models
-#kable(head(joined_qr_1 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`), 5), caption = "Start of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
-#kable(head(joined_qr_1 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`) %>% map_df(rev), 5), caption = "Start of pollen season for different species and locations, by most significant shift to later dates (QR model)")
+Using the 1% quantile estimate, we observe that the predicted dates for hazel and alder pollen moved from early April back in 1973 to late February as of 2023 and are expected to reach late January/early February respectively by 2050. The willow and elm seasons appear to shift at a similar pace, while birch pollen has accumulated a movement of 10 days over the past half century. Oak pollen now starts to appear in early May rather than towards the end of the month which appears to have been the case in the 1970's. Just as we saw in the ridge plots in the `Annual distribution of pollen` section, the starting dates of the grass pollen season are not seen to have been greatly affected by climate change. Something we can observe across the board in regards to the monitored pollen species however, is that the season lengths (difference in dates between the $95\%$-quantile and $1\%$-quantile) become longer over time. This phenomenon is present in all species we have covered in this paper. The largest growth in pollen season length is seen in hazel pollen (21 days in 50 years and 33 days in 77 years), while birch pollen saw the smallest growth with the season being barely a day longer after 77 years of increasing temperatures. 
 
-#kable(head(joined_qr_50 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
-#kable(head(joined_qr_50 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`) %>% map_df(rev), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to later dates (QR model)")
-
-#kable(head(joined_qr_95 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`), 5), caption = "End of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
-#kable(head(joined_qr_95 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`) %>% map_df(rev), 5), caption = "End of pollen season for different species and locations, by most significant shift to later dates (QR model)")
-```
+There could be many explanations for why the annual distribution of pollen behaves the way we have observed. In this paper we are not aiming to try and answer this question. Some quick thoughts however are that with an ever warmer climate, the temperatures at which plants are able to pollinate are present more days of the year, meaning the window of opportunity for trees and grass to release their pollen gets longer over time. The early pollen is what, for most species, gets shifted most heavily to earlier dates. An idea to why this may be the case is that since the spring arrives earlier over time, plants are able to begin the process of pollination earlier and consequently release most of their pollen (which always occurs in the spring months for arboreal species) at earlier dates, leaving the later parts of the year with less relative amounts of pollen.
 
 
 ### Geographic influence
@@ -314,95 +293,106 @@ ggplot(data = joined_eq_95, aes(x = Latitude, y = `Coefficient (EQ)`, colour = S
   labs(colour = "Species", x = "Latitude", y = "Coefficient")
 ```
 
-In figures (?) through (?) we can view the regression coefficients for each species and how they differ based on the latitude of the station the pollen were collected at. Thus we can determine whether pollen in colder climates are affected by climate change by a greater extent than in warmer areas, or vice versa. Figure (?) tells us how the beginning of the pollen season shifts at the observed locations throughout Sweden. Alder, hazel and oak all appear to have more dramatic seasonal shifts at northerly latitudes, while grass, birch, willow and elm show the opposite effect. The median quantile, which we also refer to as the peak of the pollen season was not observed to have had a significant impact of the latitude of where it took place, as seen in figure (?). The steep regression slope of the peak of the elm pollen seasonal shift comes down to the fact that the coefficient at the highest latitude is vastly different to the others. By that metric, a conclusion can not be made about whether this is proof of climate change impacting elm pollen at higher latitudes simply an outlier. It is worth noting that the p-value of the aforementioned elm coefficient in Umeå is 0.981. By all accounts, this points to the data point being an outlier. By figure (?) we see how the coefficients for the 95%-quantiles are estimated. We now observe, in contrast to the 1%-quantiles, that grass pollen attributes to a quicker growth toward earlier dates, the further north one goes. The remaining pollen species' seasonal ends do not appear to be strongly affected by latitude. What we can conclude from this is that the seasonal window for grass pollen does not expand as much at high latitudes than what can be observed at lower latitudes. Alder pollen appears to, somewhat consistently, attain more strongly negative coefficients, for any quantile, at the higher latitudes. Other species were not observed to be affected by the latitude of their release by any greater extent.
+In figures (?) through (?) we can view the regression coefficients for each species and how they differ based on the latitude of the station the pollen were collected at. Thus we can determine whether pollen in colder climates are affected by climate change by a greater extent than in warmer areas, or vice versa. Figure (?) tells us how the beginning of the pollen season shifts at the observed locations throughout Sweden. Alder, hazel and oak all appear to have more dramatic seasonal shifts at northerly latitudes, while grass, birch, willow and elm show the opposite effect. The median quantile, which we also refer to as the peak of the pollen season was not observed to have had a significant impact of the latitude of where it took place, as seen in figure (?). The steep regression slope of the peak of the elm pollen seasonal shift comes down to the fact that the coefficient at the highest latitude is vastly different to the others. By that metric, a conclusion can not be made about whether this is proof of climate change impacting elm pollen at higher latitudes simply an outlier. It is worth noting that the p-value of the aforementioned elm coefficient in Umeå is 0.981. By all accounts, this points to the data point being an outlier. By figure (?) we see how the coefficients for the $95\%$-quantiles are estimated. We now observe, in contrast to the 1%-quantiles, that grass pollen attributes to a quicker growth toward earlier dates, the further north one goes. The remaining pollen species' seasonal ends do not appear to be strongly affected by latitude. What we can conclude from this is that the seasonal window for grass pollen does not expand as much at high latitudes than what can be observed at lower latitudes. Alder pollen appears to, somewhat consistently, attain more strongly negative coefficients, for any quantile, at the higher latitudes. Other species were not observed to be affected by the latitude of their release by any greater extent.
 
 ## Discussion
+I diskussionen ska det tillkomma text som behandlar resultaten i en mer detaljerad omfattning. Jobbar på det under veckan. Tar gärna emot feedback på vad du tycker jag ska klämma in här eller om det är något jag missat.
 
 ### Further improvements
 The QR approach struggles with clusters of outliers such as a year with a significantly earlier pollen season. One way to look at it is that there exists a random effect of year that we do not consider in this approach. Thus deeming the assumption of independent observations obsolete in the case of our QR model. In order to improve these models, one may consider adding a random variable to deal with this yearly effect, resulting in a linear quantile mixed model.
 
 ## Bibliography and References
+Lägger till referenslistan när texten är klartskriven.
 
 ## Appendix
+Lagt in några saker jag funderar på att ha med som appendix, ska få mer ordning på det under veckan.
 
 ### Appendix 1: Translation of the latin names of pollen species
 ```{r, message=FALSE}
-kable(translation)
+kable(translation, caption = "Pollen species translation in to english and swedish.")
 ```
 
-### Appendix 2: Information about reduced data sets (ignore)
-ESKILSTUNA:
-  ALNUS: 45 362 / 10 < 5 000      (10)
-  BETULA: 451 397 / 91 < 5 000    (91)
-  CORYLUS: 3 812
-  POACEAE: 48 265 / 10 < 5 000    (10)
-  QUERCUS: 57 914 / 12 < 5 000    (12)
-  SALIX: 31 227 / 7 < 5 000       (7)
-  ULMUS: 9 779 / 2 < 5 000        (2)
-  
-GÖTEBORG:
-  ALNUS: 33 653 / 7 < 5 000       (7)
-  BETULA: 494 464 / 99 < 5 000    (99)
-  CORYLUS: 3 374
-  POACEAE: 74 372 / 15 < 5 000    (15)
-  QUERCUS: 54 957 / 11 < 5 000    (11)
-  SALIX: 19 285 / 4 < 5 000       (4)
-  ULMUS: 11 645 / 3 < 5 000       (3)
-  
-JÖNKÖPING:
-  ALNUS: 42 217 / 9 < 5 000       (9)
-  BETULA: 239 006 / 48 < 10 000   (48)
-  CORYLUS: 3 594
-  POACEAE: 31 676 / 7 < 5 000     (7)
-  QUERCUS: 26 482 / 6 < 5 000     (6)
-  SALIX: 13 929 / 3 < 5 000       (3)
-  ULMUS: 4 884
-  
-MALMÖ:
-  ALNUS: 31 596 / 7 < 5 000       (7)
-  BETULA: 203 475 / 41 < 5 000    (41)
-  CORYLUS: 4 562
-  POACEAE: 87 912 / 18 < 5 000    (18)
-  QUERCUS: 42 482 / 9 < 5 000     (9)
-  SALIX: 17 940 / 4 < 5 000       (4)
-  ULMUS: 35 560 / 8 < 5 000       (8)
-  
-NORRKÖPING:
-  ALNUS: 24 089 / 5 < 5 000       (5)
-  BETULA: 286 630 / 58 < 5 000    (58)
-  CORYLUS: 4 484
-  POACEAE: 50 537 / 11 < 5 000    (11)
-  QUERCUS: 26 899 / 6 < 5 000     (6)
-  SALIX: 14 715 / 3 < 5 000       (3)
-  ULMUS: 6 509 / 2 < 5 000        (2)
-  
-STOCKHOLM:
-  ALNUS: 55 346 / 12 < 5 000      (12)
-  BETULA: 372 668 / 75 < 5 000    (75)
-  CORYLUS: 5 848 / 2 < 5 000      (2)
-  POACEAE: 52 569 / 11 < 5 000    (11)
-  QUERCUS: 81 161 / 17 < 5 000    (17)
-  SALIX: 15 398 / 4 < 5 000       (4)
-  ULMUS: 33 284 / 7 < 5 000       (7)
-  
-UMEÅ:
-  ALNUS: 16 454 / 4 < 5 000       (4)
-  BETULA: 212 232 / 43 = 5 000    (43)
-  CORYLUS: 113
-  POACEAE: 22 639 / 5 < 5 000     (5)
-  QUERCUS: 182
-  SALIX: 8 875 / 2 < 5 000        (2)
-  ULMUS: 167
-  
-VÄSTERVIK:
-  ALNUS: 31 722 / 7 < 5 000       (7)
-  BETULA: 231 147 / 24 < 10 000   (47)
-  CORYLUS: 4 254
-  POACEAE: 37 613 / 8 < 5 000     (8)
-  QUERCUS: 40 942 / 9 < 5 000     (9)
-  SALIX: 8 127 / 2 < 5 000        (2)
-  ULMUS: 9 821 / 2 < 5 000        (2)
+### Appendix 2: Results per species and location
 
+```{r}
+# EQ models
+kable(head(joined_eq_1 %>% 
+             dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>%
+             mutate_at(vars(`Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), round), 5), 
+      caption = "Start of pollen season for different species and locations, by most significant shift to earlier dates (EQ model).")
+kable(head(joined_eq_1 %>% 
+             dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>%
+             mutate_at(vars(`Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), round) %>% map_df(rev), 5), 
+      caption = "Start of pollen season for different species and locations, by most significant shift to later dates (EQ model).")
+
+kable(head(joined_eq_50 %>%
+             dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>%
+             mutate_at(vars(`Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), round), 5), 
+      caption = "Peak of pollen season for different species and locations, by most significant shift to earlier dates (EQ model).")
+kable(head(joined_eq_50 %>% 
+             dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>%
+             mutate_at(vars(`Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), round) %>% map_df(rev), 5), 
+      caption = "Peak of pollen season for different species and locations, by most significant shift to later dates (EQ model).")
+
+kable(head(joined_eq_95 %>% 
+             dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>%
+             mutate_at(vars(`Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), round), 5), 
+      caption = "End of pollen season for different species and locations, by most significant shift to earlier dates (EQ model).")
+kable(head(joined_eq_95 %>% 
+             dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>%
+             mutate_at(vars(`Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), round) %>% map_df(rev), 5), 
+      caption = "End of pollen season for different species and locations, by most significant shift to later dates (EQ model).")
+```
+
+```{r}
+# QR models
+#kable(head(joined_qr_1 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`), 5), caption = "Start of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
+#kable(head(joined_qr_1 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`) %>% map_df(rev), 5), caption = "Start of pollen season for different species and locations, by most significant shift to later dates (QR model)")
+
+#kable(head(joined_qr_50 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
+#kable(head(joined_qr_50 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`) %>% map_df(rev), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to later dates (QR model)")
+
+#kable(head(joined_qr_95 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`), 5), caption = "End of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
+#kable(head(joined_qr_95 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`) %>% map_df(rev), 5), caption = "End of pollen season for different species and locations, by most significant shift to later dates (QR model)")
+```
+
+### Appendix 3: Information about reduced data sets (ignore)
+In order to make the process of analyzing results a lot quicker, we have reduced the size of each data set to less than 5000 observations. Each data set is made up of observations of individual pollen for all combinations of species and monitoring station. Some data sets are already below this size limit, like all the hazel (corylus) data sets and a a few more at the Umeå station, while others need massive reductions in size. Figure (?) denotes sizes of the data sets for combinations of species and station. The denominators of which we reduce the data sets with are represented in brackets. As mentioned in the section `Data selection`, a reduction in the size of each data set does not affect the shape of their distribution since we use the `slice` function to remove observations uniformly across all dates. s
+
+```{r}
+species <- c(latin_names, latin_names, latin_names, latin_names, latin_names, latin_names, latin_names, latin_names)
+stations <- c("Eskilstuna", "Göteborg", "Jönköping", "Malmö", "Norrköping", "Stockholm", "Umeå", "Västervik", 
+              "Eskilstuna", "Göteborg", "Jönköping", "Malmö", "Norrköping", "Stockholm", "Umeå", "Västervik", 
+              "Eskilstuna", "Göteborg", "Jönköping", "Malmö", "Norrköping", "Stockholm", "Umeå", "Västervik", 
+              "Eskilstuna", "Göteborg", "Jönköping", "Malmö", "Norrköping", "Stockholm", "Umeå", "Västervik", 
+              "Eskilstuna", "Göteborg", "Jönköping", "Malmö", "Norrköping", "Stockholm", "Umeå", "Västervik", 
+              "Eskilstuna", "Göteborg", "Jönköping", "Malmö", "Norrköping", "Stockholm", "Umeå", "Västervik", 
+              "Eskilstuna", "Göteborg", "Jönköping", "Malmö", "Norrköping", "Stockholm", "Umeå", "Västervik")
+
+size <- c("45 362 [10]", "451 397 [91]", "3 812 [NA]", "48 265 [10]", "57 914 [12]", "31 227 [7]", "9 779 [2]", 
+          "33 653 [7]", "494 464 [99]", "3 374 [NA]", "74 372 [15]", "54 957 [11]", "19 285 [4]", "11 645 [3]", 
+          "42 217 [9]", "239 006 [48]", "3 594 [NA]", "31 676 [7]", "26 482 [6]", "13 929 [3]", "4 884 [NA]", 
+          "31 596 [7]", "203 475 [41]", "4 484 [NA]", "50 537 [18]", "42 482 [9]", "17 940 [4]", "35 560 [8]", 
+          "24 089 [5]", "286 630 [58]", "3 812 [NA]", "48 265 [11]", "26 899 [6]", "14 715 [3]", "6 509 [2]", 
+          "55 346 [12]", "372 668 [75]", "5 848 [NA]", "52 569 [11]", "81 161 [17]", "15 398 [4]", "33 284 [7]", 
+          "16 454 [4]", "212 232 [43]", "113 [NA]", "22 639 [5]", "182 [2]", "8 875 [2]", "167 [NA]", 
+          "31 722 [7]", "231 147 [47]", "4 254 [NA]", "37 613 [8]", "40 942 [2]", "8 127 [2]", "9 821 [2]")
+
+reduction_factor <- c(10, 91, NA, 10, 12, 7, 2, 
+                      7, 99, NA, 15, 11, 4, 3, 
+                      9, 48, NA, 7, 6, 3, NA, 
+                      7, 41, NA, 18, 9, 4, 8, 
+                      5, 58, NA, 11, 6, 3, 2, 
+                      12, 75, 2, 11, 17, 4, 7, 
+                      4, 43, NA, 5, NA, 2, NA, 
+                      7, 47, NA, 8, 9, 2, 2)
+
+appendix <- data.frame(Species = species, stations = stations, size = size)
+
+appendix <- pivot_wider(appendix, names_from = stations, values_from = c(size))
+
+kable(appendix)
+```
 
 
 

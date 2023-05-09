@@ -5,7 +5,7 @@ count_per_year <- df %>% group_by(lat_name, station) %>% count(Year)
 
 new_count <- count_per_year %>%
   group_by(lat_name, station) %>%
-  summarize(n_list = list(n))
+  summarise(n_list = list(n))
 
 # 1st quantile
 data_q1 <- df %>%
@@ -18,9 +18,9 @@ eq_1 <- data_q1 %>% ungroup() %>% nest_by(lat_name, station, latitude) %>%
   mutate(coeff = summary(model)$coefficients["Year", "Estimate"], 
          "P value" = summary(model)$coefficients["Year", "Pr(>|t|)"], "Adj. R-squared" = summary(model)$adj.r.squared) %>%
   rowwise() %>%
-  mutate(`Predicted 2050 1% (EQ)` = as.integer(predict(lm(q1 ~ Year, data = data), newdata = data.frame(Year = 77))),
-         `Predicted 2023 1% (EQ)` = as.integer(predict(lm(q1 ~ Year, data = data), newdata = data.frame(Year = 50))), 
-         `Predicted 1973 1% (EQ)` = as.integer(predict(lm(q1 ~ Year, data = data), newdata = data.frame(Year = 0)))) %>%
+  mutate(`Predicted 2050 1% (EQ)` = predict(lm(q1 ~ Year, data = data), newdata = data.frame(Year = 77)),
+         `Predicted 2023 1% (EQ)` = predict(lm(q1 ~ Year, data = data), newdata = data.frame(Year = 50)), 
+         `Predicted 1973 1% (EQ)` = predict(lm(q1 ~ Year, data = data), newdata = data.frame(Year = 0))) %>%
   dplyr::select(c(-data))
 
 
@@ -35,9 +35,9 @@ eq_50 <- data_q50 %>% ungroup() %>% nest_by(lat_name, station, latitude) %>%
   mutate(coeff = summary(model)$coefficients["Year", "Estimate"], 
          "P value" = summary(model)$coefficients["Year", "Pr(>|t|)"], "Adj. R-squared" = summary(model)$adj.r.squared) %>%
   rowwise() %>%
-  mutate(`Predicted 2050 50% (EQ)` = as.integer(predict(lm(q50 ~ Year, data = data), newdata = data.frame(Year = 77))),
-         `Predicted 2023 50% (EQ)` = as.integer(predict(lm(q50 ~ Year, data = data), newdata = data.frame(Year = 50))), 
-         `Predicted 1973 50% (EQ)` = as.integer(predict(lm(q50 ~ Year, data = data), newdata = data.frame(Year = 0)))) %>%
+  mutate(`Predicted 2050 50% (EQ)` = predict(lm(q50 ~ Year, data = data), newdata = data.frame(Year = 77)),
+         `Predicted 2023 50% (EQ)` = predict(lm(q50 ~ Year, data = data), newdata = data.frame(Year = 50)), 
+         `Predicted 1973 50% (EQ)` = predict(lm(q50 ~ Year, data = data), newdata = data.frame(Year = 0))) %>%
   dplyr::select(c(-data))
 
 
@@ -52,9 +52,9 @@ eq_95 <- data_q95 %>% ungroup() %>% nest_by(lat_name, station, latitude) %>%
   mutate(coeff = summary(model)$coefficients["Year", "Estimate"], 
          "P value" = summary(model)$coefficients["Year", "Pr(>|t|)"], "Adj. R-squared" = summary(model)$adj.r.squared) %>%
   rowwise() %>%
-  mutate(`Predicted 2050 95% (EQ)` = as.integer(predict(lm(q95 ~ Year, data = data), newdata = data.frame(Year = 77))),
-         `Predicted 2023 95% (EQ)` = as.integer(predict(lm(q95 ~ Year, data = data), newdata = data.frame(Year = 50))), 
-         `Predicted 1973 95% (EQ)` = as.integer(predict(lm(q95 ~ Year, data = data), newdata = data.frame(Year = 0)))) %>%
+  mutate(`Predicted 2050 95% (EQ)` = predict(lm(q95 ~ Year, data = data), newdata = data.frame(Year = 77)),
+         `Predicted 2023 95% (EQ)` = predict(lm(q95 ~ Year, data = data), newdata = data.frame(Year = 50)), 
+         `Predicted 1973 95% (EQ)` = predict(lm(q95 ~ Year, data = data), newdata = data.frame(Year = 0))) %>%
   dplyr::select(c(-data))
 
 
@@ -94,32 +94,47 @@ joined_eq_95 <- eq_joined %>% arrange(`coefficient 95%`) %>%
 
 shift_eq_1 <- joined_eq_1 %>%
   group_by(Species) %>%
-  mutate(`Coefficient (1%)` = mean(`Coefficient (EQ)`), `Estimated day 1973 (1%)` = as.integer(mean(`Predicted 1973 (EQ)`)), 
-         `Estimated day 2023 (1%)` = as.integer(mean(`Predicted 2023 (EQ)`)), `Estimated day 2050 (1%)` = as.integer(mean(`Predicted 2050 (EQ)`))) %>%
+  mutate(`Coefficient (1%)` = round(mean(`Coefficient (EQ)`), 3), `Estimated start 1973` = round(mean(`Predicted 1973 (EQ)`)), 
+         `Estimated start 2023` = round(mean(`Predicted 2023 (EQ)`)), `Estimated start 2050` = round(mean(`Predicted 2050 (EQ)`))) %>%
   distinct(Species, .keep_all = TRUE) %>%  # Keep only one row for each Species, based on all columns
-  dplyr::select(Species, `Coefficient (1%)`, `Estimated day 1973 (1%)`, `Estimated day 2023 (1%)`, `Estimated day 2050 (1%)`)
+  dplyr::select(Species, `Coefficient (1%)`, `Estimated start 1973`, `Estimated start 2023`, `Estimated start 2050`)
 
 shift_eq_50 <- joined_eq_50 %>%
   group_by(Species) %>%
-  mutate(`Coefficient (50%)` = mean(`Coefficient (EQ)`), `Estimated day 1973 (50%)` = as.integer(mean(`Predicted 1973 (EQ)`)), 
-         `Estimated day 2023 (50%)` = as.integer(mean(`Predicted 2023 (EQ)`)), `Estimated day 2050 (50%)` = as.integer(mean(`Predicted 2050 (EQ)`))) %>%
+  mutate(`Coefficient (50%)` = round(mean(`Coefficient (EQ)`), 3), `Estimated peak 1973` = round(mean(`Predicted 1973 (EQ)`)), 
+         `Estimated peak 2023` = round(mean(`Predicted 2023 (EQ)`)), `Estimated peak 2050` = round(mean(`Predicted 2050 (EQ)`))) %>%
   distinct(Species, .keep_all = TRUE) %>%  # Keep only one row for each Species, based on all columns
-  dplyr::select(Species, `Coefficient (50%)`, `Estimated day 1973 (50%)`, `Estimated day 2023 (50%)`, `Estimated day 2050 (50%)`)
+  dplyr::select(Species, `Coefficient (50%)`, `Estimated peak 1973`, `Estimated peak 2023`, `Estimated peak 2050`)
 
 shift_eq_95 <- joined_eq_95 %>%
   group_by(Species) %>%
-  mutate(`Coefficient (95%)` = mean(`Coefficient (EQ)`), `Estimated day 1973 (95%)` = as.integer(mean(`Predicted 1973 (EQ)`)), 
-         `Estimated day 2023 (95%)` = as.integer(mean(`Predicted 2023 (EQ)`)), `Estimated day 2050 (95%)` = as.integer(mean(`Predicted 2050 (EQ)`))) %>%
+  mutate(`Coefficient (95%)` = round(mean(`Coefficient (EQ)`), 3), `Estimated end 1973` = round(mean(`Predicted 1973 (EQ)`)), 
+         `Estimated end 2023` = round(mean(`Predicted 2023 (EQ)`)), `Estimated end 2050` = round(mean(`Predicted 2050 (EQ)`))) %>%
   distinct(Species, .keep_all = TRUE) %>%  # Keep only one row for each Species, based on all columns
-  dplyr::select(Species, `Coefficient (95%)`, `Estimated day 1973 (95%)`, `Estimated day 2023 (95%)`, `Estimated day 2050 (95%)`)
+  dplyr::select(Species, `Coefficient (95%)`, `Estimated end 1973`, `Estimated end 2023`, `Estimated end 2050`)
 
 # Joined table for season lengths
 
 shift_by_species <- shift_eq_1 %>%
   left_join(shift_eq_50, by = c("Species")) %>%
   left_join(shift_eq_95, by = c("Species")) %>%
-  mutate(`Season length 1973` = abs(`Estimated day 1973 (95%)` - `Estimated day 1973 (1%)`), 
-         `Season length 2023` = abs(`Estimated day 2023 (95%)` - `Estimated day 2023 (1%)`),
-         `Season length 2050` = abs(`Estimated day 2050 (95%)` - `Estimated day 2050 (1%)`)) %>%
-  dplyr::select(Species, `Coefficient (1%)`, `Coefficient (50%)`, `Coefficient (95%)`, `Season length 1973`, `Season length 2023`, `Season length 2050`)
+  mutate(`Season length 1973` = abs(`Estimated end 1973` - `Estimated start 1973`), 
+         `Season length 2023` = abs(`Estimated end 2023` - `Estimated start 2023`),
+         `Season length 2050` = abs(`Estimated end 2050` - `Estimated start 2050`)) %>%
+  mutate(dates_1973 = as.Date(paste0("1973-", `Estimated start 1973`), format = "%Y-%j"),
+         dates_2023 = as.Date(paste0("2023-", `Estimated start 2023`), format = "%Y-%j"),
+         dates_2050 = as.Date(paste0("2050-", `Estimated start 2050`), format = "%Y-%j"), 
+         month_1973 = format(dates_1973, "%B"), 
+         month_2023 = format(dates_2023, "%B"), 
+         month_2050 = format(dates_2050, "%B"), 
+         day_1973 = format(dates_1973, "%e"), 
+         day_2023 = format(dates_2023, "%e"), 
+         day_2050 = format(dates_2050, "%e"), 
+         `Estimated start 1973` = paste0(month_1973, " ", day_1973), 
+         `Estimated start 2023` = paste0(month_2023, " ", day_2023), 
+         `Estimated start 2050` = paste0(month_2050, " ", day_2050)) %>%
+  dplyr::select(Species, `Coefficient (1%)`, `Coefficient (50%)`, `Coefficient (95%)`, 
+                `Estimated start 1973`, `Estimated start 2023`, `Estimated start 2050`, 
+                `Season length 1973`, `Season length 2023`, `Season length 2050`) %>%
+  arrange(`Coefficient (1%)`)
 

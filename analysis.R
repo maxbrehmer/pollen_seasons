@@ -5,7 +5,7 @@ ridges <- df %>% filter(year %in% c(1973, 1974, 1975, 1976, 1977, 2018, 2019, 20
   scale_x_date(breaks = seq(as.Date("2000-02-01"), as.Date("2000-09-01"), by = "1 months"), date_labels = "%b", expand = c(0,0), limits = c(as.Date("2000-02-01"), as.Date("2000-09-01")) ) +
   scale_y_discrete(expand = c(0,0)) +
   scale_fill_manual(values = c("1973-1977" = "lightgreen", "2018-2022" = "lightpink")) +
-  labs(title = "Average yearly distribution of pollen\n in Stockholm (1973-1977) and (2018-2022)", x = "Date", y = "Intensity", fill = "Year group") +
+  labs(title = "Average annual distribution of pollen\n in Stockholm (1973-1977) and (2018-2022)", x = "Date", y = "Intensity", fill = "Year group") +
   theme_ridges()
 
 
