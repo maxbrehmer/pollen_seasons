@@ -1,10 +1,10 @@
 ridges <- df %>% filter(year %in% c(1973, 1974, 1975, 1976, 1977, 2018, 2019, 2020, 2021, 2022), station == "Stockholm") %>%
   mutate(first5 = ifelse(year < 1980, "1973-1977", "2018-2022")) %>%
   ggplot(aes(x = md_date, y = lat_name)) +
-  geom_density_ridges(rel_min_height = 0.01, scale = 1.5, aes(fill = first5)) +
+  geom_density_ridges(rel_min_height = 0.01, scale = 1.5, aes(fill = first5), alpha = 0.5) +
   scale_x_date(breaks = seq(as.Date("2000-02-01"), as.Date("2000-09-01"), by = "1 months"), date_labels = "%b", expand = c(0,0), limits = c(as.Date("2000-02-01"), as.Date("2000-09-01")) ) +
   scale_y_discrete(expand = c(0,0)) +
-  scale_fill_manual(values = c("1973-1977" = "lightgreen", "2018-2022" = "lightpink")) +
+  scale_fill_manual(values = c("1973-1977" = "green", "2018-2022" = "red")) +
   labs(title = "Average annual distribution of pollen\n in Stockholm (1973-1977) and (2018-2022)", x = "Date", y = "Intensity", fill = "Year group") +
   theme_ridges()
 
