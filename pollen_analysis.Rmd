@@ -51,12 +51,12 @@ Abstract kommer...
 Här tänkte jag skriva tack till handledare, en acknowledgement om att jag använt AI verktyg som ChatGPT och övrig extra information om uppsatsen.
 
 ## Introduction
-Over the past couple of decades it has been made clear that our climate is changing rapidly in various ways. Most notably the global average temperature has risen by ca $0.2^\circ C$ per decade since the mid seventies, this constitutes an almost $1^\circ C$ increase over the past half century [@hansen2006global]. Limiting our view to only Sweden, we also see significant shifts in this regions' otherwise stable climate. Several studies in recent decades draw the conclusion that plant phenology is impacted by this increase in temperature. [@van2002influence] discusses in their study of the seasonal pollen shift in the Netherlands that an advance in the start of the pollen season by 3-22 days took place in the latter third of the 20th century. Likewise this paper strives to understand what seasonal changes have occurred to the pollen season in Sweden.
+Over the past couple of decades it has been made clear that our climate is changing rapidly in various ways. Most notably the global average temperature has risen by ca $0.2^\circ C$ per decade since the mid seventies, this constitutes an almost $1^\circ C$ increase over the past half century [@hansen2006global]. Limiting our view to only Sweden, we also see significant shifts in this regions' otherwise stable climate. Several studies in recent decades draw the conclusion that plant phenology is impacted by this increase in temperature. Van Vliet [@van2002influence] discusses in their study of the seasonal pollen shift in the Netherlands that an advance in the start of the pollen season by 3-22 days took place in the latter third of the 20th century. Likewise this paper strives to understand what seasonal changes have occurred to the pollen season in Sweden.
   As mentioned in [@lind2016pollen] the results may differ for various species of pollen. More precisely they found a stark difference in duration among arboreal plant species compared to herbaceous ones, with the former trending towards an earlier end date, while the latter was pushed to a further date and thus have a longer seasonal duration. Grass pollen, being herbaceous, is the leading cause of pollen allergy in many developed countries, meaning a lot of people suffer from these seasonal changes for an extended time [@garcia2017poaceae]. In Sweden and other parts of northern Europe however, due to differences in temperature and overall climate, the arboreal types like birch (betula) are the most common cause of pollinosis [@d2017allergenic].
 
 Continous monitoring of pollen conducted by the Swedish Museum of Natural History (NRM) began in 1973 at the Palynological laboratory in Stockholm. Since then multiple other stations have been included in the scope of NRM's continous pollen monitoring program. As of 2022 there are 20 active stations involved [@nrm2022pollen], monitoring the release of several unique species of pollen. In this paper we consider 7 of the most allergenic species, these are the arboreal pollen of alder (alnus), birch (betula), hazel (corylus), oak (quercus), willow (salix), elm (ulmus) and the herbaceous species of grass pollen (poaceae).
 
-In this paper we will attempt to determine the shift in dates of the start and end of the pollen season in Sweden as an effect of global warming of Earth's climate. We will consider global warming as a linear trend over the researched time period as to simplify the process of analyzing pollen patterns. We can do this as research has shown acceptable fitting of linear models over anthropogenic climate change, in regard to temperature [@hansen2006global]. An analysis will be conducted based on two separate frequentist quantile regression models, namely linear regression on empirical quantiles (EQ) and non-parametric quantile regression (QR). In a study of seasonal shifts of migratory birds [@karlsson2022comparison] perform both these methods, this paper covers the majority of the theory in regards to the construction of the statistical models. In the case of QR, we also make good use of [@takeuchi2006nonparametric] for a more in depth description of the method.
+In this paper we will attempt to determine the shift in dates of the start and end of the pollen season in Sweden as an effect of global warming of Earth's climate. We will consider global warming as a linear trend over the researched time period as to simplify the process of analyzing pollen patterns. We can do this as research has shown acceptable fitting of linear models over anthropogenic climate change, in regard to temperature [@hansen2006global]. An analysis will be conducted based on two separate frequentist quantile regression models, namely linear regression on empirical quantiles (EQ) and non-parametric quantile regression (QR). In a study of seasonal shifts of migratory birds, Karlsson/Hössjer [@karlsson2022comparison] perform both these methods. This paper covers the majority of the theory in regards to the construction of the statistical models. In the case of QR, we also make good use of Takeuchi's paper on nonparametric quantile estimations [@takeuchi2006nonparametric] for a more in depth description of the method.
 
 By its conclusion this research paper aims to have built a statistical model that can explain the historic shift in pollen seasons for each of the 7 species and also possesses the ability to predict expected further changes in the Swedish pollen season.
 
@@ -66,7 +66,7 @@ The following section is $\textbf{2. Data}$, in which all aspects of the data us
 
 Section $\textbf{3. Methods}$ encompasses all the theoretical definitions of the methods included in this paper. In order to strengthen the significance of our results, we have used two independent methods. Linear regression on empirical quantiles and Nonparametric quantile regression. Linear regression on empirical quantiles, which we refer to as EQ, is a simple method commonly used to perform statistical analyses on different quantile levels of data, while nonparametric quantile regression (QR) is a more complex method which substitutes the conditional mean of the loss function for the conditional median and requires numerical approaches to the resulting optimization problem. Our sections on QR $(\textbf{3.1})$ and EQ $(\textbf{3.2})$ respectively explain the theoretical aspects of these methods, while simultaneously providing descriptions of how we have applied them in our models.
 
-The most important findings of our models are presented in $\textbf{4. Results}$. This part of the paper is divided in to 3 sections for increased readability. The first, $\textbf{4.1 Statistical model performance across quantiles}$ contains an analysis of how well each of our methods perform across quantiles of the data. it is in this section we determine which method to primarily base our conclusions from in the following sections. There are a lot of interesting results to share from this statistical analysis, the most important of which are presented as a table in $\textbf{4.2 Estimations and predictions per species}$. Here we analyze which species of pollen see the most significant seasonal shift and make estimations of which dates to expect the pollen season to be active at certain years. One of our assumptions prior to performing our analysis is that high latitudes correspond to larger shifts in the climate and would thus affect the pollen season to a greater extent than at lower latitudes. In the section $\textbf{4.3 Geographic influence}$ we attempt to find out whether this assumption is correct or not in regards to predicting seasonal trends in pollen release in Sweden. Results that are not of central importance to our discussion and conclusions are nonetheless accessible in $\textbf{Appendix 2.}$
+The most important findings of our models are presented in $\textbf{4. Results}$. This part of the paper is divided in to 3 sections for increased readability. The first, $\textbf{4.1 Statistical model performance across quantiles}$ contains an analysis of how well each of our methods perform across quantiles of the data. it is in this section we determine which method to primarily base our conclusions from in the following sections. There are a lot of interesting results to share from this statistical analysis, the most important of which are presented as a table in $\textbf{4.2 Estimations and predictions per species}$. Here we analyze which species of pollen see the most significant seasonal shift and make estimations of which dates to expect the pollen season to be active at certain years. One of our assumptions prior to performing our analysis is that high latitudes correspond to larger shifts in the climate and would thus affect the pollen season to a greater extent than at lower latitudes. In the section $\textbf{4.3 Geographic influence}$ we attempt to find out whether this assumption is correct or not in regards to predicting seasonal trends in pollen release in Sweden. Results that are not of central importance to our discussion and conclusions are nonetheless accessible in $\textbf{Appendix 3.}$
 
 Section $\textbf{5. Discussion}$ is where we attempt to make sense of the results observed and visualized in $\textbf{4. Results}$. For each of our analyzed results we may be able obtain a definitive conclusion, or not, in which case a description of what we are missing for us to draw a conclusion follows. Since there are limits to what we can expect to answer in this thesis, we have set aside a section $(\textbf{5.1 Further improvements})$ on which parts of our work is inconclusive and how they can be improved upon.
 
@@ -75,10 +75,18 @@ This paper concludes with a section of $\textbf{Appendicies}$. Additional or com
 ## Section 1: Litterature review
 I mån av tid skriver jag lite om vad som tidigare uppmärksammats i liknande tidigare rapporter.
 
+In a paper from the journal "Proceedings of the National Academy of Sciences" [@hansen2006global], James Hansen and his team were able to deduce that global surface temperature has increased $\sim 0.2^\circ C$ per decade between the mid 1970's and mid 2000's. Assuming this trend also holds for the past 2 decades, we estimate the global average temperature to be almost $1^\circ C$ warmer than half a century ago. Using these trends in global average temperature over time, we are able to form conclusions about how plant phenology, and more specifically pollen release, is affected by a warming climate.
+
+In a Dutch study from 2002, a 31 year long collection of pollen in the Netherlands saw an advance in the pollen season by 3-22 days, depending on species. With species such as elm, oak and alder advancing between 15 and 18 days, while they recorded lesser advances in willow, birch and grass pollen at 12, 10 and 6 days respectively [@van2002influence].
+
+In a local study conducted by the Palynological laboratory in Stockholm, there was found to have been an advance in the seasonal starting dates for many arboreal species of pollen such as birch, oak, pine etc. Peak dates of pollen release were found to have largely followed the same trajectories as the starting dates, while the end dates for herbaceous pollen species like grass, were seen to have in fact moved to later dates. The length of pollen seasons had increased for some species, grass, mugwort and birch being among them, while most arboreal pollen types saw a decrease in overall seasonal length [@lind2016pollen].
+
+For those whom suffer from pollen allergies, the length and intensity of pollen release would preferably be as low as possible. Not all types of pollen are as allergenic as each other however. People may react differently to separate species of pollen.
+
 ## Section 2: Data
 
 ### Section 2.1: Data collection
-As we mentioned earlier in this paper, the monitoring of pollen in the Stockholm region is conducted by the Palynological laboratory at NRM. The laboratory in question uses a Burkard Seven Day Volumetric Spore Trap to capture pollen and spores from the air through a small entrance meant to resemble the human airways. Thus approximately 10 liters of air passes through the machine each minute, which is what humans tend to consume. In order to capture the pollen particles carried by the passing air, a sticky tape is mounted to a drum rotating at 2 mm per hour. As only a small portion of the tape is exposed to the air at each point in time, this method grants us a good indication of the volume of pollen in the passing air at any given moment. Each captured pollen is individually counted with regular intervals using microscopes. It must be noted that not all stations possess the same equipment. In particular, differing microscope sizes are used across the country. Consequently, the measured values of the pollen counts are biased towards the larger microscopes, thus showing a somewhat inaccurate representation of the true pollen counts [@nrm2022microscope] [@nrm2022pollen2]. However considering the structure of the dataset and the consequent data analysis being relativistic, for which a descriptive presentation follows in the $\textbf{Data}$ section, this phenomenon has been ignored.
+As we mentioned earlier in this paper, the monitoring of pollen in the Stockholm region is conducted by the Palynological laboratory at NRM. The laboratory in question uses a Burkard Seven Day Volumetric Spore Trap [@https://doi.org/10.1111/j.1744-7348.1952.tb00904.x] to capture pollen and spores from the air through a small entrance meant to resemble the human airways. Thus approximately 10 liters of air passes through the machine each minute, which is what humans tend to consume. In order to capture the pollen particles carried by the passing air, a sticky tape is mounted to a drum rotating at 2 mm per hour. As only a small portion of the tape is exposed to the air at each point in time, this method grants us a good indication of the volume of pollen in the passing air at any given moment. Each captured pollen is individually counted with regular intervals using microscopes. It must be noted that not all stations possess the same equipment. In particular, differing microscope sizes are used across the country. Consequently, the measured values of the pollen counts are biased towards the larger microscopes, thus showing a somewhat inaccurate representation of the true pollen counts [@nrm2022microscope] [@nrm2022pollen2]. However considering the structure of the dataset and the consequent data analysis being relativistic, for which a descriptive presentation follows in the $\textbf{Data}$ section, this phenomenon has been ignored.
 
 ### Section 2.2: Understanding the data
 The dataset that we have at our disposal contains 5 unique variables: `date`, `station`, `name`, `count` and `factor`. Of which all but the `factor` variable are used in this research paper. We have also added a `latitude` variable since it is known that higher latitudes contribute to more extreme climate changes [@alecrim2023higher]. This variable is however entirely dependent on `station`. A short description of the meaning of each variable is shown in table 1. Equipment for data collection is active only during the period of the predicted pollen season, estimated through using predictive models for pollen activity based on historic results.
@@ -313,52 +321,8 @@ Lagt in några saker jag funderar på att ha med som appendix, ska få mer ordni
 kable(translation, caption = "Pollen species translation in to english and swedish.")
 ```
 
-### Appendix 2: Results per species and location
-
-```{r}
-# EQ models
-kable(head(joined_eq_1 %>% 
-             dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>%
-             mutate_at(vars(`Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), round), 5), 
-      caption = "Start of pollen season for different species and locations, by most significant shift to earlier dates (EQ model).")
-kable(head(joined_eq_1 %>% 
-             dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>%
-             mutate_at(vars(`Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), round) %>% map_df(rev), 5), 
-      caption = "Start of pollen season for different species and locations, by most significant shift to later dates (EQ model).")
-
-kable(head(joined_eq_50 %>%
-             dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>%
-             mutate_at(vars(`Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), round), 5), 
-      caption = "Peak of pollen season for different species and locations, by most significant shift to earlier dates (EQ model).")
-kable(head(joined_eq_50 %>% 
-             dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>%
-             mutate_at(vars(`Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), round) %>% map_df(rev), 5), 
-      caption = "Peak of pollen season for different species and locations, by most significant shift to later dates (EQ model).")
-
-kable(head(joined_eq_95 %>% 
-             dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>%
-             mutate_at(vars(`Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), round), 5), 
-      caption = "End of pollen season for different species and locations, by most significant shift to earlier dates (EQ model).")
-kable(head(joined_eq_95 %>% 
-             dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>%
-             mutate_at(vars(`Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), round) %>% map_df(rev), 5), 
-      caption = "End of pollen season for different species and locations, by most significant shift to later dates (EQ model).")
-```
-
-```{r}
-# QR models
-#kable(head(joined_qr_1 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`), 5), caption = "Start of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
-#kable(head(joined_qr_1 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`) %>% map_df(rev), 5), caption = "Start of pollen season for different species and locations, by most significant shift to later dates (QR model)")
-
-#kable(head(joined_qr_50 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
-#kable(head(joined_qr_50 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`) %>% map_df(rev), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to later dates (QR model)")
-
-#kable(head(joined_qr_95 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`), 5), caption = "End of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
-#kable(head(joined_qr_95 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`) %>% map_df(rev), 5), caption = "End of pollen season for different species and locations, by most significant shift to later dates (QR model)")
-```
-
-### Appendix 3: Information about reduced data sets (ignore)
-In order to make the process of analyzing results a lot quicker, we have reduced the size of each data set to less than 5000 observations. Each data set is made up of observations of individual pollen for all combinations of species and monitoring station. Some data sets are already below this size limit, like all the hazel (corylus) data sets and a a few more at the Umeå station, while others need massive reductions in size. Table 11 denotes sizes of the data sets for combinations of species and station. The denominators of which we reduce the data sets with are represented in brackets. As mentioned in the section $\textbf{Data selection}$, a reduction in the size of each data set does not affect the shape of their distribution since we use the `slice()` function to remove observations uniformly across all dates.
+### Appendix 2: Information about reduced data sets
+In order to make the process of analyzing results a lot quicker, we have reduced the size of each data set to less than 5000 observations. Each data set is made up of observations of individual pollen for all combinations of species and monitoring station. Some data sets are already below this size limit, like all the hazel (corylus) data sets and a a few more at the Umeå station, while others need massive reductions in size. Table ? denotes sizes of the data sets for combinations of species and station. The denominators of which we reduce the data sets with are represented in brackets. As mentioned in the section $\textbf{Data selection}$, a reduction in the size of each data set does not affect the shape of their distribution since we use the `slice()` function to remove observations uniformly across all dates.
 
 ```{r}
 species <- c(latin_names, latin_names, latin_names, latin_names, latin_names, latin_names, latin_names, latin_names)
@@ -376,7 +340,7 @@ size <- c("45 362 [10]", "451 397 [91]", "3 812 [NA]", "48 265 [10]", "57 914 [1
           "31 596 [7]", "203 475 [41]", "4 484 [NA]", "50 537 [18]", "42 482 [9]", "17 940 [4]", "35 560 [8]", 
           "24 089 [5]", "286 630 [58]", "3 812 [NA]", "48 265 [11]", "26 899 [6]", "14 715 [3]", "6 509 [2]", 
           "55 346 [12]", "372 668 [75]", "5 848 [NA]", "52 569 [11]", "81 161 [17]", "15 398 [4]", "33 284 [7]", 
-          "16 454 [4]", "212 232 [43]", "113 [NA]", "22 639 [5]", "182 [2]", "8 875 [2]", "167 [NA]", 
+          "16 454 [4]", "212 232 [43]", "113 [NA]", "22 639 [5]", "182 [NA]", "8 875 [2]", "167 [NA]", 
           "31 722 [7]", "231 147 [47]", "4 254 [NA]", "37 613 [8]", "40 942 [2]", "8 127 [2]", "9 821 [2]")
 
 reduction_factor <- c(10, 91, NA, 10, 12, 7, 2, 
@@ -393,6 +357,51 @@ appendix <- data.frame(Species = species, Stations = stations, size = size)
 appendix <- pivot_wider(appendix, names_from = Species, values_from = c(size))
 
 kable(appendix, caption = "Dataset sizes for combinations of species and location. Brackets denote the factor of which each dataset is reduced by.")
+```
+
+
+### Appendix 3: Results per species and location
+
+```{r}
+# EQ models
+kable(joined_eq_1 %>% 
+             dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>%
+             mutate_at(vars(`Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), round), 
+      caption = "Start of pollen season for different species and locations")
+#kable(joined_eq_1 %>% 
+#             dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>%
+#             mutate_at(vars(`Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), round) %>% map_df(rev), 
+#      caption = "Start of pollen season for different species and locations")
+
+kable(joined_eq_50 %>%
+             dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>%
+             mutate_at(vars(`Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), round), 
+      caption = "Peak of pollen season for different species and locations")
+#kable(joined_eq_50 %>% 
+#             dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>%
+#             mutate_at(vars(`Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), round) %>% map_df(rev), 
+#      caption = "Peak of pollen season for different species and locations")
+
+kable(joined_eq_95 %>% 
+             dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>%
+             mutate_at(vars(`Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), round), 
+      caption = "End of pollen season for different species and locations")
+#kable(joined_eq_95 %>% 
+#             dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>%
+#             mutate_at(vars(`Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), round) %>% map_df(rev), 
+#      caption = "End of pollen season for different species and locations")
+```
+
+```{r}
+# QR models
+#kable(head(joined_qr_1 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`), 5), caption = "Start of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
+#kable(head(joined_qr_1 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`) %>% map_df(rev), 5), caption = "Start of pollen season for different species and locations, by most significant shift to later dates (QR model)")
+
+#kable(head(joined_qr_50 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
+#kable(head(joined_qr_50 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`) %>% map_df(rev), 5), caption = "Peak of pollen season for different species and locations, by most significant shift to later dates (QR model)")
+
+#kable(head(joined_qr_95 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`), 5), caption = "End of pollen season for different species and locations, by most significant shift to earlier dates (QR model)")
+#kable(head(joined_qr_95 %>% dplyr::select(Species, Location, `Coefficient (QR)`, `Predicted 1973 (QR)`, `Predicted 2023 (QR)`, `Predicted 2050 (QR)`) %>% map_df(rev), 5), caption = "End of pollen season for different species and locations, by most significant shift to later dates (QR model)")
 ```
 
 
