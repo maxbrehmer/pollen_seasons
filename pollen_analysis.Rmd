@@ -48,7 +48,7 @@ source("models.R", local = knitr::knit_global())
 Abstract kommer...
 
 ## Preface
-I have conducted this research paper as my bachelor's thesis in mathematical statistics at Stockholm University. I want to thank my advisor Martin Sköld who has been of great value throughout this semester by providing me the guidance necessary to complete this thesis. It must be noted that I have used AI tools, more specifically OpenAI's ChatGPT has been a valuable tool for gaining a deeper understanding of certain concepts. However I have not used any artificial intelligence tools to produce any of the contents in my texts, nor is it used as a source of any in-text information. A small detail I want to highlight in the data and results sections is that 
+I have conducted this research paper as my bachelor's thesis in mathematical statistics at Stockholm University. I want to thank my advisor Martin Sköld who has been of great value throughout this semester by providing me the guidance necessary to complete this thesis. It must be noted that I have used artificial intelligence tools, more specifically OpenAI's ChatGPT has been a valuable tool for gaining a deeper understanding of certain concepts. However I have not used any AI tools to produce any of the contents in my texts, nor has it been used as a source for any in-text information.
 
 ## Introduction
 Over the past couple of decades it has been made clear that our climate is changing rapidly in various ways. Most notably the global average temperature has risen by ca $0.2^\circ C$ per decade since the mid seventies, this constitutes an almost $1^\circ C$ increase over the past half century [@hansen2006global]. Limiting our view to only Sweden, we also see significant shifts in this regions' otherwise stable climate. Several studies in recent decades draw the conclusion that plant phenology is impacted by this increase in temperature. Van Vliet [@van2002influence] discusses in their study of the seasonal pollen shift in the Netherlands that an advance in the start of the pollen season by 3-22 days took place in the latter third of the 20th century. Likewise this paper strives to understand what seasonal changes have occurred to the pollen season in Sweden.
@@ -56,7 +56,7 @@ Over the past couple of decades it has been made clear that our climate is chang
 
 Continous monitoring of pollen conducted by the Swedish Museum of Natural History (NRM) began in 1973 at the Palynological laboratory in Stockholm. Since then multiple other stations have been included in the scope of NRM's continous pollen monitoring program. As of 2022 there are 20 active stations involved [@nrm2022pollen], monitoring the release of several unique species of pollen. In this paper we consider 7 of the most allergenic species, these are the arboreal pollen of alder (alnus), birch (betula), hazel (corylus), oak (quercus), willow (salix), elm (ulmus) and the herbaceous species of grass pollen (poaceae).
 
-In this paper we will attempt to determine the shift in dates of the start and end of the pollen season in Sweden as an effect of global warming of Earth's climate. We will consider global warming as a linear trend over the researched time period as to simplify the process of analyzing pollen patterns. We can do this as research has shown acceptable fitting of linear models over anthropogenic climate change, in regard to temperature [@hansen2006global]. An analysis will be conducted based on two separate frequentist quantile regression models, namely linear regression on empirical quantiles (EQ) and non-parametric quantile regression (QR). In a study of seasonal shifts of migratory birds, Karlsson/Hössjer [@karlsson2022comparison] perform both these methods. This paper covers the majority of the theory in regards to the construction of the statistical models. In the case of QR, we also make good use of Takeuchi's paper on nonparametric quantile estimations [@takeuchi2006nonparametric] for a more in depth description of the method.
+In this paper we will attempt to determine the shift in dates of the start and end of the pollen season in Sweden as an effect of global warming of Earth's climate. We will consider global warming as a linear trend over the researched time period as to simplify the process of analyzing pollen patterns. We can do this as research has shown acceptable fitting of linear models over anthropogenic climate change, in regard to temperature [@hansen2006global]. An analysis will be conducted based on two separate frequentist quantile regression models, namely linear regression on empirical quantiles (EQ) and nonparametric quantile regression (QR). In a study of seasonal shifts of migratory birds, Karlsson/Hössjer [@karlsson2022comparison] perform both these methods. This paper covers the majority of the theory in regards to the construction of the statistical models. In the case of QR, we also make good use of Takeuchi's paper on nonparametric quantile estimations [@takeuchi2006nonparametric] for a more in depth description of the method.
 
 By its conclusion this research paper aims to have built a statistical model that can explain the historic shift in pollen seasons for each of the 7 species and also possesses the ability to predict expected further changes in the Swedish pollen season.
 
@@ -77,11 +77,11 @@ In a paper from the journal "Proceedings of the National Academy of Sciences" [@
 
 In a Dutch study from 2002, a 31 year long collection of pollen in the Netherlands saw an advance in the pollen season by 3-22 days, depending on species. With species such as elm, oak and alder advancing between 15 and 18 days, while they recorded lesser advances in willow, birch and grass pollen at 12, 10 and 6 days respectively [@van2002influence].
 
-In a more local study conducted by the Palynological laboratory in Stockholm, there was found to have been an advance in the seasonal starting dates for many arboreal species of pollen such as birch, oak, pine etc. Peak dates of pollen release were found to have largely followed the same trajectories as the starting dates, while the end dates for herbaceous pollen species like grass, were seen to have in fact moved to later dates. The length of pollen seasons had increased for some species, grass, mugwort and birch being among them, while most arboreal pollen types saw a decrease in overall seasonal length [@lind2016pollen].
+In a more local study conducted by the Palynological laboratory in Stockholm, there was found to have been an advance in the seasonal starting dates for many arboreal species of pollen such as birch, oak, pine etc. Peak dates of pollen release were found to have largely followed the same trajectories as the starting dates, while the end dates for herbaceous pollen species like grass, were seen to have in fact moved to later dates. The length of pollen seasons had increased for some species, grass, mugwort and birch being among them, while most arboreal pollen types saw a decrease in overall seasonal length [@lind2016pollen]. A study of plant phenology in high latitude environments found that their advancement in annual phenology tends to be greater than equivalent plants at lower latitudes [@alecrim2023higher]. This is consistent with findings that show a greater increase in average yearly temperature near the poles than closer to the equator [@hisano2021rapid]. Research has found that the ongoing increase in temperature extremes may be contributing to an extended seasonal duration of airborne allergenic pollen across the northern hemisphere [@ziska2019temperature].
 
 For those whom suffer from pollen allergies, the length and intensity of pollen release would preferably be as low as possible. Not all types of pollen are as allergenic as each other however. People may react differently to various species of pollen. Garcia-Mozo discusses in a paper published in 2017 that grass pollen are the most allergenic worldwide [@garcia2017poaceae], whereas in a study conducted by D'Amato, it was revealed that birch pollen was the leading cause of allergic pollen reactions in northern europe [@d2017allergenic], due to the fact that this type of pollen is more prevalent in this region. What we can conclude from these findings is that seasonal changes in grass and birch pollen affect the population to a greater extent than other types and thus may be of greater interest to follow.
 
-Our primary source of material covering the theoretical background of our methods is found in a study of migratory birds by Karlsson/Hössjer (2022). They came to the conclusion that quantile regression (QR) is more effective than linear regression on quantiles (EQ) at predicting seasonal shifts in migratory birds as a response to climate change. We compare our results in the $\textbf{Discussion}$ section. Another piece of work we have used to build our models is a paper by Takeuchi (2006) in which we find more detailed definitions and properties of quantile regression. As most modern scientific pieces involving quantile regression, Koenker's contributions to quantile regression form the backbone of the material behind the methods involved, among others the use of the pinball loss function (Koenker/Bassett 1978(!)).
+Our primary source of material covering the theoretical background of our methods is found in a study of migratory birds by Karlsson/Hössjer (2022). They came to the conclusion that quantile regression (QR) is more effective than linear regression on quantiles (EQ) at predicting seasonal shifts in migratory birds as a response to climate change. We compare our results in the $\textbf{Discussion}$ section. Another piece of work we have used to build our models is a paper by Takeuchi (2006) in which we find more detailed definitions and properties of quantile regression. As most modern scientific pieces involving quantile regression, Koenker's contributions to quantile regression form the backbone of the material behind the methods involved. For these materials we refer to the book Quantile Regression (2005) [@koenker2005quantile].
 
 ## Section 2: Data
 
@@ -305,9 +305,8 @@ In figures 5 through 7 we can view the regression coefficients for each species 
 ## Section 5: Discussion
 I diskussionen ska det tillkomma text som behandlar resultaten i en mer detaljerad omfattning. Jobbar på det under veckan. Tar gärna emot feedback på vad du tycker jag ska klämma in här eller om det är något jag missat.
 
-(Comparisson with Karlsson/Hössjer)
-
-First time mentioning peak: (when referring to the "peak" of the pollen season, what is actually implied is the median or 50%-quantile, of the seasonal pollen release.)
+In Karlsson/Hössjer's study on migratory birds, the conclusion was that nonparametric quantile regression (QR) is the most well suited for single as well as multiple
+species analyses. What we can conclude from this study however is that linear regression on empirical quantiles (EQ) is the preferred method between the two when it comes to modelling the advance in seasonal distribution of pollen. As mentioned in $\textbf{Statistical model performance across quantiles}$, the confidence intervals are way smaller for the EQ model than QR. We observed how outlier years influence the slope of QR models more than EQ models. Perhaps this is where we can find an explanation as to why our findings differ in our respective studies. One reason could be that the variance in observed dates among pollen is lower than for migratory birds, leading to a more heavily skewed slope if a cluster of observations falls a lot earlier or later than normal, which tends to be the case for years with abnormal average temperatures.
 
 ### Section 5.1: Further improvements
 The QR approach struggles with clusters of outliers such as a year with a significantly earlier pollen season. One way to look at it is that there exists a random effect of year that we do not consider in this approach. Thus deeming the assumption of independent observations obsolete in the case of our QR model. In order to improve these models, one may consider adding a random variable to deal with this yearly effect, resulting in a linear quantile mixed model.
@@ -367,7 +366,8 @@ kable(appendix, caption = "Dataset sizes for combinations of species and locatio
 ```{r}
 # EQ models
 kable(joined_eq_1 %>% 
-             dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>%
+             dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Adj. R^2 (EQ)`,
+                           `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>%
              mutate_at(vars(`Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), round), 
       caption = "Start of pollen season for different species and locations")
 #kable(joined_eq_1 %>% 
@@ -376,7 +376,8 @@ kable(joined_eq_1 %>%
 #      caption = "Start of pollen season for different species and locations")
 
 kable(joined_eq_50 %>%
-             dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>%
+             dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Adj. R^2 (EQ)`,
+                           `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>%
              mutate_at(vars(`Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), round), 
       caption = "Peak of pollen season for different species and locations")
 #kable(joined_eq_50 %>% 
@@ -385,7 +386,8 @@ kable(joined_eq_50 %>%
 #      caption = "Peak of pollen season for different species and locations")
 
 kable(joined_eq_95 %>% 
-             dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>%
+             dplyr::select(Species, Location, `Coefficient (EQ)`, `P value (EQ)`, `Adj. R^2 (EQ)`,
+                           `Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`) %>%
              mutate_at(vars(`Predicted 1973 (EQ)`, `Predicted 2023 (EQ)`, `Predicted 2050 (EQ)`), round), 
       caption = "End of pollen season for different species and locations")
 #kable(joined_eq_95 %>% 

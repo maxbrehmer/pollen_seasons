@@ -60,13 +60,13 @@ eq_95 <- data_q95 %>% ungroup() %>% nest_by(lat_name, station, latitude) %>%
 
 # Joining together the relevant information from each table
 eq_joined <- eq_1 %>%
-  dplyr::select(lat_name, station, latitude, coeff, `P value`, `Predicted 1973 1% (EQ)`, `Predicted 2023 1% (EQ)`, `Predicted 2050 1% (EQ)`) %>%
-  rename("coefficient 1%" = coeff, "P value 1%" = `P value`) %>%
-  left_join(eq_50 %>% rename("coefficient 50%" = coeff, "P value 50%" = `P value`) %>% 
-              dplyr::select(lat_name, station, latitude, "coefficient 50%", "P value 50%", `Predicted 1973 50% (EQ)`, `Predicted 2023 50% (EQ)`, `Predicted 2050 50% (EQ)`),
+  dplyr::select(lat_name, station, latitude, coeff, `P value`, `Adj. R-squared`, `Predicted 1973 1% (EQ)`, `Predicted 2023 1% (EQ)`, `Predicted 2050 1% (EQ)`) %>%
+  rename("coefficient 1%" = coeff, "P value 1%" = `P value`, "Adj. R^2 1%" = `Adj. R-squared`) %>%
+  left_join(eq_50 %>% rename("coefficient 50%" = coeff, "P value 50%" = `P value`, "Adj. R^2 50%" = `Adj. R-squared`) %>% 
+              dplyr::select(lat_name, station, latitude, "coefficient 50%", "P value 50%", "Adj. R^2 50%", `Predicted 1973 50% (EQ)`, `Predicted 2023 50% (EQ)`, `Predicted 2050 50% (EQ)`),
             by = c("lat_name", "station", "latitude")) %>%
-  left_join(eq_95 %>% rename("coefficient 95%" = coeff, "P value 95%" = `P value`) %>% 
-              dplyr::select(lat_name, station, latitude, "coefficient 95%", "P value 95%", `Predicted 1973 95% (EQ)`, `Predicted 2023 95% (EQ)`, `Predicted 2050 95% (EQ)`),
+  left_join(eq_95 %>% rename("coefficient 95%" = coeff, "P value 95%" = `P value`, "Adj. R^2 95%" = `Adj. R-squared`) %>% 
+              dplyr::select(lat_name, station, latitude, "coefficient 95%", "P value 95%", "Adj. R^2 95%", `Predicted 1973 95% (EQ)`, `Predicted 2023 95% (EQ)`, `Predicted 2050 95% (EQ)`),
             by = c("lat_name", "station", "latitude")) %>%
   mutate(across(where(is.numeric), ~ round(., 3)))
 
@@ -75,43 +75,58 @@ eq_joined <- eq_1 %>%
 
 # Tables for visualizing the EQ models
 joined_eq_1 <- eq_joined %>% arrange(`coefficient 1%`) %>% 
-  dplyr::select(lat_name, station, latitude, `coefficient 1%`, `P value 1%`, `Predicted 1973 1% (EQ)`, `Predicted 2023 1% (EQ)`, `Predicted 2050 1% (EQ)`) %>%
+  dplyr::select(lat_name, station, latitude, `coefficient 1%`, `P value 1%`, `Adj. R^2 1%`, `Predicted 1973 1% (EQ)`, `Predicted 2023 1% (EQ)`, `Predicted 2050 1% (EQ)`) %>%
   rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 1%", 
-         "P value (EQ)" = "P value 1%", "Predicted 1973 (EQ)" = "Predicted 1973 1% (EQ)", "Predicted 2023 (EQ)" = "Predicted 2023 1% (EQ)", "Predicted 2050 (EQ)" = "Predicted 2050 1% (EQ)")
+         "P value (EQ)" = "P value 1%", "Adj. R^2 (EQ)" = "Adj. R^2 1%",
+         "Predicted 1973 (EQ)" = "Predicted 1973 1% (EQ)", "Predicted 2023 (EQ)" = "Predicted 2023 1% (EQ)", "Predicted 2050 (EQ)" = "Predicted 2050 1% (EQ)")
 
 joined_eq_50 <- eq_joined %>% arrange(`coefficient 50%`) %>% 
-  dplyr::select(lat_name, station, latitude, `coefficient 50%`, `P value 50%`, `Predicted 1973 50% (EQ)`, `Predicted 2023 50% (EQ)`, `Predicted 2050 50% (EQ)`) %>%
+  dplyr::select(lat_name, station, latitude, `coefficient 50%`, `P value 50%`, `Adj. R^2 50%`, `Predicted 1973 50% (EQ)`, `Predicted 2023 50% (EQ)`, `Predicted 2050 50% (EQ)`) %>%
   rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 50%", 
-         "P value (EQ)" = "P value 50%", "Predicted 1973 (EQ)" = "Predicted 1973 50% (EQ)", "Predicted 2023 (EQ)" = "Predicted 2023 50% (EQ)", "Predicted 2050 (EQ)" = "Predicted 2050 50% (EQ)")
+         "P value (EQ)" = "P value 50%", "Adj. R^2 (EQ)" = "Adj. R^2 50%",
+         "Predicted 1973 (EQ)" = "Predicted 1973 50% (EQ)", "Predicted 2023 (EQ)" = "Predicted 2023 50% (EQ)", "Predicted 2050 (EQ)" = "Predicted 2050 50% (EQ)")
 
 joined_eq_95 <- eq_joined %>% arrange(`coefficient 95%`) %>% 
-  dplyr::select(lat_name, station, latitude, `coefficient 95%`, `P value 95%`, `Predicted 1973 95% (EQ)`, `Predicted 2023 95% (EQ)`, `Predicted 2050 95% (EQ)`) %>%
+  dplyr::select(lat_name, station, latitude, `coefficient 95%`, `P value 95%`, `Adj. R^2 95%`, `Predicted 1973 95% (EQ)`, `Predicted 2023 95% (EQ)`, `Predicted 2050 95% (EQ)`) %>%
   rename("Species" = lat_name, "Location" = station, "Latitude" = latitude, "Coefficient (EQ)" = "coefficient 95%", 
-         "P value (EQ)" = "P value 95%", "Predicted 1973 (EQ)" = "Predicted 1973 95% (EQ)", "Predicted 2023 (EQ)" = "Predicted 2023 95% (EQ)", "Predicted 2050 (EQ)" = "Predicted 2050 95% (EQ)")
+         "P value (EQ)" = "P value 95%", "Adj. R^2 (EQ)" = "Adj. R^2 95%",
+         "Predicted 1973 (EQ)" = "Predicted 1973 95% (EQ)", "Predicted 2023 (EQ)" = "Predicted 2023 95% (EQ)", "Predicted 2050 (EQ)" = "Predicted 2050 95% (EQ)")
 
 
 # Season shift tables per species
 
 shift_eq_1 <- joined_eq_1 %>%
   group_by(Species) %>%
-  mutate(`Coefficient (1%)` = round(mean(`Coefficient (EQ)`), 3), `Estimated start 1973` = round(mean(`Predicted 1973 (EQ)`)), 
-         `Estimated start 2023` = round(mean(`Predicted 2023 (EQ)`)), `Estimated start 2050` = round(mean(`Predicted 2050 (EQ)`))) %>%
+  mutate(`Avg coefficient (1%)` = round(mean(`Coefficient (EQ)`), 3), 
+         `Avg R^2 (1%)` = round(mean(`Adj. R^2 (EQ)`), 2), 
+         `P value (1%)` = round(mean(`P value (EQ)`), 2), 
+         `Estimated start 1973` = round(mean(`Predicted 1973 (EQ)`)), 
+         `Estimated start 2023` = round(mean(`Predicted 2023 (EQ)`)), 
+         `Estimated start 2050` = round(mean(`Predicted 2050 (EQ)`))) %>%
   distinct(Species, .keep_all = TRUE) %>%  # Keep only one row for each Species, based on all columns
-  dplyr::select(Species, `Coefficient (1%)`, `Estimated start 1973`, `Estimated start 2023`, `Estimated start 2050`)
+  dplyr::select(Species, `Avg coefficient (1%)`, `P value (1%)`, `Avg R^2 (1%)`, `Estimated start 1973`, `Estimated start 2023`, `Estimated start 2050`)
 
 shift_eq_50 <- joined_eq_50 %>%
   group_by(Species) %>%
-  mutate(`Coefficient (50%)` = round(mean(`Coefficient (EQ)`), 3), `Estimated peak 1973` = round(mean(`Predicted 1973 (EQ)`)), 
-         `Estimated peak 2023` = round(mean(`Predicted 2023 (EQ)`)), `Estimated peak 2050` = round(mean(`Predicted 2050 (EQ)`))) %>%
+  mutate(`Avg coefficient (50%)` = round(mean(`Coefficient (EQ)`), 3), 
+         `Avg R^2 (50%)` = round(mean(`Adj. R^2 (EQ)`), 2), 
+         `P value (50%)` = round(mean(`P value (EQ)`), 2), 
+         `Estimated peak 1973` = round(mean(`Predicted 1973 (EQ)`)), 
+         `Estimated peak 2023` = round(mean(`Predicted 2023 (EQ)`)), 
+         `Estimated peak 2050` = round(mean(`Predicted 2050 (EQ)`))) %>%
   distinct(Species, .keep_all = TRUE) %>%  # Keep only one row for each Species, based on all columns
-  dplyr::select(Species, `Coefficient (50%)`, `Estimated peak 1973`, `Estimated peak 2023`, `Estimated peak 2050`)
+  dplyr::select(Species, `Avg coefficient (50%)`, `P value (50%)`, `Avg R^2 (50%)`, `Estimated peak 1973`, `Estimated peak 2023`, `Estimated peak 2050`)
 
 shift_eq_95 <- joined_eq_95 %>%
   group_by(Species) %>%
-  mutate(`Coefficient (95%)` = round(mean(`Coefficient (EQ)`), 3), `Estimated end 1973` = round(mean(`Predicted 1973 (EQ)`)), 
-         `Estimated end 2023` = round(mean(`Predicted 2023 (EQ)`)), `Estimated end 2050` = round(mean(`Predicted 2050 (EQ)`))) %>%
+  mutate(`Avg coefficient (95%)` = round(mean(`Coefficient (EQ)`), 3), 
+         `Avg R^2 (95%)` = round(mean(`Adj. R^2 (EQ)`), 2), 
+         `P value (95%)` = round(mean(`P value (EQ)`), 2), 
+         `Estimated end 1973` = round(mean(`Predicted 1973 (EQ)`)), 
+         `Estimated end 2023` = round(mean(`Predicted 2023 (EQ)`)), 
+         `Estimated end 2050` = round(mean(`Predicted 2050 (EQ)`))) %>%
   distinct(Species, .keep_all = TRUE) %>%  # Keep only one row for each Species, based on all columns
-  dplyr::select(Species, `Coefficient (95%)`, `Estimated end 1973`, `Estimated end 2023`, `Estimated end 2050`)
+  dplyr::select(Species, `Avg coefficient (95%)`, `P value (95%)`, `Avg R^2 (95%)`, `Estimated end 1973`, `Estimated end 2023`, `Estimated end 2050`)
 
 # Joined table for season lengths
 
@@ -132,9 +147,14 @@ shift_by_species <- shift_eq_1 %>%
          day_2050 = format(dates_2050, "%e"), 
          `Estimated start 1973` = paste0(month_1973, " ", day_1973), 
          `Estimated start 2023` = paste0(month_2023, " ", day_2023), 
-         `Estimated start 2050` = paste0(month_2050, " ", day_2050)) %>%
-  dplyr::select(Species, `Coefficient (1%)`, `Coefficient (50%)`, `Coefficient (95%)`, 
+         `Estimated start 2050` = paste0(month_2050, " ", day_2050), 
+         `Avg P-value` = round(mean(c(`P value (1%)`, `P value (50%)`, `P value (95%)`)), 2), 
+         `Avg R^2` = round(mean(c(`Avg R^2 (1%)`, `Avg R^2 (50%)`, `Avg R^2 (95%)`)), 2)) %>%
+  dplyr::select(Species, `Avg coefficient (1%)`, `Avg coefficient (50%)`, `Avg coefficient (95%)`, `Avg P-value`, `Avg R^2`,  
                 `Estimated start 1973`, `Estimated start 2023`, `Estimated start 2050`, 
                 `Season length 1973`, `Season length 2023`, `Season length 2050`) %>%
-  arrange(`Coefficient (1%)`)
+  arrange(`Avg coefficient (1%)`)
+
+
+
 
