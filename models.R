@@ -105,10 +105,10 @@ shift_eq_1 <- joined_eq_1 %>%
          `Adj. R^2 (1%)` = round(mean(`Adj. R^2 (EQ)`), 2), 
          `P-value (1%)` = round(mean(`P value (EQ)`), 2), 
          `Estimated start 1973` = round(mean(`Predicted 1973 (EQ)`)), 
-         `Estimated start 2023` = round(mean(`Predicted 2023 (EQ)`)), 
-         `Estimated start 2050` = round(mean(`Predicted 2050 (EQ)`))) %>%
+         `Predicted start 2023` = round(mean(`Predicted 2023 (EQ)`)), 
+         `Predicted start 2050` = round(mean(`Predicted 2050 (EQ)`))) %>%
   distinct(Species, .keep_all = TRUE) %>%  # Keep only one row for each Species, based on all columns
-  dplyr::select(Species, `Avg slope (1%)`, `P-value (1%)`, `Adj. R^2 (1%)`, `Estimated start 1973`, `Estimated start 2023`, `Estimated start 2050`)
+  dplyr::select(Species, `Avg slope (1%)`, `P-value (1%)`, `Adj. R^2 (1%)`, `Estimated start 1973`, `Predicted start 2023`, `Predicted start 2050`)
 
 shift_eq_50 <- joined_eq_50 %>%
   group_by(Species) %>%
@@ -117,10 +117,10 @@ shift_eq_50 <- joined_eq_50 %>%
          `Adj. R^2 (50%)` = round(mean(`Adj. R^2 (EQ)`), 2), 
          `P-value (50%)` = round(mean(`P value (EQ)`), 2), 
          `Estimated peak 1973` = round(mean(`Predicted 1973 (EQ)`)), 
-         `Estimated peak 2023` = round(mean(`Predicted 2023 (EQ)`)), 
-         `Estimated peak 2050` = round(mean(`Predicted 2050 (EQ)`))) %>%
+         `Predicted peak 2023` = round(mean(`Predicted 2023 (EQ)`)), 
+         `Predicted peak 2050` = round(mean(`Predicted 2050 (EQ)`))) %>%
   distinct(Species, .keep_all = TRUE) %>%  # Keep only one row for each Species, based on all columns
-  dplyr::select(Species, `Avg slope (50%)`, `P-value (50%)`, `Adj. R^2 (50%)`, `Estimated peak 1973`, `Estimated peak 2023`, `Estimated peak 2050`)
+  dplyr::select(Species, `Avg slope (50%)`, `P-value (50%)`, `Adj. R^2 (50%)`, `Estimated peak 1973`, `Predicted peak 2023`, `Predicted peak 2050`)
 
 shift_eq_95 <- joined_eq_95 %>%
   group_by(Species) %>%
@@ -129,10 +129,10 @@ shift_eq_95 <- joined_eq_95 %>%
          `Adj. R^2 (95%)` = round(mean(`Adj. R^2 (EQ)`), 2), 
          `P-value (95%)` = round(mean(`P value (EQ)`), 2), 
          `Estimated end 1973` = round(mean(`Predicted 1973 (EQ)`)), 
-         `Estimated end 2023` = round(mean(`Predicted 2023 (EQ)`)), 
-         `Estimated end 2050` = round(mean(`Predicted 2050 (EQ)`))) %>%
+         `Predicted end 2023` = round(mean(`Predicted 2023 (EQ)`)), 
+         `Predicted end 2050` = round(mean(`Predicted 2050 (EQ)`))) %>%
   distinct(Species, .keep_all = TRUE) %>%  # Keep only one row for each Species, based on all columns
-  dplyr::select(Species, `Avg slope (95%)`, `P-value (95%)`, `Adj. R^2 (95%)`, `Estimated end 1973`, `Estimated end 2023`, `Estimated end 2050`)
+  dplyr::select(Species, `Avg slope (95%)`, `P-value (95%)`, `Adj. R^2 (95%)`, `Estimated end 1973`, `Predicted end 2023`, `Predicted end 2050`)
 
 # Joined table for season lengths
 
@@ -140,11 +140,11 @@ shift_by_species <- shift_eq_1 %>%
   left_join(shift_eq_50, by = c("Species")) %>%
   left_join(shift_eq_95, by = c("Species")) %>%
   mutate(`Season length 1973` = abs(`Estimated end 1973` - `Estimated start 1973`), 
-         `Season length 2023` = abs(`Estimated end 2023` - `Estimated start 2023`),
-         `Season length 2050` = abs(`Estimated end 2050` - `Estimated start 2050`)) %>%
+         `Season length 2023` = abs(`Predicted end 2023` - `Predicted start 2023`),
+         `Season length 2050` = abs(`Predicted end 2050` - `Predicted start 2050`)) %>%
   mutate(dates_1973 = as.Date(paste0("1973-", `Estimated start 1973`), format = "%Y-%j"),
-         dates_2023 = as.Date(paste0("2023-", `Estimated start 2023`), format = "%Y-%j"),
-         dates_2050 = as.Date(paste0("2050-", `Estimated start 2050`), format = "%Y-%j"), 
+         dates_2023 = as.Date(paste0("2023-", `Predicted start 2023`), format = "%Y-%j"),
+         dates_2050 = as.Date(paste0("2050-", `Predicted start 2050`), format = "%Y-%j"), 
          month_1973 = format(dates_1973, "%B"), 
          month_2023 = format(dates_2023, "%B"), 
          month_2050 = format(dates_2050, "%B"), 
@@ -152,13 +152,13 @@ shift_by_species <- shift_eq_1 %>%
          day_2023 = format(dates_2023, "%e"), 
          day_2050 = format(dates_2050, "%e"), 
          `Estimated start 1973` = paste0(month_1973, " ", day_1973), 
-         `Estimated start 2023` = paste0(month_2023, " ", day_2023), 
-         `Estimated start 2050` = paste0(month_2050, " ", day_2050), 
+         `Predicted start 2023` = paste0(month_2023, " ", day_2023), 
+         `Predicted start 2050` = paste0(month_2050, " ", day_2050), 
          `Slope (season length)` = round((`Season length 2023`-`Season length 1973`), 3)/50) %>%
   dplyr::select(Species, `Avg slope (1%)`, `Avg slope (50%)`, `Avg slope (95%)`,
                 `P-value (1%)`, `P-value (50%)`, `P-value (95%)`, 
                 `Adj. R^2 (1%)`, `Adj. R^2 (50%)`, `Adj. R^2 (95%)`, 
-                `Estimated start 1973`, `Estimated start 2023`, `Estimated start 2050`, 
+                `Estimated start 1973`, `Predicted start 2023`, `Predicted start 2050`, 
                 `Season length 1973`, `Season length 2023`, `Season length 2050`, 
                 `Slope (season length)`) %>%
   arrange(`Avg slope (1%)`)
@@ -176,10 +176,10 @@ shift_eq_1_sthlm <- joined_eq_1 %>%
          `Adj. R^2 (1%)` = round(`Adj. R^2 (EQ)`, 2), 
          `P-value (1%)` = round(`P value (EQ)`, 2), 
          `Estimated start 1973` = `Predicted 1973 (EQ)`, 
-         `Estimated start 2023` = `Predicted 2023 (EQ)`, 
-         `Estimated start 2050` = `Predicted 2050 (EQ)`) %>%
+         `Predicted start 2023` = `Predicted 2023 (EQ)`, 
+         `Predicted start 2050` = `Predicted 2050 (EQ)`) %>%
   #distinct(Species, .keep_all = TRUE) %>%  # Keep only one row for each Species, based on all columns
-  dplyr::select(Species, `Slope (1%)  `, `P-value (1%)`, `Adj. R^2 (1%)`, `Estimated start 1973`, `Estimated start 2023`, `Estimated start 2050`)
+  dplyr::select(Species, `Slope (1%)  `, `P-value (1%)`, `Adj. R^2 (1%)`, `Estimated start 1973`, `Predicted start 2023`, `Predicted start 2050`)
 
 shift_eq_50_sthlm <- joined_eq_50 %>%
   filter(Location == "Stockholm") %>%
@@ -187,10 +187,10 @@ shift_eq_50_sthlm <- joined_eq_50 %>%
          `Adj. R^2 (50%)` = round(`Adj. R^2 (EQ)`, 2), 
          `P-value (50%)` = round(`P value (EQ)`, 2), 
          `Estimated peak 1973` = `Predicted 1973 (EQ)`, 
-         `Estimated peak 2023` = `Predicted 2023 (EQ)`, 
-         `Estimated peak 2050` = `Predicted 2050 (EQ)`) %>%
+         `Predicted peak 2023` = `Predicted 2023 (EQ)`, 
+         `Predicted peak 2050` = `Predicted 2050 (EQ)`) %>%
   #distinct(Species, .keep_all = TRUE) %>%  # Keep only one row for each Species, based on all columns
-  dplyr::select(Species, `Slope (50%)`, `P-value (50%)`, `Adj. R^2 (50%)`, `Estimated peak 1973`, `Estimated peak 2023`, `Estimated peak 2050`)
+  dplyr::select(Species, `Slope (50%)`, `P-value (50%)`, `Adj. R^2 (50%)`, `Estimated peak 1973`, `Predicted peak 2023`, `Predicted peak 2050`)
 
 shift_eq_95_sthlm <- joined_eq_95 %>%
   filter(Location == "Stockholm") %>%
@@ -198,10 +198,10 @@ shift_eq_95_sthlm <- joined_eq_95 %>%
          `Adj. R^2 (95%)` = round(`Adj. R^2 (EQ)`, 2), 
          `P-value (95%)` = round(`P value (EQ)`, 2), 
          `Estimated end 1973` = `Predicted 1973 (EQ)`, 
-         `Estimated end 2023` = `Predicted 2023 (EQ)`, 
-         `Estimated end 2050` = `Predicted 2050 (EQ)`) %>%
+         `Predicted end 2023` = `Predicted 2023 (EQ)`, 
+         `Predicted end 2050` = `Predicted 2050 (EQ)`) %>%
   #distinct(Species, .keep_all = TRUE) %>%  # Keep only one row for each Species, based on all columns
-  dplyr::select(Species, `Slope (95%)`, `P-value (95%)`, `Adj. R^2 (95%)`, `Estimated end 1973`, `Estimated end 2023`, `Estimated end 2050`)
+  dplyr::select(Species, `Slope (95%)`, `P-value (95%)`, `Adj. R^2 (95%)`, `Estimated end 1973`, `Predicted end 2023`, `Predicted end 2050`)
 
 # Joined table for season lengths (Stockholm)
 
@@ -209,11 +209,11 @@ shift_by_species_sthlm <- shift_eq_1_sthlm %>%
   left_join(shift_eq_50_sthlm, by = c("Species")) %>%
   left_join(shift_eq_95_sthlm, by = c("Species")) %>%
   mutate(`Season length 1973` = round(abs(`Estimated end 1973` - `Estimated start 1973`)), 
-         `Season length 2023` = round(abs(`Estimated end 2023` - `Estimated start 2023`)),
-         `Season length 2050` = round(abs(`Estimated end 2050` - `Estimated start 2050`))) %>%
+         `Season length 2023` = round(abs(`Predicted end 2023` - `Predicted start 2023`)),
+         `Season length 2050` = round(abs(`Predicted end 2050` - `Predicted start 2050`))) %>%
   mutate(dates_1973 = as.Date(paste0("1973-", `Estimated start 1973`), format = "%Y-%j"),
-         dates_2023 = as.Date(paste0("2023-", `Estimated start 2023`), format = "%Y-%j"),
-         dates_2050 = as.Date(paste0("2050-", `Estimated start 2050`), format = "%Y-%j"), 
+         dates_2023 = as.Date(paste0("2023-", `Predicted start 2023`), format = "%Y-%j"),
+         dates_2050 = as.Date(paste0("2050-", `Predicted start 2050`), format = "%Y-%j"), 
          month_1973 = format(dates_1973, "%B"), 
          month_2023 = format(dates_2023, "%B"), 
          month_2050 = format(dates_2050, "%B"), 
@@ -221,13 +221,13 @@ shift_by_species_sthlm <- shift_eq_1_sthlm %>%
          day_2023 = format(dates_2023, "%e"), 
          day_2050 = format(dates_2050, "%e"), 
          `Estimated start 1973` = paste0(month_1973, " ", day_1973), 
-         `Estimated start 2023` = paste0(month_2023, " ", day_2023), 
-         `Estimated start 2050` = paste0(month_2050, " ", day_2050), 
+         `Predicted start 2023` = paste0(month_2023, " ", day_2023), 
+         `Predicted start 2050` = paste0(month_2050, " ", day_2050), 
          `Slope (season length)` = round((`Season length 2023`-`Season length 1973`), 3)/50) %>%
   dplyr::select(Species, `Slope (1%)  `, `Slope (50%)`, `Slope (95%)`,
                 `P-value (1%)`, `P-value (50%)`, `P-value (95%)`, 
                 `Adj. R^2 (1%)`, `Adj. R^2 (50%)`, `Adj. R^2 (95%)`, 
-                `Estimated start 1973`, `Estimated start 2023`, `Estimated start 2050`, 
+                `Estimated start 1973`, `Predicted start 2023`, `Predicted start 2050`, 
                 `Season length 1973`, `Season length 2023`, `Season length 2050`, 
                 `Slope (season length)`) %>%
   arrange(`Slope (1%)  `)
@@ -245,11 +245,11 @@ appendix_1 <- joined_eq_1 %>%
          `Adj. R^2` = round(`Adj. R^2 (EQ)`, 2), 
          `P-value` = round(`P value (EQ)`, 2), 
          `Estimated start 1973` = round(mean(`Predicted 1973 (EQ)`)), 
-         `Estimated start 2023` = round(mean(`Predicted 2023 (EQ)`)), 
-         `Estimated start 2050` = round(mean(`Predicted 2050 (EQ)`))) %>%
+         `Predicted start 2023` = round(mean(`Predicted 2023 (EQ)`)), 
+         `Predicted start 2050` = round(mean(`Predicted 2050 (EQ)`))) %>%
   mutate(dates_1973 = as.Date(paste0("1973-", `Estimated start 1973`), format = "%Y-%j"),
-         dates_2023 = as.Date(paste0("2023-", `Estimated start 2023`), format = "%Y-%j"),
-         dates_2050 = as.Date(paste0("2050-", `Estimated start 2050`), format = "%Y-%j"), 
+         dates_2023 = as.Date(paste0("2023-", `Predicted start 2023`), format = "%Y-%j"),
+         dates_2050 = as.Date(paste0("2050-", `Predicted start 2050`), format = "%Y-%j"), 
          month_1973 = format(dates_1973, "%B"), 
          month_2023 = format(dates_2023, "%B"), 
          month_2050 = format(dates_2050, "%B"), 
@@ -257,20 +257,20 @@ appendix_1 <- joined_eq_1 %>%
          day_2023 = format(dates_2023, "%e"), 
          day_2050 = format(dates_2050, "%e"), 
          `Estimated start 1973` = paste0(month_1973, " ", day_1973), 
-         `Estimated start 2023` = paste0(month_2023, " ", day_2023), 
-         `Estimated start 2050` = paste0(month_2050, " ", day_2050)) %>%
-  dplyr::select(Species, Location, `Slope  `, `P-value`, `Adj. R^2`, `Estimated start 1973`, `Estimated start 2023`, `Estimated start 2050`)
+         `Predicted start 2023` = paste0(month_2023, " ", day_2023), 
+         `Predicted start 2050` = paste0(month_2050, " ", day_2050)) %>%
+  dplyr::select(Species, Location, `Slope  `, `P-value`, `Adj. R^2`, `Estimated start 1973`, `Predicted start 2023`, `Predicted start 2050`)
 
 appendix_50 <- joined_eq_50 %>%
   mutate(`Slope  ` = round(`Coefficient (EQ)`, 3), 
          `Adj. R^2` = round(`Adj. R^2 (EQ)`, 2), 
          `P-value` = round(`P value (EQ)`, 2), 
          `Estimated peak 1973` = round(mean(`Predicted 1973 (EQ)`)), 
-         `Estimated peak 2023` = round(mean(`Predicted 2023 (EQ)`)), 
-         `Estimated peak 2050` = round(mean(`Predicted 2050 (EQ)`))) %>%
+         `Predicted peak 2023` = round(mean(`Predicted 2023 (EQ)`)), 
+         `Predicted peak 2050` = round(mean(`Predicted 2050 (EQ)`))) %>%
   mutate(dates_1973 = as.Date(paste0("1973-", `Estimated peak 1973`), format = "%Y-%j"),
-         dates_2023 = as.Date(paste0("2023-", `Estimated peak 2023`), format = "%Y-%j"),
-         dates_2050 = as.Date(paste0("2050-", `Estimated peak 2050`), format = "%Y-%j"), 
+         dates_2023 = as.Date(paste0("2023-", `Predicted peak 2023`), format = "%Y-%j"),
+         dates_2050 = as.Date(paste0("2050-", `Predicted peak 2050`), format = "%Y-%j"), 
          month_1973 = format(dates_1973, "%B"), 
          month_2023 = format(dates_2023, "%B"), 
          month_2050 = format(dates_2050, "%B"), 
@@ -278,20 +278,20 @@ appendix_50 <- joined_eq_50 %>%
          day_2023 = format(dates_2023, "%e"), 
          day_2050 = format(dates_2050, "%e"), 
          `Estimated peak 1973` = paste0(month_1973, " ", day_1973), 
-         `Estimated peak 2023` = paste0(month_2023, " ", day_2023), 
-         `Estimated peak 2050` = paste0(month_2050, " ", day_2050)) %>%
-  dplyr::select(Species, Location, `Slope  `, `P-value`, `Adj. R^2`, `Estimated peak 1973`, `Estimated peak 2023`, `Estimated peak 2050`)
+         `Predicted peak 2023` = paste0(month_2023, " ", day_2023), 
+         `Predicted peak 2050` = paste0(month_2050, " ", day_2050)) %>%
+  dplyr::select(Species, Location, `Slope  `, `P-value`, `Adj. R^2`, `Estimated peak 1973`, `Predicted peak 2023`, `Predicted peak 2050`)
 
 appendix_95 <- joined_eq_95 %>%
   mutate(`Slope  ` = round(`Coefficient (EQ)`, 3), 
          `Adj. R^2` = round(`Adj. R^2 (EQ)`, 2), 
          `P-value` = round(`P value (EQ)`, 2), 
          `Estimated end 1973` = round(mean(`Predicted 1973 (EQ)`)), 
-         `Estimated end 2023` = round(mean(`Predicted 2023 (EQ)`)), 
-         `Estimated end 2050` = round(mean(`Predicted 2050 (EQ)`))) %>%
+         `Predicted end 2023` = round(mean(`Predicted 2023 (EQ)`)), 
+         `Predicted end 2050` = round(mean(`Predicted 2050 (EQ)`))) %>%
   mutate(dates_1973 = as.Date(paste0("1973-", `Estimated end 1973`), format = "%Y-%j"),
-         dates_2023 = as.Date(paste0("2023-", `Estimated end 2023`), format = "%Y-%j"),
-         dates_2050 = as.Date(paste0("2050-", `Estimated end 2050`), format = "%Y-%j"), 
+         dates_2023 = as.Date(paste0("2023-", `Predicted end 2023`), format = "%Y-%j"),
+         dates_2050 = as.Date(paste0("2050-", `Predicted end 2050`), format = "%Y-%j"), 
          month_1973 = format(dates_1973, "%B"), 
          month_2023 = format(dates_2023, "%B"), 
          month_2050 = format(dates_2050, "%B"), 
@@ -299,9 +299,9 @@ appendix_95 <- joined_eq_95 %>%
          day_2023 = format(dates_2023, "%e"), 
          day_2050 = format(dates_2050, "%e"), 
          `Estimated end 1973` = paste0(month_1973, " ", day_1973), 
-         `Estimated end 2023` = paste0(month_2023, " ", day_2023), 
-         `Estimated end 2050` = paste0(month_2050, " ", day_2050)) %>%
-  dplyr::select(Species, Location, `Slope  `, `P-value`, `Adj. R^2`, `Estimated end 1973`, `Estimated end 2023`, `Estimated end 2050`)
+         `Predicted end 2023` = paste0(month_2023, " ", day_2023), 
+         `Predicted end 2050` = paste0(month_2050, " ", day_2050)) %>%
+  dplyr::select(Species, Location, `Slope  `, `P-value`, `Adj. R^2`, `Estimated end 1973`, `Predicted end 2023`, `Predicted end 2050`)
 
 
 

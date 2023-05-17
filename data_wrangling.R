@@ -21,7 +21,7 @@ df <- data %>% arrange(station, lat_name, date) %>% mutate(year = as.numeric(yea
     ))
 
 latitudes <- data.frame("station" = c("Umeå", "Eskilstuna", "Stockholm", "Norrköping", "Jönköping", "Västervik", "Göteborg", "Malmö"),
-                        "latitude" = c(62.83, 59.37, 59.33, 58.59, 57.78, 57.76, 57.71, 55.60))
+                        "latitude" = c(63.83, 59.37, 59.33, 58.59, 57.78, 57.76, 57.71, 55.61))
 
 df <- full_join(df, latitudes, by = c("station" = "station"))
   
