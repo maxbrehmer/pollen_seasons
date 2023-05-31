@@ -6,7 +6,7 @@ df <- df %>% mutate(Year = year - 1973)
 ################################################################################
 
 # QR performance testing
-QR <- rq(formula = greg_day ~ Year, data = df %>% filter(station == "Stockholm"), tau = 1:99/100)
+QR <- rq(formula = greg_day ~ Year, data = df %>% filter(station == "Stockholm", lat_name == "Betula"), tau = 1:99/100)
 
 # Creating data frame and adding confidence interval
 QR_tidy <- QR %>%
@@ -18,7 +18,7 @@ QR_tidy <- QR %>%
 ################################################################################
 
 # Creating linear OLS regression model
-lm <- lm(data = df %>% filter(station == "Stockholm"), formula = greg_day ~ Year)
+lm <- lm(data = df %>% filter(station == "Stockholm", lat_name == "Betula"), formula = greg_day ~ Year)
 
 ols <- as.data.frame(coef(lm))
 ols.ci <- as.data.frame(confint(lm))
@@ -39,35 +39,41 @@ lm_quantile_df_tau <- data.frame(term = character(2*length(quantile_levels)),
                                  conf.high = numeric(2*length(quantile_levels)), 
                                  tau = numeric(2*length(quantile_levels)))
 
-# Loop through each quantile level and compute coefficient estimates and confidence intervals
+# Create an empty list to store the data frames
+quantile_data_frames <- list()
+
+# Loop through each quantile level and compute the quantile value
 for (i in seq_along(quantile_levels)) {
   tau <- quantile_levels[i]
   
-  # Compute quantile for the current quantile level
-  quantile_val <- quantile(df$greg_day, probs = tau)
+  # Compute the quantile for the current quantile level
+  quantile_value <- df %>%
+    filter(station == "Stockholm", lat_name == "Betula") %>%
+    group_by(Year, lat_name, station, latitude) %>%
+    summarise(!!paste0("q", i) := quantile(greg_day, prob = tau))
   
-  # Subset the data for the current quantile level
-  quantile_data <- df %>% filter(station == "Stockholm", greg_day <= quantile_val)
+  # Store the quantile value in a separate data frame
+  quantile_data_frames[[i]] <- data.frame(quantile_value)
   
   # Fit linear regression for the current quantile level
-  lm_quantile <- lm(formula = greg_day ~ Year, data = quantile_data)
+  lm_quantile <- lm(formula = quantile_data_frames[[i]][[5]] ~ Year, data = quantile_data_frames[[i]])
   
   # Extract coefficient estimates and confidence intervals
   lm_quantile_coef <- coef(lm_quantile)
   lm_quantile_ci <- confint(lm_quantile, level = 0.95)
   
   # Assign the results to the corresponding row in the data frame
-  lm_quantile_df_tau[i+i-1, "term"] <- "(Intercept)"
-  lm_quantile_df_tau[i+i-1, "estimate"] <- lm_quantile_coef[1]
-  lm_quantile_df_tau[i+i-1, "conf.low"] <- lm_quantile_ci["(Intercept)", 1]
-  lm_quantile_df_tau[i+i-1, "conf.high"] <- lm_quantile_ci["(Intercept)", 2]
-  lm_quantile_df_tau[i+i-1, "tau"] <- tau
+  lm_quantile_df_tau[2*i-1, "term"] <- "(Intercept)"
+  lm_quantile_df_tau[2*i-1, "estimate"] <- lm_quantile_coef[1]
+  lm_quantile_df_tau[2*i-1, "conf.low"] <- lm_quantile_ci["(Intercept)", 1]
+  lm_quantile_df_tau[2*i-1, "conf.high"] <- lm_quantile_ci["(Intercept)", 2]
+  lm_quantile_df_tau[2*i-1, "tau"] <- tau
   
-  lm_quantile_df_tau[i+i, "term"] <- "Year"
-  lm_quantile_df_tau[i+i, "estimate"] <- lm_quantile_coef[2]
-  lm_quantile_df_tau[i+i, "conf.low"] <- lm_quantile_ci["Year", 1]
-  lm_quantile_df_tau[i+i, "conf.high"] <- lm_quantile_ci["Year", 2]
-  lm_quantile_df_tau[i+i, "tau"] <- tau
+  lm_quantile_df_tau[2*i, "term"] <- "Year"
+  lm_quantile_df_tau[2*i, "estimate"] <- lm_quantile_coef[2]
+  lm_quantile_df_tau[2*i, "conf.low"] <- lm_quantile_ci["Year", 1]
+  lm_quantile_df_tau[2*i, "conf.high"] <- lm_quantile_ci["Year", 2]
+  lm_quantile_df_tau[2*i, "tau"] <- tau
 }
 
 ################################################################################

@@ -25,6 +25,7 @@ library(gdata) # Renaming objects
 library(purrr)
 library(maps) # Loading maps
 library(mapdata)
+library(xtable) # Convert R objects to latex code
 ```
 
 ```{r, message=FALSE, warning=FALSE}
@@ -47,6 +48,10 @@ source("models.R", local = knitr::knit_global())
 #source("qr_models.R", local = knitr::knit_global())
 ```
 
+```{r, message=FALSE, warning=FALSE}
+#source("qr_tables.R", local = knitr::knit_global())
+```
+
 ## Abstract
 It is well established that climate change has led to significant changes in the timing and intensity of phenological events around the world. One such event is the release of pollen by plants, which is a major cause of allergies in humans. This study aims to investigate the impact of climate change on the timing and intensity of pollen release in Sweden. We also look at whether or not the latitude of plants has a significant influence on seasonal pollen release.
 
@@ -61,7 +66,7 @@ I have conducted this research paper as my bachelor's thesis in mathematical sta
 
 I must acknowledge that I have used artificial intelligence tools. More specifically OpenAI's ChatGPT has been a valuable tool for gaining a deeper understanding of certain concepts. However I have not used any AI tools to produce any of the contents in my texts, nor has it been used as a source for any in-text information.
 
-## Introduction
+## 1. Introduction
 Over the past couple of decades it has been made clear that our climate is changing rapidly in various ways. Most notably the global average temperature has risen by ca $0.2^\circ C$ per decade since the mid seventies, this constitutes an almost $1^\circ C$ increase over the past half century [@hansen2006global]. Limiting our view to only Sweden, we also see significant shifts in this regions' otherwise stable climate. Several studies in recent decades draw the conclusion that plant phenology is impacted by this increase in temperature. [@van2002influence] discusses in a study of the seasonal pollen shift in the Netherlands that an advance in the start of the pollen season by 3-22 days took place in the latter third of the 20th century. Likewise this paper strives to understand what seasonal changes have occurred to the pollen season in Sweden.
 
 Results may differ for various species of pollen. [@lind2016pollen] found a stark difference in duration among arboreal plant species compared to herbaceous ones, with the former trending towards an earlier end date, while the latter was pushed to a further date and thus have a longer seasonal duration. Grass pollen, being herbaceous, is the leading cause of pollen allergy in many developed countries, meaning a lot of people suffer from these seasonal changes for an extended time [@garcia2017poaceae]. In Sweden and other parts of northern Europe however, due to differences in temperature and overall climate, the arboreal types like birch (betula) are the most common cause of pollinosis [@d2017allergenic].
@@ -72,19 +77,19 @@ In this paper we will attempt to determine the shift in dates of the start and e
 
 By its conclusion this research paper aims to have built a statistical model that can explain the historic shift in pollen seasons for each of the 7 species and also possesses the ability to predict expected further changes in the Swedish pollen season.
 
-We begin our research with the section $\textbf{1. Litterature review}$, where we present the findings of what we consider to be the most relevant studies of similar character to what we envisage our own research to look like.
+We begin our research with the section $\textbf{2. Litterature review}$, where we present the findings of what we consider to be the most relevant studies of similar character to what we envisage our own research to look like.
 
-The following section is $\textbf{2. Data}$, in which all aspects of the data used in the research is presented. We cover these aspects in four smaller sections. Firstly $\textbf{2.1 Data collection}$ where a light description of both the physical and digital methods used to collect the data. An extensive description of how we use the data is later presented in the section $\textbf{2.2 Understanding the data}$. Here the reader is granted a look at the structure of the data in the form of easily-to-read tables and which variables are to be considered in the research. In $\textbf{2.3 Data transformation}$ we follow with a description of how the data has been restructured. $\textbf{2.4 Data selection}$ is where we conduct an explanation of how we deal with missing values and how the data sets are reduced. We conclude the $\textbf{Data}$ section with $\textbf{2.5 Annual distribution of pollen}$ in which we use density ridge plots to glance at what sort of results to expect.
+The following section is $\textbf{3. Data}$, in which all aspects of the data used in the research is presented. We cover these aspects in four smaller sections. Firstly $\textbf{3.1 Data collection}$ where a light description of both the physical and digital methods used to collect the data. An extensive description of how we use the data is later presented in the section $\textbf{3.2 Understanding the data}$. Here the reader is granted a look at the structure of the data in the form of easily-to-read tables and which variables are to be considered in the research. In $\textbf{3.3 Data transformation}$ we follow with a description of how the data has been restructured. $\textbf{3.4 Data selection}$ is where we conduct an explanation of how we deal with missing values and how the data sets are reduced. We conclude the $\textbf{Data}$ section with $\textbf{3.5 Annual distribution of pollen}$ in which we use density ridge plots to glance at what sort of results to expect.
 
-$\textbf{3. Methods}$ encompasses all the theoretical definitions of the methods included in this paper. In order to strengthen the significance of our results, we have used two independent methods. Linear regression on empirical quantiles and Nonparametric quantile regression. Linear regression on empirical quantiles, which we refer to as EQ, is a simple method commonly used to perform statistical analyses on different quantile levels of data, while nonparametric quantile regression (QR) is a more complex method which substitutes the conditional mean of the loss function for the conditional median and requires numerical approaches to the resulting optimization problem. The sections $(\textbf{3.1 Nonparametric quantile regression})$ and $(\textbf{3.2 Linear regression on empirical quantiles})$ explain the theoretical aspects of respective method, while simultaneously providing descriptions of how we have applied them in our models.
+$\textbf{4. Methods}$ encompasses all the theoretical definitions of the methods included in this paper. In order to strengthen the significance of our results, we have used two independent methods. Linear regression on empirical quantiles and Nonparametric quantile regression. Linear regression on empirical quantiles, which we refer to as EQ, is a simple method commonly used to perform statistical analyses on different quantile levels of data, while nonparametric quantile regression (QR) is a more complex method which substitutes the conditional mean of the loss function for the conditional median and requires numerical approaches to the resulting optimization problem. The sections $(\textbf{4.1 Nonparametric quantile regression})$ and $(\textbf{4.2 Linear regression on empirical quantiles})$ explain the theoretical aspects of respective method, while simultaneously providing descriptions of how we have applied them in our models.
 
-The most important findings of our models are presented in $\textbf{4. Results}$. This part of the paper is divided in to 3 sections for increased readability. The first, $\textbf{4.1 Statistical model performance across quantiles}$ contains an analysis of how well each of our methods perform across quantiles of the data. it is in this section we determine which method to primarily base our conclusions from in the following sections. There are a lot of interesting results to share from this statistical analysis, the most important of which are presented as a table in $\textbf{4.2 Estimations and predictions per species}$. Here we analyze which species of pollen see the most significant seasonal shift and make estimations of which dates to expect the pollen season to be active at certain years. One of our assumptions prior to performing our analysis is that high latitudes correspond to larger shifts in the climate and would thus affect the pollen season to a greater extent than at lower latitudes. In the section $\textbf{4.3 Geographic influence}$ we attempt to find out whether this assumption is correct or not in regards to predicting seasonal trends in pollen release in Sweden. Results that are not of central importance to our discussion and conclusions are nonetheless accessible in $\textbf{Appendix C}$.
+The most important findings of our models are presented in $\textbf{5. Results}$. This part of the paper is divided in to 3 sections for increased readability. The first, $\textbf{5.1 Statistical model performance across quantiles}$ contains an analysis of how well each of our methods perform across quantiles of the data. it is in this section we determine which method to primarily base our conclusions from in the following sections. There are a lot of interesting results to share from this statistical analysis, the most important of which are presented as a table in $\textbf{5.2 Estimations and predictions per species}$. Here we analyze which species of pollen see the most significant seasonal shift and make estimations of which dates to expect the pollen season to be active at certain years. One of our assumptions prior to performing our analysis is that high latitudes correspond to larger shifts in the climate and would thus affect the pollen season to a greater extent than at lower latitudes. In the section $\textbf{5.3 Geographic influence}$ we attempt to find out whether this assumption is correct or not in regards to predicting seasonal trends in pollen release in Sweden. Results that are not of central importance to our discussion and conclusions are nonetheless accessible in $\textbf{Appendix C}$.
 
-Section $\textbf{6. Discussion}$, is divided in to $(\textbf{6.1 Comparison with prior studies})$ and $(\textbf{6.2 Further improvements})$. The former section covers a comparative analysis of our results with other, similar studies. For each of our questions at issue, we may be able obtain a definitive conclusion, in which case we present this in $(\textbf{5. Conclusions})$. If we are not able to obtain a definitive conclusion, a description of what we is missing for us to draw a conclusion follows. Since there are limits to what we can expect to answer in this thesis, we have set aside a section $(\textbf{6.2 Further improvements})$ on which parts of our work is inconclusive and how they can be improved upon.
+Section $\textbf{7. Discussion}$, is divided in to $(\textbf{7.1 Comparison with prior studies})$ and $(\textbf{7.2 Further improvements})$. The former section covers a comparative analysis of our results with other, similar studies. For each of our questions at issue, we may be able obtain a definitive conclusion, in which case we present this in $(\textbf{6. Conclusions})$. If we are not able to obtain a definitive conclusion, a description of what we is missing for us to draw a conclusion follows. Since there are limits to what we can expect to answer in this thesis, we have set aside a section $(\textbf{7.2 Further improvements})$ on which parts of our work is inconclusive and how they can be improved upon.
 
 This paper concludes with the an $\textbf{Appendix}$ section. Additional or complementary information which the reader may find interesting, but not vital for the results of which we form our conclusions. Each appendix is refered to by, and refers back to a result or explanation.
 
-## 1. Literature review
+## 2. Literature review
 In a paper from the journal "Proceedings of the National Academy of Sciences" [@hansen2006global], James Hansen and his team were able to deduce that global surface temperature has increased $\sim 0.2^\circ C$ per decade between the mid 1970's and mid 2000's. Assuming this trend also holds for the past 2 decades, we estimate the global average temperature to be almost $1^\circ C$ warmer than half a century ago. Using these trends in global average temperature over time, we are able to form conclusions about how plant phenology, and more specifically pollen release, is affected by a warming climate.
 
 A Dutch study analyzing a 31 year long collection of pollen in the Netherlands saw an advance in the pollen season by 3-22 days, depending on species. With species such as elm, oak and alder advancing between 15 and 18 days, while they recorded lesser advances in willow, birch and grass pollen at 12, 10 and 6 days respectively [@van2002influence].
@@ -95,12 +100,12 @@ For those whom suffer from pollen allergies, the length and intensity of pollen 
 
 Our primary source of material covering the theoretical background of our methods can be found in a study of migratory birds [@karlsson2022comparison]. They came to the conclusion that quantile regression (QR) is more effective than linear regression on quantiles (EQ) at predicting seasonal shifts in migratory birds as a response to climate change. We compare our results in the $\textbf{Discussion}$ section. Another piece of work we have used to build our models is [@takeuchi2006nonparametric] in which we find more detailed definitions and properties of quantile regression. Many of the most central aspects of quantile regression, like the pinball loss function among other things, are thoroughly explained in [@koenker2005quantile].
 
-## 2. Data
+## 3. Data
 
-### 2.1 Data collection
+### 3.1 Data collection
 As mentioned earlier in this paper, the monitoring of pollen in the Stockholm region is conducted by the Palynological laboratory at NRM. The laboratory in question uses a Burkard Seven Day Volumetric Spore Trap [@https://doi.org/10.1111/j.1744-7348.1952.tb00904.x] to capture pollen and spores from the air through a small entrance meant to resemble the human airways. Thus approximately 10 liters of air passes through the machine each minute, which is what humans tend to consume. In order to capture the pollen particles carried by the passing air, a sticky tape is mounted to a drum rotating at 2 mm per hour. As only a small portion of the tape is exposed to the air at each point in time, this method grants us a good indication of the volume of pollen in the passing air at any given moment. Each captured pollen is individually counted with regular intervals using microscopes. It must be noted that not all stations possess the same equipment. In particular, differing microscope sizes are used across the country. Consequently, the measured values of the pollen counts are biased towards the larger microscopes, thus showing a somewhat inaccurate representation of the true pollen counts [@nrm2022microscope] [@nrm2022prognos]. However considering the structure of the data set and the consequent data analysis being relativistic, for which a descriptive presentation follows in the $\textbf{Data}$ section, this phenomenon has been ignored.
 
-### 2.2 Understanding the data
+### 3.2 Understanding the data
 The data set that we have at our disposal contains 5 unique variables: `date`, `station`, `name`, `count` and `factor`. Of which all but the `factor` variable are used in this research paper. We have also added a `latitude` variable since it is known that higher latitudes contribute to more extreme climate changes [@alecrim2023higher]. This variable is however entirely dependent on `station`. A short description of the meaning of each variable is shown in table 1. Equipment for data collection is active only during the period of the predicted pollen season, estimated through using predictive models for pollen activity based on historic results.
 
 ```{r, message=FALSE}
@@ -113,24 +118,26 @@ Viewing the years of availability in table 2 we conclude that not all data point
 kable(stations, caption = "Years for which data for different pollen species are available at the pollen monitoring stations used in our research, as well as their latidudal coordinates.")
 ```
 
-### 2.3 Data transformation
+### 3.3 Data transformation
 In order to be able to perform methods like quantile regression and linear regression on quantiles, a transformation of the given data structure is necessary. To be more precise, we must turn each individual pollen, quantified by the `count` variable, in to its own data point. Using the function `uncount()` in `R` we are able to perform the described transformation of data. The daily counts of certain pollen types at any given station can be in the thousands. Each pollen season usually lasting around a month, and the data covering multiple species of pollen at a multitude of geographic locations over a number of years, means in return, that the size of the data set increases dramatically and as a consequence slows down computation time.
 
-### 2.4 Data selection
+### 3.4 Data selection
 After altering the structure of the data in to an individualistic format, we first remove any observations with missing values in any of the columns `date`, `station` or `species`, since these are fundamental parameters to perform the following data analysis. For the purposes of EQ regression, the time it takes to compute the models on the entire data set in `R` is negligible. For nonparametric quantile regression however, the computational time appears to grow very quickly with the amount of observations. This has led us to the decision to reduce the amount of content in each data set (one data set containing all observations of any combination of `station` and `species`) to below a fixed limit. 
 
 Without reducing any data, the largest data sets contain $\sim 500 000$ observations, while some combinations of data contain considerably fewer. By testing and optimizing the models for various sizes of the data sets we decided to set the limit to $5 000$ observations per combination of data. This reduces the running time considerably, making the process of analyzing our results much easier. In order to minimize the effect this has on our results the rows must be removed uniformly over the time of year. If the number of observations in a data set is smaller than $n \cdot 5 000$, we want to select every $n$th element and discard the rest. We can do this in `R` by using the `slice()` and `bind_rows()` functions from the `dplyr` package. By performing these modifications to our data, we are sure to keep the shape of the distributions mostly the same and thus the results of the quantile regression. Information about by how much each data set was reduced by can be found in $\textbf{Appendix B}$.
 
-### 2.5 Annual distribution of pollen
+### 3.5 Annual distribution of pollen
 Before constructing the models, we can take a glance at what sort of results to expect from the subsequent regression analysis. In figure 1 we present a ridge plot containing information about the distribution of observed pollen by date of year. The `geom_density_ridges()` function from the `R` library `ggridges` uses kernel density estimation (KDE) to fit a continuous density function to what is, in essence, a histogram of the frequency of pollen on each date. KDE is a non-parametric method used to estimate the probability density function of a random variable. This is achieved by placing a kernel at each data point. In our case the kernels are Gaussian distributed. We then summarise each of the kernels' distributions in order to obtain a smooth continuous approximation of the density. The width of the kernel, known as the bandwidth, determines by how much each data point contributes to the density estimate. Larger bandwidths result in smoother but less detailed density estimates, while smaller bandwidths result in more detailed but noisier density estimates [@duong2001kde]. A common way to find the optimal bandwidth is to use the Asymptotic Mean Integrated Squared Error (AMISE). The function `geom_density_ridges()` uses an alternative method based on the [@10.2307/2345597] plug-in bandwidth selection method.
 
 By looking at the average distribution from the first and last 5 years in the data set respectively, we construct a somewhat consistent average in terms of the state of the pollen season at a given location, reducing the risk of falsely identifying outlier data as patterned occurrences. We can conclude that, in the Stockholm area, the pollen season seemed to begin earlier for all the arboreal pollen species while grass pollen (Poaceae) did not appear to show those tendencies. In general the shape of the pollen distribution was not seen to have been altered over time. A visual analysis of the distribution of annual pollen release may suggest that the average pollen season now begins earlier by up to a month compared to 45 years ago.
 
 ```{r, message=FALSE, warning=FALSE, fig.cap="Ridgeline figures approximating the density functions of the distribution of annual pollen. Comparing the observed dates of pollen capture for the average of the years 1973-1978 (green) with the average for 2018-2022 (red)."}
 ridges
+
+ggsave(filename = "ridges.png", plot = ridges, dpi = 300, width = 8, height = 6, units = "in")
 ```
 
-## 3. Methods
+## 4. Methods
 In this section we explain the underlying theory behind the statistical approaches used for our data analysis. We will compare "linear regression on empirical quantiles" (EQ), as used in [@karlsson2022comparison] with the supposedly more powerful method "nonparametric quantile regression" which we refer to as QR.
 
 In the QR approach, we estimate the response variable as the conditional median of the predictor variables, of which the median can be substituted to any other quantile of data. In the EQ method however, we use the method of ordinary least squares (OLS) to estimate the conditional mean of a subset of the predictor variables corresponding to the desired quantile level. Ordinary linear regression is the preferred method for many research purposes due to its inherent simplicity. In this research paper however, we are more interested in patterns for certain quantiles of data than the mean. To do this effectively we have conducted our research using quantile regression methods instead.
@@ -171,11 +178,11 @@ where $\mathcal{L}_{\tau}(\xi)$ represents the pinball loss function [@koenker20
 
 The name of the pinball loss function derives from the fact that it's shape somewhat resembles that of a pinball game as shown in figure 2. Rather trivially, the loss is minimized at $\xi = 0$, since that means the predicted quantile exactly attains the value of the observed value of the target variable. Overprediction is more heavily penalized than underprediciton for quantiles $\tau < 0$, while the opposite is true when $\tau > 0$. This is because the loss function places more weight on the residuals above the predicted value for overprediction and below the predicted value for underprediction [@takeuchi2006nonparametric].
 
-```{r, fig.cap="Illustration of the pinball loss function.", out.width="300px", fig.align='center'}
+```{r, fig.cap="Illustration of the pinball loss function. Here xi represents the offset of predicted values from the true values. As the quantile level tau increases, the slope for underestimation errors becomes steeper (more negative), while the slope for overestimation errors becomes shallower (less negative)", out.width="300px", fig.align='center'}
 knitr::include_graphics("data/pinball.png")
 ```
 
-### 3.1 Nonparametric quantile regression
+### 4.1 Nonparametric quantile regression
 By nonparametric regression models we refer to models that do not make any parametric assumptions about the form of the conditional distribution function, the relationship between the response variable and predictor variable(s) are linear however. By applying the theory of nonparametric models to a linear predictor of the conditional median, we arrive at the basis of a nonparametric quantile regression model.
 
 For a nonparametric QR model, consider the observed response date $y_i$ of grain $i$ and the predictor variable year $t_i$ with an intercept in the $(n \times 2)$-matrix $X$.
@@ -207,7 +214,7 @@ Q(\tau \, | \, X) = X \beta (\tau) + \varepsilon (\tau)
 
 whereby the column vector $\beta(\tau) = (\beta_0(\tau), \, \beta_t(\tau))^\top$ contains the intercept $\beta_0(\tau)$ and year as the slope $\beta_t(\tau)$ of quantile $\tau$. We define $\varepsilon(\tau)$ as a non-parameterised vector of the error terms [@karlsson2022comparison].
 
-An optimization problem is then constructed as to minimize the objective function in (5). In ordinary linear regression one typically uses the method of least squared errors (LSE) to find the model that leads to the lowest amount of loss of information. In our case however, we want to learn the parameters of a quantile regression model that can accurately predict the conditional quantiles of the target variable. To do this, we minimize the pinball loss function $\mathcal{L}_{\tau}(\xi)$, which we previously introduced in $\textbf{3. Methods}$, over a set of data $X, y$ [@koenker2005quantile; @takeuchi2006nonparametric].
+An optimization problem is then constructed as to minimize the objective function in (5). In ordinary linear regression one typically uses the method of least squared errors (LSE) to find the model that leads to the lowest amount of loss of information. In our case however, we want to learn the parameters of a quantile regression model that can accurately predict the conditional quantiles of the target variable. To do this, we minimize the pinball loss function $\mathcal{L}_{\tau}(\xi)$, which we previously introduced in $\textbf{4. Methods}$, over a set of data $X, y$ [@koenker2005quantile; @takeuchi2006nonparametric].
 
 The resulting regression parameter estimates of the $\tau$-quantile is thus given by the solution to the minimization problem
 \begin{equation}
@@ -218,7 +225,7 @@ Comparing equation 8 with equation 3, note that we replace the scalar $\mu_{\tau
 
 Since the function (8) is non-differentiable at $0$, no direct solution exists. Rather we use numerical estimation methods provided in the `R` library `quantreg`, such as the Frisch-Newton interior point method to find the optimal point along the $\xi$-axis [@koenker2023quantreg].
 
-### 3.2 Linear regression on emprical quantiles
+### 4.2 Linear regression on emprical quantiles
 Another approach we used is to perform linear regression on empirical quantiles, a statistical method that combines linear regression with year-wise empirical quantiles to model the relationship between a response variable and one or more predictor variables. The basic gist of EQ regression is to fit a linear regression model to the empirical quantiles of the response variable, rather than to the mean. Most source material and notations in this section are collected from [@karlsson2022comparison]. This method is called "empirical" quantile regression because it estimates quantiles of the response variable based on the empirical distribution of the data, rather than assuming a specific distribution for the response variable.
 
 Rather than using the raw gregorian date $y_i$ as response variable, we predict an empirical quantile of the dates of a subset of observations. For each year $t \in \mathcal{T}$ we extract a set of observations $\mathcal{Y}_{t}$. Let $\tau \in (0,1)$ be a quantile. For each set $\mathcal{Y_t}$ we let $\hat{F}_{(t)}$ be the empirical distribution function formed by the elements of its set. The corresponding empirical quantile is defined as
@@ -252,36 +259,42 @@ MLE(\beta(\tau), \sigma^2(\tau)) =  \underset{\beta, \sigma^2 \in \mathbb{R^2}}{
 
 for a given quantile $\tau$. Since the function is continuous and twice differentiable, the solution can easily be found using conventional methods [@karlsson2022comparison].
 
-## 4. Results
+## 5. Results
 
-### 4.1 Statistical model performance across quantiles
+### 5.1 Statistical model performance across quantiles
 
-```{r, fig.cap="Line graph over the coefficient and intecept estimates for each quantile in Stockholm, all species. The thicker, opaque bounaries define the 95%-confidence intervals for each method. The red line shows the linear regression coefficient without quantile parameterization."}
+```{r, fig.cap="Line graph over the coefficient and intecept estimates for each quantile of betula pollen in Stockholm. The thicker, opaque bounaries define the 95%-confidence intervals for each method. The red line shows the linear regression coefficient without quantile parameterization. As we conduct a comparison between the methods EQ and QR, we find that the EQ method is more in line with the red ordinary linear regression line than QR in both figures, implying there is a more uniform shift in dates across all quantiles. QR produces lower confidence intervals. Note that the year parameter using QR estimates positive coefficients (pollen season moving to later dates) for low quantiles."}
 plotQR
+
+ggsave(filename = "plotQR.png", plot = plotQR, dpi = 1000, width = 8, height = 6, units = "in")
 ```
 
-Putting both these methods to the test, we take a look at how each method behaves for any quantile of data. In figure 3 we limit the scope of our analysis to pollen monitored in Stockholm, similar patterns are however present for data found at other stations. We observe that the intercept begins at around day 50 for both models but increases more rapidly over the quantiles for QR than with EQ, leading to a significantly later estimation of when the pollen season ends (high quantiles) using the QR approach. Another phenomenon visible in figure 3 is that the direction of the slopes are different in the second graph. What we observe is that the QR estimates of the `year` variable move from strong negative coefficients, to lesser negative or even slightly positive coefficients across the quantiles. This means we get a significantly earlier start of the pollen season, but a less shifted end to the season. All in all this results in a longer and more spread out pollen season. In stark contrast to the QR method, when analyzing the EQ coefficient estimations, we find that the early parts of the pollen season actually moved to later dates, while most of the season beyond the first 20% of pollen or so, saw a shift of around $0.3$ days per year to earlier dates.
+Putting both these methods to the test, we take a look at how each method behaves for any quantile of data. In figure 3 we limit the scope of our analysis to birch pollen monitored in Stockholm, similar patterns are however observable for data of various species found at other stations. We observe that the intercept begins around 25 days earlier for the QR model but increases more rapidly over the low quantiles than the EQ model, eventually converging as the quantile level increases, leading to a significantly earlier estimation of when the pollen season begins (low quantiles) using the QR approach. Another phenomenon visible in figure 3 is that the direction of the slopes are different in parts of the second graph. What we observe is that the QR estimates of the `Year` variable move from positive, to negative values across the quantiles. This would imply that we should expect a later start of the pollen season each year, but an advance in dates across most if the season. Note that the ridge plots in figure 1 show an advance in dates for birch (betula) pollen in Stockholm. The EQ method appears to do a better job at modelling this seasonal shift that QR.
 
-Based on this information, one may ask oneself which of these approaches we deem to be the most fit to represent the behaviour of the pollen season. The fact that the size of the confidence intervals differ so greatly is, to us, sufficient material to determine the EQ model as more desirable for the purpose of this research paper. In order to understand this difference in confidence between the to methods, let us take a look at how the models look overlayed on the set of observations.
+An aspect in which QR appears to be a stronger alternative is the fact that the 95%-confidence intervals are consistently lower using this method. Based on this and prior mentioned information, one may ask oneself which of these approaches we deem to be the most fit to represent the behaviour of the pollen season. The differing sizes of the confidence intervals make tempting to chose QR as the most viable method, however the differing direction of slopes in the QR model is concerning as our previous glances at the data tell us otherwise, this pattern is neither intuitive nor is it consistent among stations and species, meaning we find this pattern in some combinations of data, but not others. Based on these finding, we choose to continue with what we consider to be the safer option which is linear regression on empirical quantiles (sacrificing precision for accuracy). Admittedly, the kernel density ridges in figure 1 may not be able to highlight opposing directions of seasonal shift particularly well, as a smoothed density is fitted onto the distribution, leading to a loss of information and therefore accuracy.
 
-```{r, message=FALSE, fig.cap="Jitter plot over the annual distribution of betula pollen in Stockholm comparing QR and EQ at the 1% quantile level."}
+In order to understand the stark differences in coefficients for low quantiles between the two methods, let us take a look at how the models look overlayed on the set of observations.
+
+```{r, message=FALSE, fig.cap="Jitter plot over the annual distribution of betula pollen in Stockholm comparing QR and EQ at the 1% quantile level. Blue line is the fitted nonparametric quantile regression (QR) line which keeps 1% of observations (black dots) below it self, while the green line represents the linear regression (EQ) slope fitted on to the averaged points highlighted in green."}
 plot_trend
+
+ggsave(filename = "plot_trend.png", plot = plot_trend, dpi = 1000, width = 8, height = 6, units = "in")
 ```
 
-Figure 4 tells us the difference in fitting of both our models. The quantile regression method fits a linear model to encompass a given quantile, in this case the first $1\%$ of annual pollen release, below the regression line. We can observe that year 17 appears to be a heavy outlier in which the entire pollen season came significantly earlier than other years. Since the QR method tries to fit a linear trend with a specific amount of observations below it, and a large amount of these first 1% of observations are from the 17th year, the model is heavily skewed by the observations from this year and thus does not generate a good fit. EQ does not succumb to this issue since we in this approach aggregate the observations from each year to a specific date value (red points) and then perform ordinary linear regression on these aggregated observations. In this case the one outlier year corresponds to only 2% of the total observations while for QR this effect appears to be well over $50\%$. These results explain why the confidence intervals for QR are much larger than the equivalent measure of EQ. Thus we conclude that linear regression on empirical quantiles is a more fitting approach to use in the case of estimating the annual seasonal shift of pollen.
+Figure 4 tells us the difference in fitting of both our models. The quantile regression method fits a linear model to encompass a given quantile, in this case the first $1\%$ of annual pollen release, below the regression line. We can observe that year 17 appears to be a heavy outlier in which the entire pollen season came significantly earlier than other years. Since the QR method tries to fit a linear trend with a specific amount of observations below it, and a large amount of these first 1% of observations are from the 17th year, the model is heavily skewed by the observations from this year and thus does not generate a good fit. EQ does not succumb to this issue since we in this approach aggregate the observations from each year to a specific date value (green points) and then perform ordinary linear regression on these aggregated observations. In this case the one outlier year corresponds to only $2\%$ of the total observations while for QR this effect appears to be well over $50\%$. These results explain why the slopes for low quantiles of QR are so different to the equivalent measure of EQ. Thus we conclude that linear regression on empirical quantiles is a more fitting approach to use in the case of estimating the annual seasonal shift of pollen.
 
-### 4.2 Estimations and predictions per species
+### 5.2 Estimations and predictions per species
 
 ```{r}
 kable(shift_by_species %>%
         dplyr::select(Species, `Avg slope (1%)`, `P-value (1%)`, `Adj. R^2 (1%)`, 
                       `Avg slope (50%)`, `P-value (50%)`, `Adj. R^2 (50%)`, 
                       `Avg slope (95%)`, `P-value (95%)`, `Adj. R^2 (95%)`, 
-                      `Slope (season length)`), caption = "Modelled pollen season shift by species averaged over all monitored stations (p-values and $R^2$ are averages).")
+                      `Slope (season length)`), caption = "Modelled pollen season shift by species averaged over all monitored stations (Adj. $R^2$ and p-values are averages).")
 
 kable(shift_by_species %>%
         dplyr::select(Species, `Estimated start 1973`, `Predicted start 2023`, `Predicted start 2050`, 
-                      `Season length 1973`, `Season length 2023`, `Season length 2050`), caption = "Estimated starting dates and seasonal length averaged over all monitored stations (p-values and $R^2$ are averages).")
+                      `Season length 1973`, `Season length 2023`, `Season length 2050`), caption = "Estimated starting dates and seasonal length averaged over all monitored stations.")
 ```
 
 ```{r}
@@ -293,13 +306,13 @@ kable(shift_by_species_sthlm %>%
 
 kable(shift_by_species_sthlm %>%
         dplyr::select(Species, `Estimated start 1973`, `Predicted start 2023`, `Predicted start 2050`, 
-                      `Season length 1973`, `Season length 2023`, `Season length 2050`), caption = "Estimated starting dates and seasonal length averaged in Stockholm (models with p-values larger than 0.05 are ignored).")
+                      `Season length 1973`, `Season length 2023`, `Season length 2050`), caption = "Estimated starting dates and seasonal length averaged in Stockholm.")
 ```
 
 
 Table 3 grants us information about how our EQ models predict the pollen seasons, for all monitored species, to respond to increasing temperatures in the atmosphere. The entries in the columns named `Slope` are the average of the $\beta$-coefficient values generated at different combinations of `species` and `station`, for each species of pollen. Although some pollen monitoring stations generated results with positive coefficients for certain species, such a phenomenon appears not to be present when we take the mean of our regression coefficients for each species from all stations. The exception to this however would be the $95\%$-quantile estimate for grass pollen (poaceae), meaning the grass pollen season is moving to later dates over time, while its start and peak shifts to earlier dates. This brings us to the conclusion that the pollen season unanimously is headed towards an earlier start, as well as peak, as the climate warms. The date at which $95\%$ of all annual pollen gets monitored also seems to arrive earlier each year. The exception to this pattern is, as we point out, grass pollen. The slope estimates for the end of season arrival dates are however lower than the starting dates across all species. By using the linear regression coefficients shown in the table, we can predict the dates at which quantiles of the annual pollen release are expected to appear at.
 
-Using the 1% quantile estimate, we observe in table 4 that the predicted dates for hazel and alder pollen moved from early April back in 1973 to late February as of 2023 and are expected to reach late January and early February respectively by 2050. The willow and elm seasons appear to shift at a slightly slower pace moving from late to early April over the same 50-year time span. Meanwhile birch pollen only accumulated a movement of 10 days over the past half century. Oak pollen now starts to appear in early May rather than towards the end of the month, which appears to have been the case in the 1970's. Just as we saw in the ridge plots in section $\textbf{2.5 Annual distribution of pollen}$, the starting dates of the grass pollen season are not seen to be as greatly affected by climate change as for arboreal pollen, although we find the peak to advance by $0.20$ days annually, which is faster than at least one arboreal plant (birch).
+Using the 1% quantile estimate, we observe in table 4 that the predicted dates for hazel and alder pollen moved from early April back in 1973 to late February as of 2023 and are expected to reach late January and early February respectively by 2050. The willow and elm seasons appear to shift at a slightly slower pace moving from late to early April over the same 50-year time span. Meanwhile birch pollen only accumulated a movement of 10 days over the past half century. Oak pollen now starts to appear in early May rather than towards the end of the month, which appears to have been the case in the 1970's. Just as we saw in the ridge plots in section $\textbf{3.5 Annual distribution of pollen}$, the starting dates of the grass pollen season are not seen to be as greatly affected by climate change as for arboreal pollen, although we find the peak to advance by $0.20$ days annually, which is faster than at least one arboreal plant (birch).
 
 Something we can observe across the board in regards to the monitored pollen species however, is that the season lengths (difference in dates between the $95\%$-quantile and $1\%$-quantile) become longer over time. This phenomenon is present in all species we have covered in this paper. The largest increase in pollen season length among the arboreal species is seen in hazel pollen (21 days in 50 years and 33 days in 77 years) while grass pollen, which saw negligible changes to its starting dates, still saw a significant increase in season length (14 days in 50 years and 22 days in 77 years), largely owing to the fact that the seasonal end moves to later dates by approximately $0.13$ days a year. Birch pollen saw the smallest increase as the season length is extends by barely a day after 77 years of increasing temperatures.
 
@@ -307,52 +320,64 @@ Looking at the equivalent results from the Stockholm region in tables 5 and 6, w
 
 There could be many explanations for why the annual distribution of pollen behaves the way we have observed. In this paper we are not aiming to try and answer this question. Some quick thoughts however are that with an ever warmer climate, the temperatures at which plants are able to pollinate are present more days of the year, meaning the window of opportunity for trees and grass to release their pollen gets longer over time. The early pollen is what, for most species, gets shifted most heavily to earlier dates. An idea to why this may be the case is that since the spring arrives earlier over time, plants are able to begin the process of pollination earlier and consequently release most of their pollen (which always occurs in the spring months for arboreal species) at earlier dates, leaving the later parts of the year with less relative amounts of pollen. Results for each individual station can be accessed in $\textbf{Appendix C}$.
 
-### 4.3 Geographic influence
-```{r, fig.cap="Visualization of latitudal impact on the EQ estimations (1% quantile)"}
-ggplot(data = joined_eq_1, aes(x = Latitude, y = `Coefficient (EQ)`, colour = Species)) +
+### 5.3 Geographic influence
+```{r, message=FALSE, fig.cap="Visualization of latitudal impact on the EQ estimations per species (season start, 1% quantile)"}
+latitude_1 <- ggplot(data = joined_eq_1, aes(x = Latitude, y = `Coefficient (EQ)`, colour = Species)) +
   geom_point() +
   stat_smooth(formula = y ~ x, method="lm", se=FALSE) +
   facet_wrap(~Species) +
   labs(colour = "Species", x = "Latitude", y = "Regression coefficient")
+
+latitude_1
+
+ggsave(filename = "latitude_1.png", plot = latitude_1, dpi = 1000, width = 8, height = 6, units = "in")
 ```
 
-```{r, fig.cap="Visualization of latitudal impact on the EQ estimations (50% quantile)"}
-ggplot(data = joined_eq_50, aes(x = Latitude, y = `Coefficient (EQ)`, colour = Species)) +
+```{r, message=FALSE, fig.cap="Visualization of latitudal impact on the EQ estimations per species (season peak, 50% quantile)"}
+latitude_50 <- ggplot(data = joined_eq_50, aes(x = Latitude, y = `Coefficient (EQ)`, colour = Species)) +
   geom_point() +
   stat_smooth(formula = y ~ x, method="lm", se=FALSE) +
   facet_wrap(~Species) +
   labs(colour = "Species", x = "Latitude", y = "Regression coefficient")
+
+latitude_50
+
+ggsave(filename = "latitude_50.png", plot = latitude_50, dpi = 1000, width = 8, height = 6, units = "in")
 ```
 
 
-```{r, fig.cap="Visualization of latitudal impact on the EQ estimations (95% quantile)"}
-ggplot(data = joined_eq_95, aes(x = Latitude, y = `Coefficient (EQ)`, colour = Species)) +
+```{r, message=FALSE, fig.cap="Visualization of latitudal impact on the EQ estimations per species (season end, 95% quantile)"}
+latitude_95 <- ggplot(data = joined_eq_95, aes(x = Latitude, y = `Coefficient (EQ)`, colour = Species)) +
   geom_point() +
   stat_smooth(formula = y ~ x, method="lm", se=FALSE) +
   facet_wrap(~Species) +
   labs(colour = "Species", x = "Latitude", y = "Regression coefficient")
+
+latitude_95
+
+ggsave(filename = "latitude_95.png", plot = latitude_95, dpi = 1000, width = 8, height = 6, units = "in")
 ```
 
 In figures 5 through 7 we can view the regression coefficients for each species and how they differ based on the latitude of the station the pollen were collected at. Thus we can determine whether pollen in colder climates are affected by climate change by a greater extent than in warmer areas, or vice versa. Figure 5 tells us how the beginning of the pollen season shifts at the observed locations throughout Sweden. Alder, hazel and oak all appear to have more dramatic seasonal shifts at northerly latitudes, while grass, birch, willow and elm show the opposite effect. The median quantile, which we also refer to as the peak of the pollen season was not observed to have had a significant impact of the latitude of where it took place, as seen in figure 6. The steep regression slope of the peak of the elm pollen seasonal shift comes down to the fact that the coefficient at the highest latitude is vastly different to the others. By that metric, a conclusion can not be made about whether this is proof of climate change impacting elm pollen at higher latitudes simply an outlier. It is worth noting that the p-value of the aforementioned elm coefficient in Umeå is $0.981$. By all accounts, this points to the data point being an outlier. By figure 7 we see how the coefficients for the $95\%$-quantiles are estimated. We now observe, in contrast to the 1%-quantiles, that grass pollen attributes to a quicker movement toward earlier dates, the further north one goes. To summarise, the length of the grass pollen season appears to be reduced at higher latitudes. The remaining pollen species' seasonal ends do not appear to be strongly affected by latitude. What we can conclude from this is that the seasonal window for grass pollen does not expand as much at high latitudes than what can be observed at lower latitudes. Alder pollen appears to, somewhat consistently, attain more strongly negative coefficients, for any quantile, at the higher latitudes. Other species were not observed to be affected by the latitude of their release by any greater extent.
 
-### 5. Conclusions
-The results in this study point towards EQ being a more fitting model than QR when predicting changes in seasonal pollen distributions. Largely, this has to do with the fact that the spread, or variance of dates is fairly low, leading to clustering of extreme observations in the case of abnormally hot or cold years. This can in turn be catastrophic when using nonparametric quantile regression to predict extreme quantiles, as discussed in $\textbf{4.1 Statistical model performance across quantiles}$.
+### 6. Conclusions
+The results in this study point towards EQ being a more fitting model than QR when predicting changes in seasonal pollen distributions. Largely, this has to do with the fact that the spread, or variance of dates is fairly low since the linear regression lines are based on yearly averages. Nonparametric quantile regression models struggle to predict extreme quantiles due to clustering of extreme observations in the case of abnormally hot or cold years, as discussed in $\textbf{5.1 Statistical model performance across quantiles}$.
 
 Based on the slopes of our predictive linear models, we conclude that an advance in the seasonal start of pollen release among arboreal species occurs by between $0.19$ and $0.76$ calendar days per year. The seasonal peak in arboreal pollen appears to also be heavily affected by climate change, as an advance of $0.14$ to $0.54$ days per year is observed. The 95th percentile of annual observed pollen was found to not advance as dramatically, resulting in longer periods of seasonal activity. Since 1973, season lengths of arboreal pollen have increased by $8$-$21$ days on average with the exception of birch, for which no noticeable change in season length was observed. Grass pollen saw an increase of $14$ days over the same 50-year time frame. Grass pollen is the only species to attain a positive slope (pollination occurring later over time) as we see ending dates regress by $0.13$ days annually.
 
-A comparison of seasonal pollen distributions between various locations, as seen in $\textbf{4.3 Geographic influence}$ reveals that the slopes can differ quite dramatically between latitudes. In particular we see that alder, hazel and oak pollen see more dramatic advances at higher latitudes, while herbaceous species appear less affected by climate change further north.
+A comparison of seasonal pollen distributions between various locations, as seen in $\textbf{5.3 Geographic influence}$ reveals that the slopes can differ quite dramatically between latitudes. In particular we see that alder, hazel and oak pollen see more dramatic advances at higher latitudes, while herbaceous species appear less affected by climate change further north.
 
-## 6. Discussion
+## 7. Discussion
 
-## 6.1 Comparison with prior studies
+## 7.1 Comparison with prior studies
 The conclusion made in [@karlsson2022comparison] was that nonparametric quantile regression (QR) is the most well suited for single as well as multiple
-species analyses of migratory birds. What we can conclude from this study however is that linear regression on empirical quantiles (EQ) is the preferred method between the two when it comes to modelling the advance in seasonal distribution of pollen. As mentioned in $\textbf{Statistical model performance across quantiles}$, the confidence intervals are way smaller for the EQ model than QR. We observed how outlier years influence the slope of QR models more than EQ models. Perhaps this is where we can find an explanation as to why our findings differ in our respective studies. One reason could be that the variance in observed dates among pollen is lower than for migratory birds, leading to a more heavily skewed slope if a cluster of observations falls a lot earlier or later than normal, which tends to be the case for years with abnormal average temperatures.
+species analyses of migratory birds. What we can conclude from this study however is that linear regression on empirical quantiles (EQ) appears to be the preferred method between the two when it comes to modelling the advance in seasonal distribution of pollen. We observed how outlier years influence the slope of QR models more than EQ models. Perhaps this is where we can find an explanation as to why our findings differ in our respective studies. One reason could be that the variance in observed dates among pollen is lower than for migratory birds, leading to a more heavily skewed slope if a cluster of observations falls a lot earlier or later than normal, which tends to be the case for years with abnormal average temperatures.
 
 As we recall the results observed in the $\textbf{Estimations and predictions per species}$ section, our findings reveal that hazel pollen is subject to the largest advance in starting dates as well as overall dates of seasonal pollinosis. Grass pollen, which is not arboreal, we find to not advance its end of season date, rather the opposite effect is observed as there is a push back of $0.13$ days per year on average. We find birch to be the species with the smallest change in season length and the shortest advance in starting dates among the arboreal pollen.
 
-As mentioned in $\textbf{1. Literature review}$, a similar Stockholm based study on seasonal pollen shift in response to climate change [@lind2016pollen] found that end-of-season dates for herbaceous species of pollen, like grass, had moved to later parts of the year but showed no significant change in starting or peak dates. This is consistent with our findings as we see a push back of $0.21$ days per year on average in Stockholm. Just like in [@lind2016pollen] we see a significant advance in starting, as well as peak dates for all arboreal species. Our averaged results agree on the fact that hazel was the species with the greatest advance in dates whereas if we look exclusively at the phenology in Stockholm, alder appears to have advanced more rapidly. We found oak to be the species with the smallest change in season length and the shortest advance in starting dates among the arboreal pollen in Stockholm, whereas the model provided in [@lind2016pollen] found lower estimates for both elm and willow trees.
+As mentioned in $\textbf{2. Literature review}$, a similar Stockholm based study on seasonal pollen shift in response to climate change [@lind2016pollen] found that end-of-season dates for herbaceous species of pollen, like grass, had moved to later parts of the year but showed no significant change in starting or peak dates. This is consistent with our findings as we see a push back of $0.21$ days per year on average in Stockholm. Just like in [@lind2016pollen] we see a significant advance in starting, as well as peak dates for all arboreal species. Our averaged results agree on the fact that hazel was the species with the greatest advance in dates whereas if we look exclusively at the phenology in Stockholm, alder appears to have advanced more rapidly. We found oak to be the species with the smallest change in season length and the shortest advance in starting dates among the arboreal pollen in Stockholm, whereas the model provided in [@lind2016pollen] found lower estimates for both elm and willow trees.
 
-### 6.2 Further improvements
+### 7.2 Further improvements
 The QR approach struggles with clusters of outliers such as a year with a significantly earlier pollen season. One way to look at it is that there exists a random effect of year that we do not consider in this approach, thus deeming the assumption of independent observations incorrect in the case of our QR model. In order to improve upon these models, one may consider adding a random variable to deal with this yearly effect, resulting in a linear quantile mixed model, which may grant more significant slope estimations than these QR and EQ models.
 
 This study only tells us about the distribution of pollen, we do not make any considerations about the volume of pollen, which may be a telling factor in determining why and how plants' pollination cycle reacts to a warming climate. Thus, further studies of this character may consider integrating pollen volume in their models.
@@ -419,5 +444,18 @@ kable(appendix_95, caption = "End of pollen season for different species and loc
 ```
 
 
+```{r}
+# Convert data frame to LaTeX table code
+#table_code_a1 <- xtable(appendix_1, caption = "Appendix table season start")
+#table_code_a50 <- xtable(appendix_50, caption = "Appendix table season peak")
+#table_code_a95 <- xtable(appendix_95, caption = "Appendix table season end")
+#table_code <- xtable(appendix, caption = "Data set sizes for combinations of species and location. Brackets denote the factor of which each data set is reduced by.")
+
+# Print the LaTeX table code
+#print(table_code_a1, include.rownames = FALSE)
+#print(table_code_a50, include.rownames = FALSE)
+#print(table_code_a95, include.rownames = FALSE)
+#print(table_code, include.rownames = FALSE)
+```
 
 
